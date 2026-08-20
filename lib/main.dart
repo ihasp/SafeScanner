@@ -1,0 +1,58 @@
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import 'constants/app_colors.dart';
+import 'constants/app_constants.dart';
+import 'routing/tab_scaffold.dart';
+
+void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+  SystemChrome.setSystemUIOverlayStyle(
+    const SystemUiOverlayStyle(
+      statusBarColor: Colors.transparent,
+      statusBarIconBrightness: Brightness.dark,
+    ),
+  );
+  runApp(const ProviderScope(child: CryptoScannerApp()));
+}
+
+class CryptoScannerApp extends StatelessWidget {
+  const CryptoScannerApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: AppConstants.appName,
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData(
+        useMaterial3: true,
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: AppColors.primary,
+          brightness: Brightness.light,
+        ),
+        scaffoldBackgroundColor: Colors.white,
+        appBarTheme: const AppBarTheme(
+          backgroundColor: Colors.white,
+          elevation: 0,
+          scrolledUnderElevation: 0,
+        ),
+      ),
+      darkTheme: ThemeData(
+        useMaterial3: true,
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: AppColors.primary,
+          brightness: Brightness.dark,
+        ),
+        scaffoldBackgroundColor: AppColors.surfaceDark,
+        appBarTheme: const AppBarTheme(
+          backgroundColor: AppColors.surfaceDark,
+          elevation: 0,
+          scrolledUnderElevation: 0,
+        ),
+      ),
+      themeMode: ThemeMode.system,
+      home: const TabScaffold(),
+    );
+  }
+}
