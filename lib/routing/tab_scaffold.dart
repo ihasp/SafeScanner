@@ -6,18 +6,6 @@ import '../modules/results/views/results_page.dart';
 import '../modules/settings/views/settings_page.dart';
 import '../shared/widgets/glass_tab_bar.dart';
 
-class SelectedTabIndexNotifier extends Notifier<int> {
-  @override
-  int build() => 0;
-
-  void setIndex(int index) => state = index;
-}
-
-final selectedTabIndexProvider =
-    NotifierProvider<SelectedTabIndexNotifier, int>(
-      SelectedTabIndexNotifier.new,
-    );
-
 class TabScaffold extends ConsumerWidget {
   const TabScaffold({super.key});
 
@@ -50,3 +38,15 @@ class TabScaffold extends ConsumerWidget {
     );
   }
 }
+
+class SelectedTabIndexNotifier extends Notifier<int> {
+  @override
+  int build() => 0;
+
+  void setIndex(int index) => state = index;
+}
+
+final selectedTabIndexProvider =
+    NotifierProvider<SelectedTabIndexNotifier, int>(
+      SelectedTabIndexNotifier.new,
+    );

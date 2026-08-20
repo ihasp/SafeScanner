@@ -25,4 +25,3 @@ class SettingsService {
   Future<void> persistSettings(AppSettings settings) =>
       SettingsStorageHelper.saveSettings(settings, _prefs);
 }
-

@@ -4,8 +4,6 @@ import '../../../constants/app_colors.dart';
 import '../../../helpers/security/analysis_status_resolver.dart';
 import '../models/analysis_model.dart';
 
-enum CustomFlatlistVariant { summary, details }
-
 class CustomFlatlistView extends StatefulWidget {
   final Analysis analysis;
   final CustomFlatlistVariant variant;
@@ -22,6 +20,8 @@ class CustomFlatlistView extends StatefulWidget {
   State<CustomFlatlistView> createState() => _CustomFlatlistViewState();
 }
 
+enum CustomFlatlistVariant { summary, details }
+
 class _CustomFlatlistViewState extends State<CustomFlatlistView> {
   bool _showAllEngines = false;
 
@@ -37,8 +37,8 @@ class _CustomFlatlistViewState extends State<CustomFlatlistView> {
     final verdictColor = status.isSafe ? AppColors.safe : AppColors.malicious;
     final verdictBg = isDark
         ? (status.isSafe
-            ? AppColors.safe.withAlpha(40)
-            : AppColors.malicious.withAlpha(40))
+              ? AppColors.safe.withAlpha(40)
+              : AppColors.malicious.withAlpha(40))
         : (status.isSafe ? AppColors.safeBg : AppColors.maliciousBg);
     final verdictIcon = status.isSafe
         ? Icons.verified_user_outlined
@@ -110,7 +110,9 @@ class _CustomFlatlistViewState extends State<CustomFlatlistView> {
                     vertical: 8,
                   ),
                   decoration: BoxDecoration(
-                    color: isDark ? const Color(0xFF1E2022) : Colors.transparent,
+                    color: isDark
+                        ? const Color(0xFF1E2022)
+                        : Colors.transparent,
                     border: Border.all(color: borderColor),
                     borderRadius: BorderRadius.circular(8),
                   ),
@@ -147,7 +149,9 @@ class _CustomFlatlistViewState extends State<CustomFlatlistView> {
                     vertical: 8,
                   ),
                   decoration: BoxDecoration(
-                    color: isDark ? const Color(0xFF1E2022) : Colors.transparent,
+                    color: isDark
+                        ? const Color(0xFF1E2022)
+                        : Colors.transparent,
                     border: Border.all(color: borderColor),
                     borderRadius: BorderRadius.circular(8),
                   ),

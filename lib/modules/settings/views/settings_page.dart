@@ -37,9 +37,9 @@ class SettingsPage extends ConsumerWidget {
     if (confirmed == true) {
       ref.read(scanResultsProvider.notifier).clearScans();
       if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Scan history cleared.')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text('Scan history cleared.')));
       }
     }
   }

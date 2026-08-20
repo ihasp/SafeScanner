@@ -147,7 +147,9 @@ class _CryptoScanAccordionState extends State<CryptoScanAccordion> {
                       ),
                     ),
                     padding: const EdgeInsets.only(top: 8),
-                    child: CryptoWalletResultsView(scan: widget.scan.cryptoScan),
+                    child: CryptoWalletResultsView(
+                      scan: widget.scan.cryptoScan,
+                    ),
                   )
                 : const SizedBox.shrink(),
           ),

@@ -62,8 +62,7 @@ class CryptoWalletResultsView extends StatelessWidget {
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Text(
-                scan.safety.description ??
-                    'This wallet was reported by a malicious-address data source.',
+                scan.safety.description ?? 'This wallet was reported by a malicious-address data source.',
                 style: const TextStyle(
                   fontSize: 12,
                   fontWeight: FontWeight.w700,

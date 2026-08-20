@@ -15,9 +15,10 @@ class ScanResultsStorageService {
     try {
       final jsonString = _prefs.getString(_storageKey);
       if (jsonString != null && jsonString.isNotEmpty) {
-        final decoded = jsonDecode(jsonString) as List<dynamic>;
+        final decoded = jsonDecode(jsonString) as List<Object?>;
         return decoded
-            .map((item) => ScanResult.fromJson(item as Map<String, dynamic>))
+            .whereType<Map<String, dynamic>>()
+            .map(ScanResult.fromJson)
             .toList();
       }
     } catch (_) {}
@@ -30,9 +31,10 @@ class ScanResultsStorageService {
       final prefs = await SharedPreferences.getInstance();
       final jsonString = prefs.getString(_storageKey);
       if (jsonString != null && jsonString.isNotEmpty) {
-        final decoded = jsonDecode(jsonString) as List<dynamic>;
+        final decoded = jsonDecode(jsonString) as List<Object?>;
         return decoded
-            .map((item) => ScanResult.fromJson(item as Map<String, dynamic>))
+            .whereType<Map<String, dynamic>>()
+            .map(ScanResult.fromJson)
             .toList();
       }
     } catch (_) {}

@@ -105,11 +105,14 @@ class _ScannerViewState extends ConsumerState<ScannerView>
     });
 
     _lockTimer?.cancel();
-    _lockTimer = Timer(const Duration(milliseconds: AppConstants.lockTimeoutMs), () {
-      if (mounted) {
-        _qrLock = false;
-      }
-    });
+    _lockTimer = Timer(
+      const Duration(milliseconds: AppConstants.lockTimeoutMs),
+      () {
+        if (mounted) {
+          _qrLock = false;
+        }
+      },
+    );
   }
 
   Future<void> _handleRetry() async {
@@ -147,6 +150,7 @@ class _ScannerViewState extends ConsumerState<ScannerView>
     final wallet = AddressDecoder.decode(sanitized);
     final detectedMode = wallet != null ? ScanMode.crypto : ScanMode.qr;
 
+    if (!mounted) return;
     setState(() {
       _scanMode = detectedMode;
     });
@@ -192,7 +196,8 @@ class _ScannerViewState extends ConsumerState<ScannerView>
     } else {
       // URL / QR Mode
       final uri = Uri.tryParse(sanitized);
-      final isLikelyUrl = uri != null &&
+      final isLikelyUrl =
+          uri != null &&
           ((uri.hasScheme &&
                   (uri.scheme == 'http' ||
                       uri.scheme == 'https' ||
@@ -204,9 +209,8 @@ class _ScannerViewState extends ConsumerState<ScannerView>
                   !sanitized.contains('\n') &&
                   !sanitized.startsWith('WIFI:') &&
                   !sanitized.startsWith('BEGIN:VCARD') &&
-                  RegExp(
-                    r'^(?:[a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}(?::\d+)?(?:/.*)?$',
-                  ).hasMatch(sanitized)));
+                  RegExp(r'^(?:[a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}(?::\d+)?(?:/.*)?$')
+                      .hasMatch(sanitized)));
 
       if (!isLikelyUrl) {
         if (!mounted) return;

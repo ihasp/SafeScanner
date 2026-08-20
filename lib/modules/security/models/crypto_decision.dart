@@ -1,7 +1,5 @@
 import 'tatum_models.dart';
 
-enum CryptoSafetyLevel { safe, malicious, unverified }
-
 class CryptoDecision {
   final MaliciousCheckStatus status;
   final CryptoSafetyLevel safetyLevel;
@@ -18,3 +16,4 @@ class CryptoDecision {
   });
 }
 
+enum CryptoSafetyLevel { safe, malicious, unverified }

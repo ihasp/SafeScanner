@@ -89,13 +89,13 @@ class _ScannedLayoutSheetState extends ConsumerState<ScannedLayoutSheet>
           widget.analysis?.data.attributes.results.isNotEmpty ?? false;
 
       if (isCompleted || hasResults) {
-        _triggerGlow(widget.analysis);
+        _applyGlowState(widget.analysis);
       } else {
         _startPolling(settings.apiPollingRate);
       }
     } else {
       if (widget.cryptoScan?.status == CryptoScanStatus.completed) {
-        _triggerCryptoGlow(widget.cryptoScan);
+        _applyCryptoGlowState(widget.cryptoScan);
       }
     }
   }
@@ -112,13 +112,13 @@ class _ScannedLayoutSheetState extends ConsumerState<ScannedLayoutSheet>
           _pollingTimer?.cancel();
         }
         if (!_hasTriggeredGlow) {
-          _triggerGlow(widget.analysis);
+          _applyGlowState(widget.analysis);
         }
       }
     } else {
       if (widget.cryptoScan?.status == CryptoScanStatus.completed &&
           !_hasTriggeredGlow) {
-        _triggerCryptoGlow(widget.cryptoScan);
+        _applyCryptoGlowState(widget.cryptoScan);
       }
     }
   }
@@ -127,36 +127,37 @@ class _ScannedLayoutSheetState extends ConsumerState<ScannedLayoutSheet>
     _pollingTimer?.cancel();
     _pollingTimer = Timer.periodic(Duration(milliseconds: pollingRate), (
       timer,
-    ) async {
-      if (_isPolling) return;
-      final isCompleted =
-          widget.analysis?.data.attributes.status == AnalysisStatus.completed;
-      if (isCompleted) {
-        timer.cancel();
-        if (!_hasTriggeredGlow) {
-          _triggerGlow(widget.analysis);
-        }
-      } else {
-        _isPolling = true;
-        try {
-          await widget.onRetry();
-        } finally {
-          _isPolling = false;
-        }
-      }
+    ) {
+      _pollAnalysis(timer);
     });
   }
 
-  void _triggerGlow(Analysis? analysis) {
+  Future<void> _pollAnalysis(Timer timer) async {
+    if (_isPolling) return;
+    final isCompleted =
+        widget.analysis?.data.attributes.status == AnalysisStatus.completed;
+    if (isCompleted) {
+      timer.cancel();
+      if (!_hasTriggeredGlow) {
+        _triggerGlow(widget.analysis);
+      }
+    } else {
+      _isPolling = true;
+      try {
+        await widget.onRetry();
+      } finally {
+        _isPolling = false;
+      }
+    }
+  }
+
+  void _applyGlowState(Analysis? analysis) {
     if (analysis == null || _hasTriggeredGlow) return;
     _hasTriggeredGlow = true;
 
     final resolved = AnalysisStatusResolver.resolve(analysis);
-    if (!mounted) return;
-    setState(() {
-      _glowIsSafe = resolved.isSafe;
-      _showGlow = true;
-    });
+    _glowIsSafe = resolved.isSafe;
+    _showGlow = true;
 
     final settings = ref.read(settingsProvider);
     final isCompleted =
@@ -179,16 +180,13 @@ class _ScannedLayoutSheetState extends ConsumerState<ScannedLayoutSheet>
     });
   }
 
-  void _triggerCryptoGlow(CryptoScanState? cryptoState) {
+  void _applyCryptoGlowState(CryptoScanState? cryptoState) {
     if (cryptoState?.result == null || _hasTriggeredGlow) return;
     _hasTriggeredGlow = true;
 
     final isSafe = DecisionMaker.isWalletSafe(cryptoState!.result!);
-    if (!mounted) return;
-    setState(() {
-      _glowIsSafe = isSafe;
-      _showGlow = true;
-    });
+    _glowIsSafe = isSafe;
+    _showGlow = true;
 
     _glowTimer?.cancel();
     _glowTimer = Timer(const Duration(milliseconds: 2000), () {
@@ -197,6 +195,13 @@ class _ScannedLayoutSheetState extends ConsumerState<ScannedLayoutSheet>
           _showGlow = false;
         });
       }
+    });
+  }
+
+  void _triggerGlow(Analysis? analysis) {
+    if (analysis == null || _hasTriggeredGlow || !mounted) return;
+    setState(() {
+      _applyGlowState(analysis);
     });
   }
 
@@ -313,7 +318,9 @@ class _ScannedLayoutSheetState extends ConsumerState<ScannedLayoutSheet>
                                 size: 24,
                                 color: AppColors.textSecondary,
                               ),
-                              onPressed: _handleDismiss,
+                              onPressed: () {
+                                _handleDismiss();
+                              },
                               splashRadius: 20,
                             ),
                           ),

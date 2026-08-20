@@ -2,13 +2,6 @@ import 'package:flutter/material.dart';
 
 import '../../../constants/app_colors.dart';
 
-class SegmentItem<T> {
-  final T value;
-  final String label;
-
-  const SegmentItem({required this.value, required this.label});
-}
-
 class SegmentButtonGroup<T> extends StatelessWidget {
   final List<SegmentItem<T>> items;
   final T selectedValue;
@@ -71,4 +64,11 @@ class SegmentButtonGroup<T> extends StatelessWidget {
       ),
     );
   }
+}
+
+class SegmentItem<T> {
+  final T value;
+  final String label;
+
+  const SegmentItem({required this.value, required this.label});
 }

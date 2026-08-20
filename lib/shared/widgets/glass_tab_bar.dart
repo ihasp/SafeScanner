@@ -4,13 +4,6 @@ import 'package:flutter/material.dart';
 
 import '../../constants/app_colors.dart';
 
-class TabBarItem {
-  final IconData icon;
-  final String label;
-
-  const TabBarItem({required this.icon, required this.label});
-}
-
 class GlassTabBar extends StatelessWidget {
   final int selectedIndex;
   final ValueChanged<int> onTabSelected;
@@ -112,4 +105,11 @@ class GlassTabBar extends StatelessWidget {
       ),
     );
   }
+}
+
+class TabBarItem {
+  final IconData icon;
+  final String label;
+
+  const TabBarItem({required this.icon, required this.label});
 }

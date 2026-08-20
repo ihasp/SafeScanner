@@ -1,7 +1,5 @@
 import '../../security/models/crypto_wallet_scan.dart';
 
-enum CryptoScanStatus { queued, completed, failed }
-
 class CryptoScanState {
   final CryptoScanStatus status;
   final CryptoWalletScan? result;
@@ -18,3 +16,5 @@ class CryptoScanState {
   factory CryptoScanState.failed(String error) =>
       CryptoScanState(status: CryptoScanStatus.failed, error: error);
 }
+
+enum CryptoScanStatus { queued, completed, failed }

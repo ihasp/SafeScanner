@@ -14,7 +14,7 @@ class CryptoWalletScan {
   });
 
   factory CryptoWalletScan.fromJson(Map<String, dynamic> json) {
-    final rawAssets = json['assets'] as List<dynamic>? ?? [];
+    final rawAssets = json['assets'] as List<Object?>? ?? [];
     return CryptoWalletScan(
       wallet: CryptoWallet.fromJson(
         json['wallet'] as Map<String, dynamic>? ?? {},
@@ -25,7 +25,8 @@ class CryptoWalletScan {
             )
           : null,
       assets: rawAssets
-          .map((e) => TatumAssetBalance.fromJson(e as Map<String, dynamic>))
+          .whereType<Map<String, dynamic>>()
+          .map(TatumAssetBalance.fromJson)
           .toList(),
       safety: TatumMaliciousAddressCheck.fromJson(
         json['safety'] as Map<String, dynamic>? ?? {},

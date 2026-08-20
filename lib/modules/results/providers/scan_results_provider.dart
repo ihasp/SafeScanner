@@ -1,3 +1,4 @@
+// ignore_for_file: prefer-match-file-name
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../helpers/shared/date_group_helper.dart';
@@ -48,7 +49,7 @@ class ScanResultsNotifier extends Notifier<List<ScanResult>> {
   void updateUrlScan(String data, Analysis analysis) {
     final index = state.indexWhere((s) => s is UrlScanResult && s.data == data);
     if (index != -1) {
-      final updated = List<ScanResult>.from(state);
+      final updated = List<ScanResult>.of(state);
       final existing = updated[index] as UrlScanResult;
       updated[index] = existing.copyWith(analysis: analysis);
       state = updated;

@@ -54,7 +54,9 @@ abstract final class DecisionMaker {
       reasons.add('Wallet holds no detectable balance or assets.');
     }
     reasons.add('Address is unverified in threat intelligence databases.');
-    reasons.add('Always double-check the recipient address before transferring funds.');
+    reasons.add(
+      'Always double-check the recipient address before transferring funds.',
+    );
 
     return CryptoDecision(
       status: MaliciousCheckStatus.unknown,

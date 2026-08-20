@@ -1,20 +1,5 @@
 import '../../../shared/models/scan_mode.dart';
 
-enum AppCameraFacing {
-  back('back'),
-  front('front');
-
-  final String value;
-  const AppCameraFacing(this.value);
-
-  static AppCameraFacing fromString(String? value) {
-    return switch (value?.toLowerCase()) {
-      'front' => AppCameraFacing.front,
-      _ => AppCameraFacing.back,
-    };
-  }
-}
-
 class AppSettings {
   final AppCameraFacing defaultCameraFacing;
   final ScanMode defaultScanMode;
@@ -78,5 +63,20 @@ class AppSettings {
       historySizeLimit: json['historySizeLimit'] as int? ?? 10,
       apiPollingRate: json['apiPollingRate'] as int? ?? 1000,
     );
+  }
+}
+
+enum AppCameraFacing {
+  back('back'),
+  front('front');
+
+  final String value;
+  const AppCameraFacing(this.value);
+
+  static AppCameraFacing fromString(String? value) {
+    return switch (value?.toLowerCase()) {
+      'front' => AppCameraFacing.front,
+      _ => AppCameraFacing.back,
+    };
   }
 }

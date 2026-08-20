@@ -73,11 +73,11 @@ class _UrlScanAccordionState extends State<UrlScanAccordion> {
                                     fontWeight: FontWeight.w700,
                                     color: status.isSafe
                                         ? (isDark
-                                            ? const Color(0xFF58A6FF)
-                                            : AppColors.primaryLight)
+                                              ? const Color(0xFF58A6FF)
+                                              : AppColors.primaryLight)
                                         : (isDark
-                                            ? AppColors.textDark
-                                            : AppColors.textLight),
+                                              ? AppColors.textDark
+                                              : AppColors.textLight),
                                     decoration: status.isSafe
                                         ? TextDecoration.underline
                                         : TextDecoration.none,
@@ -90,8 +90,8 @@ class _UrlScanAccordionState extends State<UrlScanAccordion> {
                                 size: 14,
                                 color: status.isSafe
                                     ? (isDark
-                                        ? const Color(0xFF58A6FF)
-                                        : AppColors.primaryLight)
+                                          ? const Color(0xFF58A6FF)
+                                          : AppColors.primaryLight)
                                     : AppColors.textSecondary,
                               ),
                             ],
@@ -185,4 +185,3 @@ class _UrlScanAccordionState extends State<UrlScanAccordion> {
     );
   }
 }
-

@@ -7,56 +7,6 @@ import '../../../constants/app_constants.dart';
 import '../models/crypto_wallet_scan.dart';
 import '../models/tatum_models.dart';
 
-sealed class TatumException implements Exception {
-  final String message;
-  final int? statusCode;
-
-  const TatumException(this.message, [this.statusCode]);
-
-  @override
-  String toString() => message;
-}
-
-class TatumAuthException extends TatumException {
-  const TatumAuthException([
-    String message = 'Invalid or missing Tatum API key.',
-  ]) : super(message, 401);
-}
-
-class TatumForbiddenException extends TatumException {
-  const TatumForbiddenException([
-    String message = 'Access to Tatum API was forbidden.',
-  ]) : super(message, 403);
-}
-
-class TatumRateLimitException extends TatumException {
-  const TatumRateLimitException([
-    String message = 'Tatum rate limit reached. Please try again shortly.',
-  ]) : super(message, 429);
-}
-
-class TatumBadRequestException extends TatumException {
-  const TatumBadRequestException([
-    String message = 'Invalid wallet or request format for Tatum API.',
-  ]) : super(message, 400);
-}
-
-class TatumNotFoundException extends TatumException {
-  const TatumNotFoundException([
-    String message = 'Wallet or resource not found on Tatum.',
-  ]) : super(message, 404);
-}
-
-class TatumServerException extends TatumException {
-  const TatumServerException([
-    String message = 'Tatum service is temporarily unavailable.',
-  ]) : super(message, 500);
-}
-
-class TatumGenericException extends TatumException {
-  const TatumGenericException(super.message, [super.statusCode]);
-}
-
 class TatumService {
   final http.Client _client;
   final String _apiKey;
@@ -106,7 +56,7 @@ class TatumService {
     }
   }
 
-  Future<dynamic> _tatumFetch(
+  Future<Object?> _tatumFetch(
     String path, {
     Map<String, String>? queryParams,
   }) async {
@@ -162,9 +112,10 @@ class TatumService {
         },
       ) as Map<String, dynamic>;
 
-      final balances = data['balances'] as List<dynamic>? ?? [];
+      final balances = data['balances'] as List<Object?>? ?? [];
       return balances
-          .map((e) => TatumAssetBalance.fromJson(e as Map<String, dynamic>))
+          .whereType<Map<String, dynamic>>()
+          .map(TatumAssetBalance.fromJson)
           .toList();
     } catch (_) {
       return const [];
@@ -204,7 +155,7 @@ class TatumService {
       checkMaliciousAddress(wallet),
     ]);
 
-    final nativeBalance = results[0] as TatumNativeBalance?;
+    final nativeBalance = results.first as TatumNativeBalance?;
     final nativeAssets = results[1] as List<TatumAssetBalance>;
     final fungibleAssets = results[2] as List<TatumAssetBalance>;
     final collectibleAssets = results[3] as List<TatumAssetBalance>;
@@ -227,4 +178,54 @@ class TatumService {
   void close() {
     _client.close();
   }
+}
+
+sealed class TatumException implements Exception {
+  final String message;
+  final int? statusCode;
+
+  const TatumException(this.message, [this.statusCode]);
+
+  @override
+  String toString() => message;
+}
+
+class TatumAuthException extends TatumException {
+  const TatumAuthException([
+    String message = 'Invalid or missing Tatum API key.',
+  ]) : super(message, 401);
+}
+
+class TatumForbiddenException extends TatumException {
+  const TatumForbiddenException([
+    String message = 'Access to Tatum API was forbidden.',
+  ]) : super(message, 403);
+}
+
+class TatumRateLimitException extends TatumException {
+  const TatumRateLimitException([
+    String message = 'Tatum rate limit reached. Please try again shortly.',
+  ]) : super(message, 429);
+}
+
+class TatumBadRequestException extends TatumException {
+  const TatumBadRequestException([
+    String message = 'Invalid wallet or request format for Tatum API.',
+  ]) : super(message, 400);
+}
+
+class TatumNotFoundException extends TatumException {
+  const TatumNotFoundException([
+    String message = 'Wallet or resource not found on Tatum.',
+  ]) : super(message, 404);
+}
+
+class TatumServerException extends TatumException {
+  const TatumServerException([
+    String message = 'Tatum service is temporarily unavailable.',
+  ]) : super(message, 500);
+}
+
+class TatumGenericException extends TatumException {
+  const TatumGenericException(super.message, [super.statusCode]);
 }

@@ -20,19 +20,55 @@ analyzer:
     - linux/**
 
 linter:
-  # The lint rules applied to this project can be customized in the
-  # section below to disable rules from the `package:flutter_lints/flutter.yaml`
-  # included above or to enable additional rules. A list of all available lints
-  # and their documentation is published at https://dart.dev/lints.
-  #
-  # Instead of disabling a lint rule for the entire project in the
-  # section below, it can also be suppressed for a single line of code
-  # or a specific dart file by using the `// ignore: name_of_lint` and
-  # `// ignore_for_file: name_of_lint` syntax on the line or in the file
-  # producing the lint.
   rules:
-    # avoid_print: false  # Uncomment to disable the `avoid_print` rule
+    avoid_print: true
     # prefer_single_quotes: true  # Uncomment to enable the `prefer_single_quotes` rule
 
-# Additional information about this file can be found at
-# https://dart.dev/guides/language/analysis-options
+# DCM (Dart Code Metrics) configuration
+dcm:
+  rules:
+    - avoid-dynamic
+    - avoid-assignments-as-conditions
+    - avoid-casting-to-extension-type
+    - avoid-cascade-after-if-null
+    - avoid-unused-parameters
+    - prefer-conditional-expressions:
+        ignore-nested: false
+    - prefer-first
+    - prefer-correct-test-file-name
+    - avoid-collection-methods-with-unrelated-types
+    - avoid-conditions-with-boolean-literals
+    - avoid-double-slash-imports
+    - avoid-duplicate-exports
+    - avoid-duplicate-mixins
+    - avoid-duplicate-test-assertions
+    - avoid-empty-spread
+    - avoid-explicit-pattern-field-name
+    - avoid-generics-shadowing
+    - avoid-missed-calls
+    - avoid-misused-set-literals
+    - avoid-nested-records
+    - avoid-nullable-tostring
+    - avoid-passing-async-when-sync-expected
+    - avoid-passing-self-as-argument
+    - avoid-redundant-async
+    - avoid-self-assignment
+    - avoid-throw-in-catch-block
+    - avoid-unnecessary-conditionals
+    - avoid-unnecessary-type-assertions
+    - avoid-unnecessary-type-casts
+    - avoid-unrelated-type-assertions
+    - no-empty-block
+    - no-equal-then-else
+    - prefer-iterable-of
+    - prefer-match-file-name
+    - always-remove-listener
+    - avoid-incomplete-copy-with
+    - avoid-incorrect-image-opacity
+    - provide-image-semantic-label
+    - avoid-unnecessary-setstate
+    - avoid-unnecessary-stateful-widgets
+    - check-for-equals-in-render-object-setters
+    - consistent-update-render-object
+    - prefer-single-widget-per-file
+    - use-setstate-synchronously

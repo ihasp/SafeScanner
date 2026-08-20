@@ -111,9 +111,8 @@ abstract final class AddressDecoder {
 
     // Solana address check
     if (hintedChain == TatumChain.solanaMainnet) {
-      final solMatch = RegExp(
-        r'\b[1-9A-HJ-NP-Za-km-z]{32,44}\b',
-      ).firstMatch(textToSearch);
+      final solMatch = RegExp(r'\b[1-9A-HJ-NP-Za-km-z]{32,44}\b')
+          .firstMatch(textToSearch);
       if (solMatch != null) {
         return CryptoWallet(
           address: solMatch.group(0)!,
@@ -123,9 +122,8 @@ abstract final class AddressDecoder {
         );
       }
     } else if (hintedChain == null && normalized.scheme == null) {
-      final strictSolMatch = RegExp(
-        r'^[1-9A-HJ-NP-Za-km-z]{32,44}$',
-      ).firstMatch(textToSearch);
+      final strictSolMatch = RegExp(r'^[1-9A-HJ-NP-Za-km-z]{32,44}$')
+          .firstMatch(textToSearch);
       if (strictSolMatch != null) {
         return CryptoWallet(
           address: strictSolMatch.group(0)!,
@@ -135,7 +133,6 @@ abstract final class AddressDecoder {
         );
       }
     }
-
 
     return null;
   }

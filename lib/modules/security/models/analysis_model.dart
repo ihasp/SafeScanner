@@ -1,3 +1,47 @@
+// ignore_for_file: prefer-match-file-name
+class Analysis {
+  final String? error;
+  final AnalysisData data;
+
+  const Analysis({this.error, required this.data});
+
+  factory Analysis.queued() {
+    return const Analysis(
+      data: AnalysisData(
+        attributes: AnalysisAttributes(
+          status: AnalysisStatus.queued,
+          results: {},
+        ),
+      ),
+    );
+  }
+
+  factory Analysis.failed({required String error}) {
+    return Analysis(
+      error: error,
+      data: const AnalysisData(
+        attributes: AnalysisAttributes(
+          status: AnalysisStatus.failed,
+          results: {},
+        ),
+      ),
+    );
+  }
+
+  factory Analysis.fromJson(Map<String, dynamic> json) {
+    final rawData = json['data'] as Map<String, dynamic>? ?? {};
+    return Analysis(
+      error: json['error'] as String?,
+      data: AnalysisData.fromJson(rawData),
+    );
+  }
+
+  Map<String, dynamic> toJson() => {
+    if (error != null) 'error': error,
+    'data': data.toJson(),
+  };
+}
+
 enum AnalysisStatus {
   queued,
   inProgress,
@@ -77,47 +121,4 @@ class AnalysisData {
   }
 
   Map<String, dynamic> toJson() => {'attributes': attributes.toJson()};
-}
-
-class Analysis {
-  final String? error;
-  final AnalysisData data;
-
-  const Analysis({this.error, required this.data});
-
-  factory Analysis.queued() {
-    return const Analysis(
-      data: AnalysisData(
-        attributes: AnalysisAttributes(
-          status: AnalysisStatus.queued,
-          results: {},
-        ),
-      ),
-    );
-  }
-
-  factory Analysis.failed({required String error}) {
-    return Analysis(
-      error: error,
-      data: const AnalysisData(
-        attributes: AnalysisAttributes(
-          status: AnalysisStatus.failed,
-          results: {},
-        ),
-      ),
-    );
-  }
-
-  factory Analysis.fromJson(Map<String, dynamic> json) {
-    final rawData = json['data'] as Map<String, dynamic>? ?? {};
-    return Analysis(
-      error: json['error'] as String?,
-      data: AnalysisData.fromJson(rawData),
-    );
-  }
-
-  Map<String, dynamic> toJson() => {
-    if (error != null) 'error': error,
-    'data': data.toJson(),
-  };
 }

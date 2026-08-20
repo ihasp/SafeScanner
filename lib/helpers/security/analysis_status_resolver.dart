@@ -3,54 +3,6 @@ import 'package:flutter/material.dart';
 import '../../constants/app_colors.dart';
 import '../../modules/security/models/analysis_model.dart';
 
-class FormattedEngineResult {
-  final String key;
-  final String text;
-  final Color color;
-  final int priority;
-
-  const FormattedEngineResult({
-    required this.key,
-    required this.text,
-    required this.color,
-    required this.priority,
-  });
-}
-
-class ResultCounts {
-  final int malicious;
-  final int phishing;
-  final int suspicious;
-  final int safe;
-  final int total;
-
-  const ResultCounts({
-    required this.malicious,
-    required this.phishing,
-    required this.suspicious,
-    required this.safe,
-    required this.total,
-  });
-}
-
-class ResolvedAnalysisStatus {
-  final List<FormattedEngineResult> sortedResults;
-  final ResultCounts resultCounts;
-  final int riskCount;
-  final bool hasDangerousResults;
-  final bool isSafe;
-  final AnalysisStatus status;
-
-  const ResolvedAnalysisStatus({
-    required this.sortedResults,
-    required this.resultCounts,
-    required this.riskCount,
-    required this.hasDangerousResults,
-    required this.isSafe,
-    required this.status,
-  });
-}
-
 abstract final class AnalysisStatusResolver {
   static FormattedEngineResult formatEngineResult(
     String key,
@@ -139,7 +91,6 @@ abstract final class AnalysisStatusResolver {
     final riskCount = maliciousCount + phishingCount + suspiciousCount;
     final isSafe = isCompleted && !hasDangerous;
 
-
     return ResolvedAnalysisStatus(
       sortedResults: formattedList,
       resultCounts: ResultCounts(
@@ -155,4 +106,52 @@ abstract final class AnalysisStatusResolver {
       status: analysis.data.attributes.status,
     );
   }
+}
+
+class FormattedEngineResult {
+  final String key;
+  final String text;
+  final Color color;
+  final int priority;
+
+  const FormattedEngineResult({
+    required this.key,
+    required this.text,
+    required this.color,
+    required this.priority,
+  });
+}
+
+class ResultCounts {
+  final int malicious;
+  final int phishing;
+  final int suspicious;
+  final int safe;
+  final int total;
+
+  const ResultCounts({
+    required this.malicious,
+    required this.phishing,
+    required this.suspicious,
+    required this.safe,
+    required this.total,
+  });
+}
+
+class ResolvedAnalysisStatus {
+  final List<FormattedEngineResult> sortedResults;
+  final ResultCounts resultCounts;
+  final int riskCount;
+  final bool hasDangerousResults;
+  final bool isSafe;
+  final AnalysisStatus status;
+
+  const ResolvedAnalysisStatus({
+    required this.sortedResults,
+    required this.resultCounts,
+    required this.riskCount,
+    required this.hasDangerousResults,
+    required this.isSafe,
+    required this.status,
+  });
 }
