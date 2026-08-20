@@ -64,7 +64,7 @@ abstract final class AddressDecoder {
         : normalized.originalText;
 
     // EVM address check (0x...)
-    final evmMatch = RegExp(r'0x[a-fA-F0-9]{40}').firstMatch(textToSearch);
+    final evmMatch = RegExp(r'\b0x[a-fA-F0-9]{40}\b').firstMatch(textToSearch);
     if (evmMatch != null) {
       final chain = (hintedChain != null && _evmChains.contains(hintedChain))
           ? hintedChain
@@ -112,7 +112,7 @@ abstract final class AddressDecoder {
     // Solana address check
     if (hintedChain == TatumChain.solanaMainnet) {
       final solMatch = RegExp(
-        r'[1-9A-HJ-NP-Za-km-z]{32,44}',
+        r'\b[1-9A-HJ-NP-Za-km-z]{32,44}\b',
       ).firstMatch(textToSearch);
       if (solMatch != null) {
         return CryptoWallet(

@@ -34,20 +34,27 @@ Write-Host "Environment Variables Check:" -ForegroundColor Yellow
 if ($vtConfigured) {
     Write-Host " - VIRUSTOTAL_API_KEY: [Configured]" -ForegroundColor Green
 } else {
-    Write-Host " - VIRUSTOTAL_API_KEY: [Not Set]" -ForegroundColor DarkGray
+    Write-Host " - VIRUSTOTAL_API_KEY: [Not Set]" -ForegroundColor Red
 }
 
 if ($tatumConfigured) {
     Write-Host " - TATUM_API_KEY:       [Configured]" -ForegroundColor Green
 } else {
-    Write-Host " - TATUM_API_KEY:       [Not Set]" -ForegroundColor DarkGray
+    Write-Host " - TATUM_API_KEY:       [Not Set]" -ForegroundColor Red
 }
 Write-Host ""
 
-if (-not $vtConfigured -and -not $tatumConfigured) {
-    Write-Warning "Neither VIRUSTOTAL_API_KEY nor TATUM_API_KEY are configured."
-    Write-Warning "The build will continue, but security/blockchain scanning may fail at runtime."
+if (-not $vtConfigured -or -not $tatumConfigured) {
+    Write-Host "ERROR: Required environment variable(s) missing or not configured for Play Store build." -ForegroundColor Red
+    if (-not $vtConfigured) {
+        Write-Host "  - VIRUSTOTAL_API_KEY is required but not set or empty." -ForegroundColor Red
+    }
+    if (-not $tatumConfigured) {
+        Write-Host "  - TATUM_API_KEY is required but not set or empty." -ForegroundColor Red
+    }
     Write-Host ""
+    Write-Host "Please set the environment variables or pass them as parameters (-VirusTotalApiKey, -TatumApiKey)." -ForegroundColor Yellow
+    exit 1
 }
 
 # Optional clean step
@@ -62,15 +69,11 @@ if ($Clean) {
 $buildArgs = @("build", "appbundle", "--release")
 $displayArgs = @("build", "appbundle", "--release")
 
-if ($vtConfigured) {
-    $buildArgs += "--dart-define=VIRUSTOTAL_API_KEY=$VirusTotalApiKey"
-    $displayArgs += "--dart-define=VIRUSTOTAL_API_KEY=***"
-}
+$buildArgs += "--dart-define=VIRUSTOTAL_API_KEY=$VirusTotalApiKey"
+$displayArgs += "--dart-define=VIRUSTOTAL_API_KEY=***"
 
-if ($tatumConfigured) {
-    $buildArgs += "--dart-define=TATUM_API_KEY=$TatumApiKey"
-    $displayArgs += "--dart-define=TATUM_API_KEY=***"
-}
+$buildArgs += "--dart-define=TATUM_API_KEY=$TatumApiKey"
+$displayArgs += "--dart-define=TATUM_API_KEY=***"
 
 Write-Host "Executing build command:" -ForegroundColor Green
 Write-Host "flutter $($displayArgs -join ' ')" -ForegroundColor DarkGray

@@ -1,11 +1,17 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../shared/models/scan_mode.dart';
 import '../models/app_settings.dart';
 import '../services/settings_service.dart';
 
+final sharedPreferencesProvider = Provider<SharedPreferences?>((ref) {
+  return null;
+});
+
 final settingsServiceProvider = Provider<SettingsService>((ref) {
-  return SettingsService();
+  final prefs = ref.watch(sharedPreferencesProvider);
+  return SettingsService(prefs);
 });
 
 class SettingsNotifier extends Notifier<AppSettings> {
@@ -14,13 +20,7 @@ class SettingsNotifier extends Notifier<AppSettings> {
   @override
   AppSettings build() {
     _service = ref.watch(settingsServiceProvider);
-    _init();
-    return const AppSettings();
-  }
-
-  Future<void> _init() async {
-    final saved = await _service.getSettings();
-    state = saved;
+    return _service.getSettingsSync();
   }
 
   Future<void> _update(AppSettings newSettings) async {
@@ -60,3 +60,4 @@ class SettingsNotifier extends Notifier<AppSettings> {
 final settingsProvider = NotifierProvider<SettingsNotifier, AppSettings>(
   SettingsNotifier.new,
 );
+

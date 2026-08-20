@@ -24,15 +24,18 @@ class CryptoWalletResultsView extends StatelessWidget {
         color: AppColors.malicious,
       ),
       MaliciousCheckStatus.unknown => (
-        label: 'Unknown',
-        color: AppColors.unknown,
+        label: 'Unverified',
+        color: AppColors.phishing,
       ),
     };
   }
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final safetyDisplay = _getSafetyDisplay(scan.safety);
+    final textColor = isDark ? AppColors.textDark : AppColors.textLight;
+    final borderColor = isDark ? AppColors.borderDark : AppColors.border;
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
@@ -44,6 +47,7 @@ class CryptoWalletResultsView extends StatelessWidget {
             'Safety',
             safetyDisplay.label,
             valueColor: safetyDisplay.color,
+            defaultTextColor: textColor,
           ),
 
           // Warning banner if invalid
@@ -52,15 +56,38 @@ class CryptoWalletResultsView extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(10),
               decoration: BoxDecoration(
-                color: AppColors.maliciousBg,
+                color: isDark
+                    ? AppColors.malicious.withAlpha(40)
+                    : AppColors.maliciousBg,
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Text(
-                scan.safety.description ?? 'This wallet was reported by a malicious-address data source.',
+                scan.safety.description ??
+                    'This wallet was reported by a malicious-address data source.',
                 style: const TextStyle(
                   fontSize: 12,
                   fontWeight: FontWeight.w700,
                   color: AppColors.malicious,
+                ),
+              ),
+            ),
+            const SizedBox(height: 6),
+          ] else if (scan.safety.status == MaliciousCheckStatus.unknown) ...[
+            const SizedBox(height: 6),
+            Container(
+              padding: const EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                color: isDark
+                    ? AppColors.phishing.withAlpha(35)
+                    : const Color(0xFFFFF8E1),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: const Text(
+                'Address unverified in threat databases. Verify recipient before sending funds.',
+                style: TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w700,
+                  color: AppColors.phishing,
                 ),
               ),
             ),
@@ -84,21 +111,26 @@ class CryptoWalletResultsView extends StatelessWidget {
           ],
 
           // Network row
-          _buildSummaryRow('Network', scan.wallet.label),
+          _buildSummaryRow(
+            'Network',
+            scan.wallet.label,
+            defaultTextColor: textColor,
+          ),
 
           // Native balance row
           _buildSummaryRow(
             'Native balance',
             BalanceFormatter.format(scan.nativeBalance?.balance),
+            defaultTextColor: textColor,
           ),
 
           const SizedBox(height: 18),
-          const Text(
+          Text(
             'Wallet assets',
             style: TextStyle(
               fontSize: 15,
               fontWeight: FontWeight.w800,
-              color: AppColors.textLight,
+              color: textColor,
             ),
           ),
           const SizedBox(height: 8),
@@ -118,8 +150,8 @@ class CryptoWalletResultsView extends StatelessWidget {
                 return Container(
                   constraints: const BoxConstraints(minHeight: 54),
                   padding: const EdgeInsets.symmetric(vertical: 8),
-                  decoration: const BoxDecoration(
-                    border: Border(top: BorderSide(color: AppColors.border)),
+                  decoration: BoxDecoration(
+                    border: Border(top: BorderSide(color: borderColor)),
                   ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -132,10 +164,10 @@ class CryptoWalletResultsView extends StatelessWidget {
                               _getAssetName(asset),
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
-                              style: const TextStyle(
+                              style: TextStyle(
                                 fontSize: 13,
                                 fontWeight: FontWeight.w700,
-                                color: AppColors.textLight,
+                                color: textColor,
                               ),
                             ),
                             const SizedBox(height: 2),
@@ -154,10 +186,10 @@ class CryptoWalletResultsView extends StatelessWidget {
                         '${BalanceFormatter.format(asset.balance)} ${asset.symbol ?? ''}',
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 13,
                           fontWeight: FontWeight.w700,
-                          color: AppColors.textLight,
+                          color: textColor,
                         ),
                       ),
                     ],
@@ -170,7 +202,12 @@ class CryptoWalletResultsView extends StatelessWidget {
     );
   }
 
-  Widget _buildSummaryRow(String label, String value, {Color? valueColor}) {
+  Widget _buildSummaryRow(
+    String label,
+    String value, {
+    Color? valueColor,
+    Color defaultTextColor = AppColors.textLight,
+  }) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8),
       child: Row(
@@ -188,7 +225,7 @@ class CryptoWalletResultsView extends StatelessWidget {
             style: TextStyle(
               fontSize: 13,
               fontWeight: FontWeight.w700,
-              color: valueColor ?? AppColors.textLight,
+              color: valueColor ?? defaultTextColor,
             ),
           ),
         ],

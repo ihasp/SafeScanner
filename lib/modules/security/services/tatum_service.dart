@@ -7,6 +7,56 @@ import '../../../constants/app_constants.dart';
 import '../models/crypto_wallet_scan.dart';
 import '../models/tatum_models.dart';
 
+sealed class TatumException implements Exception {
+  final String message;
+  final int? statusCode;
+
+  const TatumException(this.message, [this.statusCode]);
+
+  @override
+  String toString() => message;
+}
+
+class TatumAuthException extends TatumException {
+  const TatumAuthException([
+    String message = 'Invalid or missing Tatum API key.',
+  ]) : super(message, 401);
+}
+
+class TatumForbiddenException extends TatumException {
+  const TatumForbiddenException([
+    String message = 'Access to Tatum API was forbidden.',
+  ]) : super(message, 403);
+}
+
+class TatumRateLimitException extends TatumException {
+  const TatumRateLimitException([
+    String message = 'Tatum rate limit reached. Please try again shortly.',
+  ]) : super(message, 429);
+}
+
+class TatumBadRequestException extends TatumException {
+  const TatumBadRequestException([
+    String message = 'Invalid wallet or request format for Tatum API.',
+  ]) : super(message, 400);
+}
+
+class TatumNotFoundException extends TatumException {
+  const TatumNotFoundException([
+    String message = 'Wallet or resource not found on Tatum.',
+  ]) : super(message, 404);
+}
+
+class TatumServerException extends TatumException {
+  const TatumServerException([
+    String message = 'Tatum service is temporarily unavailable.',
+  ]) : super(message, 500);
+}
+
+class TatumGenericException extends TatumException {
+  const TatumGenericException(super.message, [super.statusCode]);
+}
+
 class TatumService {
   final http.Client _client;
   final String _apiKey;
@@ -33,6 +83,29 @@ class TatumService {
     TatumChain.solanaMainnet,
   };
 
+  void _handleStatusCode(http.Response response) {
+    if (response.statusCode >= 200 && response.statusCode < 300) return;
+    switch (response.statusCode) {
+      case 400:
+        throw const TatumBadRequestException();
+      case 401:
+        throw const TatumAuthException();
+      case 403:
+        throw const TatumForbiddenException();
+      case 404:
+        throw const TatumNotFoundException();
+      case 429:
+        throw const TatumRateLimitException();
+      case 500 || 502 || 503 || 504:
+        throw const TatumServerException();
+      default:
+        throw TatumGenericException(
+          'Tatum request failed (${response.statusCode}): ${response.body}',
+          response.statusCode,
+        );
+    }
+  }
+
   Future<dynamic> _tatumFetch(
     String path, {
     Map<String, String>? queryParams,
@@ -51,11 +124,7 @@ class TatumService {
       headers: {'accept': 'application/json', 'x-api-key': _apiKey},
     );
 
-    if (response.statusCode < 200 || response.statusCode >= 300) {
-      throw Exception(
-        'Tatum request failed (${response.statusCode}): ${response.body}',
-      );
-    }
+    _handleStatusCode(response);
 
     return jsonDecode(response.body);
   }
@@ -153,5 +222,9 @@ class TatumService {
       assets: allAssets,
       safety: safety,
     );
+  }
+
+  void close() {
+    _client.close();
   }
 }

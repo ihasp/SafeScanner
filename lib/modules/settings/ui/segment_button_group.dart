@@ -23,9 +23,11 @@ class SegmentButtonGroup<T> extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Container(
       decoration: BoxDecoration(
-        color: const Color(0xFFF0F0F0),
+        color: isDark ? const Color(0xFF2C2C2E) : const Color(0xFFF0F0F0),
         borderRadius: BorderRadius.circular(8),
       ),
       padding: const EdgeInsets.all(2),
@@ -39,7 +41,9 @@ class SegmentButtonGroup<T> extends StatelessWidget {
               duration: const Duration(milliseconds: 150),
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
               decoration: BoxDecoration(
-                color: isSelected ? Colors.white : Colors.transparent,
+                color: isSelected
+                    ? (isDark ? const Color(0xFF48484A) : Colors.white)
+                    : Colors.transparent,
                 borderRadius: BorderRadius.circular(6),
                 boxShadow: isSelected
                     ? [
@@ -56,7 +60,7 @@ class SegmentButtonGroup<T> extends StatelessWidget {
                 style: TextStyle(
                   fontSize: 13,
                   color: isSelected
-                      ? AppColors.textLight
+                      ? (isDark ? AppColors.textDark : AppColors.textLight)
                       : AppColors.textSecondary,
                   fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
                 ),

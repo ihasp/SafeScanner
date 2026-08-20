@@ -38,6 +38,7 @@ class ScannerView extends ConsumerStatefulWidget {
 class _ScannerViewState extends ConsumerState<ScannerView>
     with WidgetsBindingObserver {
   late MobileScannerController _cameraController;
+  Timer? _lockTimer;
   bool _qrLock = false;
   bool _isProcessingScan = false;
   bool _showScannedLayout = false;
@@ -83,6 +84,7 @@ class _ScannerViewState extends ConsumerState<ScannerView>
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
+    _lockTimer?.cancel();
     _cameraController.dispose();
     super.dispose();
   }
@@ -102,7 +104,8 @@ class _ScannerViewState extends ConsumerState<ScannerView>
       _currentAnalysisId = null;
     });
 
-    Timer(const Duration(milliseconds: AppConstants.lockTimeoutMs), () {
+    _lockTimer?.cancel();
+    _lockTimer = Timer(const Duration(milliseconds: AppConstants.lockTimeoutMs), () {
       if (mounted) {
         _qrLock = false;
       }
@@ -193,13 +196,17 @@ class _ScannerViewState extends ConsumerState<ScannerView>
           ((uri.hasScheme &&
                   (uri.scheme == 'http' ||
                       uri.scheme == 'https' ||
-                      uri.scheme == 'ftp')) ||
+                      uri.scheme == 'ftp') &&
+                  uri.host.isNotEmpty) ||
               (!uri.hasScheme &&
-                  sanitized.contains('.') &&
+                  !sanitized.contains('@') &&
                   !sanitized.contains(' ') &&
                   !sanitized.contains('\n') &&
                   !sanitized.startsWith('WIFI:') &&
-                  !sanitized.startsWith('BEGIN:VCARD')));
+                  !sanitized.startsWith('BEGIN:VCARD') &&
+                  RegExp(
+                    r'^(?:[a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}(?::\d+)?(?:/.*)?$',
+                  ).hasMatch(sanitized)));
 
       if (!isLikelyUrl) {
         if (!mounted) return;

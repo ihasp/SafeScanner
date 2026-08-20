@@ -11,7 +11,8 @@ import '../services/scan_results_storage_service.dart';
 final scanResultsStorageServiceProvider = Provider<ScanResultsStorageService>((
   ref,
 ) {
-  return ScanResultsStorageService();
+  final prefs = ref.watch(sharedPreferencesProvider);
+  return ScanResultsStorageService(prefs);
 });
 
 class ScanResultsNotifier extends Notifier<List<ScanResult>> {
@@ -20,13 +21,7 @@ class ScanResultsNotifier extends Notifier<List<ScanResult>> {
   @override
   List<ScanResult> build() {
     _storageService = ref.watch(scanResultsStorageServiceProvider);
-    _init();
-    return const [];
-  }
-
-  Future<void> _init() async {
-    final saved = await _storageService.loadScans();
-    state = saved;
+    return _storageService.loadScansSync();
   }
 
   Future<void> _persist() async {
@@ -83,7 +78,7 @@ class ScanResultsNotifier extends Notifier<List<ScanResult>> {
 
   void clearScans() {
     state = const [];
-    _persist();
+    _storageService.clearScans();
   }
 }
 
@@ -94,20 +89,19 @@ final scanResultsProvider =
 
 final groupedScansProvider = Provider<List<ScanGroup>>((ref) {
   final scans = ref.watch(scanResultsProvider);
-  final groupsMap = <String, ScanGroup>{};
+  final groupsMap = <String, List<ScanResult>>{};
 
   for (final scan in scans) {
     final key = DateGroupHelper.getGroupKey(scan.scannedAt);
-    if (groupsMap.containsKey(key)) {
-      groupsMap[key]!.scans.add(scan);
-    } else {
-      groupsMap[key] = ScanGroup(
-        key: key,
-        title: DateGroupHelper.getGroupTitle(scan.scannedAt),
-        scans: [scan],
-      );
-    }
+    groupsMap.putIfAbsent(key, () => <ScanResult>[]).add(scan);
   }
 
-  return groupsMap.values.toList();
+  return groupsMap.entries.map((entry) {
+    final firstScan = entry.value.first;
+    return ScanGroup(
+      key: entry.key,
+      title: DateGroupHelper.getGroupTitle(firstScan.scannedAt),
+      scans: List.unmodifiable(entry.value),
+    );
+  }).toList();
 });

@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 
 abstract final class AppColors {
   // Theme colors
-  static const Color primary = Color(0xFF0A7EA4);
-  static const Color primaryLight = Color(0xFF3675FF);
+  static const Color primary = Color.fromARGB(255, 19, 124, 159);
+  static const Color primaryLight = Color.fromARGB(255, 100, 135, 210);
   static const Color surfaceLight = Color(0xFFFFFFFF);
   static const Color surfaceDark = Color(0xFF151718);
   static const Color textLight = Color(0xFF11181C);
@@ -23,7 +23,7 @@ abstract final class AppColors {
   static const Color unknown = Color(0xFF777777);
 
   // Switch button & overlay colors
-  static const Color switchBackground = Color(0x4D000000);
+  static const Color switchBackground = Color.fromARGB(77, 9, 9, 9);
   static const Color glowSafe = Color(0x9F00FF00);
   static const Color glowMalicious = Color(0x9FFF0000);
 }

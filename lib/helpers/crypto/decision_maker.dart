@@ -24,6 +24,7 @@ abstract final class DecisionMaker {
       }
       return CryptoDecision(
         status: status,
+        safetyLevel: CryptoSafetyLevel.malicious,
         isSafe: false,
         reasons: reasons,
         signals: signals,
@@ -34,6 +35,7 @@ abstract final class DecisionMaker {
       reasons.add('Address reported as valid by malicious-address data source');
       return CryptoDecision(
         status: status,
+        safetyLevel: CryptoSafetyLevel.safe,
         isSafe: true,
         reasons: reasons,
         signals: signals,
@@ -51,18 +53,19 @@ abstract final class DecisionMaker {
     } else {
       reasons.add('Wallet holds no detectable balance or assets.');
     }
-    reasons.add('No malicious threat records reported for this address.');
+    reasons.add('Address is unverified in threat intelligence databases.');
+    reasons.add('Always double-check the recipient address before transferring funds.');
 
     return CryptoDecision(
       status: MaliciousCheckStatus.unknown,
-      isSafe: true,
+      safetyLevel: CryptoSafetyLevel.unverified,
+      isSafe: false,
       reasons: reasons,
       signals: signals,
     );
-
   }
 
   static bool isWalletSafe(CryptoWalletScan scan) {
-    return decide(scan).isSafe;
+    return decide(scan).safetyLevel == CryptoSafetyLevel.safe;
   }
 }

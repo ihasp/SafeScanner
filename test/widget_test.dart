@@ -3,6 +3,7 @@ import 'package:crypto_scanner/helpers/crypto/decision_maker.dart';
 import 'package:crypto_scanner/helpers/scanner/scan_mode_detector.dart';
 import 'package:crypto_scanner/helpers/security/analysis_status_resolver.dart';
 import 'package:crypto_scanner/modules/security/models/analysis_model.dart';
+import 'package:crypto_scanner/modules/security/models/crypto_decision.dart';
 import 'package:crypto_scanner/modules/security/models/crypto_wallet_scan.dart';
 import 'package:crypto_scanner/modules/security/models/tatum_models.dart';
 import 'package:crypto_scanner/shared/models/scan_mode.dart';
@@ -82,6 +83,7 @@ void main() {
 
       final decision = DecisionMaker.decide(scan);
       expect(decision.isSafe, isTrue);
+      expect(decision.safetyLevel, equals(CryptoSafetyLevel.safe));
       expect(decision.status, equals(MaliciousCheckStatus.valid));
     });
 
@@ -102,10 +104,11 @@ void main() {
 
       final decision = DecisionMaker.decide(scan);
       expect(decision.isSafe, isFalse);
+      expect(decision.safetyLevel, equals(CryptoSafetyLevel.malicious));
       expect(decision.status, equals(MaliciousCheckStatus.invalid));
     });
 
-    test('Marks unknown status for active wallet as safe without false alarm', () {
+    test('Marks unknown status as unverified without false safe alarm', () {
       const scan = CryptoWalletScan(
         wallet: CryptoWallet(
           address: '0x123',
@@ -119,8 +122,10 @@ void main() {
       );
 
       final decision = DecisionMaker.decide(scan);
-      expect(decision.isSafe, isTrue);
+      expect(decision.isSafe, isFalse);
+      expect(decision.safetyLevel, equals(CryptoSafetyLevel.unverified));
       expect(decision.status, equals(MaliciousCheckStatus.unknown));
+      expect(DecisionMaker.isWalletSafe(scan), isFalse);
     });
   });
 

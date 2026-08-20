@@ -27,22 +27,25 @@ class _CryptoScanAccordionState extends State<CryptoScanAccordion> {
         color: AppColors.malicious,
       ),
       MaliciousCheckStatus.unknown => (
-        label: 'Unknown',
-        color: AppColors.unknown,
+        label: 'Unverified',
+        color: AppColors.phishing,
       ),
     };
   }
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final safety = _getSafetyDisplay(widget.scan.cryptoScan.safety);
 
     return Container(
       margin: const EdgeInsets.only(bottom: 10),
       decoration: BoxDecoration(
-        color: Colors.white,
-        border: Border.all(color: const Color(0xFFE7E7E7)),
-        borderRadius: BorderRadius.circular(8),
+        color: isDark ? const Color(0xFF1E2022) : Colors.white,
+        border: Border.all(
+          color: isDark ? AppColors.borderDark : const Color(0xFFE7E7E7),
+        ),
+        borderRadius: BorderRadius.circular(10),
       ),
       clipBehavior: Clip.antiAlias,
       child: Column(
@@ -66,10 +69,12 @@ class _CryptoScanAccordionState extends State<CryptoScanAccordion> {
                           widget.scan.cryptoScan.wallet.address,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 14,
                             fontWeight: FontWeight.w700,
-                            color: AppColors.textLight,
+                            color: isDark
+                                ? AppColors.textDark
+                                : AppColors.textLight,
                           ),
                         ),
                         const SizedBox(height: 4),
@@ -132,10 +137,16 @@ class _CryptoScanAccordionState extends State<CryptoScanAccordion> {
             alignment: Alignment.topCenter,
             child: _isOpen
                 ? Container(
-                    decoration: const BoxDecoration(
-                      border: Border(top: BorderSide(color: AppColors.border)),
+                    decoration: BoxDecoration(
+                      border: Border(
+                        top: BorderSide(
+                          color: isDark
+                              ? AppColors.borderDark
+                              : AppColors.border,
+                        ),
+                      ),
                     ),
-                    padding: const EdgeInsets.only(top: 12),
+                    padding: const EdgeInsets.only(top: 8),
                     child: CryptoWalletResultsView(scan: widget.scan.cryptoScan),
                   )
                 : const SizedBox.shrink(),

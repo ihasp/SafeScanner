@@ -45,9 +45,9 @@ if ($tatumConfigured) {
 }
 Write-Host ""
 
-if (-not $vtConfigured -and -not $tatumConfigured) {
-    Write-Warning "Neither VIRUSTOTAL_API_KEY nor TATUM_API_KEY are configured."
-    Write-Warning "The build will continue, but security/blockchain scanning may fail at runtime."
+if (-not $vtConfigured -or -not $tatumConfigured) {
+    Write-Warning "One or more API keys (VIRUSTOTAL_API_KEY, TATUM_API_KEY) are not configured."
+    Write-Warning "Debug build will continue without them, but security/blockchain scanning features may fail at runtime."
     Write-Host ""
 }
 

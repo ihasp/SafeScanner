@@ -9,8 +9,10 @@ class PermissionRequestView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: isDark ? AppColors.surfaceDark : Colors.white,
       body: SafeArea(
         child: Center(
           child: Padding(
@@ -24,13 +26,13 @@ class PermissionRequestView extends StatelessWidget {
                   color: AppColors.primary,
                 ),
                 const SizedBox(height: 24),
-                const Text(
+                Text(
                   'Camera Access Required',
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
-                    color: AppColors.textLight,
+                    color: isDark ? AppColors.textDark : AppColors.textLight,
                   ),
                 ),
                 const SizedBox(height: 12),

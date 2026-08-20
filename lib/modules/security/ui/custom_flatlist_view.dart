@@ -27,6 +27,7 @@ class _CustomFlatlistViewState extends State<CustomFlatlistView> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final status = AnalysisStatusResolver.resolve(widget.analysis);
 
     final verdictTitle = status.isSafe ? 'Safe' : 'Potentially unsafe';
@@ -34,7 +35,11 @@ class _CustomFlatlistViewState extends State<CustomFlatlistView> {
         ? 'No security issues were found for this link.'
         : 'Security checks found warning signs. Only open this link if you trust the source.';
     final verdictColor = status.isSafe ? AppColors.safe : AppColors.malicious;
-    final verdictBg = status.isSafe ? AppColors.safeBg : AppColors.maliciousBg;
+    final verdictBg = isDark
+        ? (status.isSafe
+            ? AppColors.safe.withAlpha(40)
+            : AppColors.malicious.withAlpha(40))
+        : (status.isSafe ? AppColors.safeBg : AppColors.maliciousBg);
     final verdictIcon = status.isSafe
         ? Icons.verified_user_outlined
         : Icons.gpp_bad_outlined;
@@ -42,6 +47,9 @@ class _CustomFlatlistViewState extends State<CustomFlatlistView> {
     final resultsToShow = _showAllEngines || status.sortedResults.length <= 5
         ? status.sortedResults
         : status.sortedResults.take(5).toList();
+
+    final textColor = isDark ? AppColors.textDark : AppColors.textLight;
+    final borderColor = isDark ? AppColors.borderDark : AppColors.border;
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
@@ -75,10 +83,12 @@ class _CustomFlatlistViewState extends State<CustomFlatlistView> {
                       const SizedBox(height: 4),
                       Text(
                         verdictMessage,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 13,
                           height: 1.35,
-                          color: Color(0xFF4F4F4F),
+                          color: isDark
+                              ? const Color(0xFFD0D0D0)
+                              : const Color(0xFF4F4F4F),
                         ),
                       ),
                     ],
@@ -100,7 +110,8 @@ class _CustomFlatlistViewState extends State<CustomFlatlistView> {
                     vertical: 8,
                   ),
                   decoration: BoxDecoration(
-                    border: Border.all(color: AppColors.border),
+                    color: isDark ? const Color(0xFF1E2022) : Colors.transparent,
+                    border: Border.all(color: borderColor),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Column(
@@ -109,10 +120,10 @@ class _CustomFlatlistViewState extends State<CustomFlatlistView> {
                     children: [
                       Text(
                         '${status.resultCounts.total}',
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 22,
                           fontWeight: FontWeight.w900,
-                          color: AppColors.textLight,
+                          color: textColor,
                         ),
                       ),
                       const SizedBox(height: 2),
@@ -136,7 +147,8 @@ class _CustomFlatlistViewState extends State<CustomFlatlistView> {
                     vertical: 8,
                   ),
                   decoration: BoxDecoration(
-                    border: Border.all(color: AppColors.border),
+                    color: isDark ? const Color(0xFF1E2022) : Colors.transparent,
+                    border: Border.all(color: borderColor),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Column(
@@ -172,8 +184,8 @@ class _CustomFlatlistViewState extends State<CustomFlatlistView> {
           if (!status.isSafe) ...[
             const SizedBox(height: 14),
             Container(
-              decoration: const BoxDecoration(
-                border: Border(top: BorderSide(color: AppColors.border)),
+              decoration: BoxDecoration(
+                border: Border(top: BorderSide(color: borderColor)),
               ),
               child: Column(
                 children: [
@@ -181,16 +193,19 @@ class _CustomFlatlistViewState extends State<CustomFlatlistView> {
                     _buildWarningRow(
                       'Malicious',
                       '${status.resultCounts.malicious}',
+                      isDark,
                     ),
                   if (status.resultCounts.phishing > 0)
                     _buildWarningRow(
                       'Phishing',
                       '${status.resultCounts.phishing}',
+                      isDark,
                     ),
                   if (status.resultCounts.suspicious > 0)
                     _buildWarningRow(
                       'Suspicious',
                       '${status.resultCounts.suspicious}',
+                      isDark,
                     ),
                 ],
               ),
@@ -201,8 +216,8 @@ class _CustomFlatlistViewState extends State<CustomFlatlistView> {
           if (widget.variant == CustomFlatlistVariant.details) ...[
             const SizedBox(height: 18),
             Container(
-              decoration: const BoxDecoration(
-                border: Border(top: BorderSide(color: AppColors.border)),
+              decoration: BoxDecoration(
+                border: Border(top: BorderSide(color: borderColor)),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -211,12 +226,12 @@ class _CustomFlatlistViewState extends State<CustomFlatlistView> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      const Text(
+                      Text(
                         'Scanner results',
                         style: TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.w800,
-                          color: AppColors.textLight,
+                          color: textColor,
                         ),
                       ),
                       Text(
@@ -235,7 +250,7 @@ class _CustomFlatlistViewState extends State<CustomFlatlistView> {
                     alignment: Alignment.topCenter,
                     child: Column(
                       children: resultsToShow
-                          .map((item) => _buildScannerRow(item))
+                          .map((item) => _buildScannerRow(item, isDark))
                           .toList(),
                     ),
                   ),
@@ -277,21 +292,25 @@ class _CustomFlatlistViewState extends State<CustomFlatlistView> {
     );
   }
 
-  Widget _buildWarningRow(String label, String value) {
+  Widget _buildWarningRow(String label, String value, bool isDark) {
     return Container(
       constraints: const BoxConstraints(minHeight: 42),
-      decoration: const BoxDecoration(
-        border: Border(bottom: BorderSide(color: AppColors.border)),
+      decoration: BoxDecoration(
+        border: Border(
+          bottom: BorderSide(
+            color: isDark ? AppColors.borderDark : AppColors.border,
+          ),
+        ),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(
             label,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 13,
               fontWeight: FontWeight.w700,
-              color: Color(0xFF333333),
+              color: isDark ? AppColors.textDark : const Color(0xFF333333),
             ),
           ),
           Text(
@@ -307,11 +326,15 @@ class _CustomFlatlistViewState extends State<CustomFlatlistView> {
     );
   }
 
-  Widget _buildScannerRow(FormattedEngineResult item) {
+  Widget _buildScannerRow(FormattedEngineResult item, bool isDark) {
     return Container(
       constraints: const BoxConstraints(minHeight: 38),
-      decoration: const BoxDecoration(
-        border: Border(bottom: BorderSide(color: Color(0xFFF1F1F1))),
+      decoration: BoxDecoration(
+        border: Border(
+          bottom: BorderSide(
+            color: isDark ? AppColors.borderDark : const Color(0xFFF1F1F1),
+          ),
+        ),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -321,10 +344,10 @@ class _CustomFlatlistViewState extends State<CustomFlatlistView> {
               item.key,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 12,
                 fontWeight: FontWeight.w700,
-                color: Color(0xFF333333),
+                color: isDark ? AppColors.textDark : const Color(0xFF333333),
               ),
             ),
           ),

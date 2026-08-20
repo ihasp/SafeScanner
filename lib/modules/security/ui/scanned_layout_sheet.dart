@@ -46,6 +46,8 @@ class _ScannedLayoutSheetState extends ConsumerState<ScannedLayoutSheet>
   late final Animation<Offset> _slideAnimation;
 
   Timer? _pollingTimer;
+  Timer? _glowTimer;
+  bool _isPolling = false;
   bool _showGlow = false;
   bool _glowIsSafe = true;
   bool _hasTriggeredGlow = false;
@@ -70,6 +72,10 @@ class _ScannedLayoutSheetState extends ConsumerState<ScannedLayoutSheet>
   @override
   void didUpdateWidget(covariant ScannedLayoutSheet oldWidget) {
     super.didUpdateWidget(oldWidget);
+    if (oldWidget.data != widget.data) {
+      _hasTriggeredGlow = false;
+      _hasOpenedAutoLink = false;
+    }
     _onWidgetUpdated();
   }
 
@@ -122,6 +128,7 @@ class _ScannedLayoutSheetState extends ConsumerState<ScannedLayoutSheet>
     _pollingTimer = Timer.periodic(Duration(milliseconds: pollingRate), (
       timer,
     ) async {
+      if (_isPolling) return;
       final isCompleted =
           widget.analysis?.data.attributes.status == AnalysisStatus.completed;
       if (isCompleted) {
@@ -130,7 +137,12 @@ class _ScannedLayoutSheetState extends ConsumerState<ScannedLayoutSheet>
           _triggerGlow(widget.analysis);
         }
       } else {
-        await widget.onRetry();
+        _isPolling = true;
+        try {
+          await widget.onRetry();
+        } finally {
+          _isPolling = false;
+        }
       }
     });
   }
@@ -157,7 +169,8 @@ class _ScannedLayoutSheetState extends ConsumerState<ScannedLayoutSheet>
       _openUrl(widget.data);
     }
 
-    Timer(const Duration(milliseconds: 2000), () {
+    _glowTimer?.cancel();
+    _glowTimer = Timer(const Duration(milliseconds: 2000), () {
       if (mounted) {
         setState(() {
           _showGlow = false;
@@ -177,7 +190,8 @@ class _ScannedLayoutSheetState extends ConsumerState<ScannedLayoutSheet>
       _showGlow = true;
     });
 
-    Timer(const Duration(milliseconds: 2000), () {
+    _glowTimer?.cancel();
+    _glowTimer = Timer(const Duration(milliseconds: 2000), () {
       if (mounted) {
         setState(() {
           _showGlow = false;
@@ -199,12 +213,14 @@ class _ScannedLayoutSheetState extends ConsumerState<ScannedLayoutSheet>
   @override
   void dispose() {
     _pollingTimer?.cancel();
+    _glowTimer?.cancel();
     _slideController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final isCrypto = widget.scanMode == ScanMode.crypto;
     final resolvedUrl = widget.analysis != null
         ? AnalysisStatusResolver.resolve(widget.analysis!)
@@ -228,6 +244,9 @@ class _ScannedLayoutSheetState extends ConsumerState<ScannedLayoutSheet>
         ? (!isCryptoCompleted && !isCryptoFailed)
         : (!isUrlCompleted && !hasUrlResults && !isUrlFailed);
 
+    final sheetBg = isDark ? const Color(0xFF1E2022) : Colors.white;
+    final headerTextColor = isDark ? AppColors.textDark : AppColors.textLight;
+
     return Stack(
       children: [
         Positioned.fill(
@@ -240,13 +259,13 @@ class _ScannedLayoutSheetState extends ConsumerState<ScannedLayoutSheet>
             child: Container(
               height: MediaQuery.of(context).size.height * 0.70,
               width: double.infinity,
-              decoration: const BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.only(
+              decoration: BoxDecoration(
+                color: sheetBg,
+                borderRadius: const BorderRadius.only(
                   topLeft: Radius.circular(20),
                   topRight: Radius.circular(20),
                 ),
-                boxShadow: [
+                boxShadow: const [
                   BoxShadow(
                     color: Colors.black26,
                     blurRadius: 10,
@@ -279,7 +298,9 @@ class _ScannedLayoutSheetState extends ConsumerState<ScannedLayoutSheet>
                               width: 40,
                               height: 5,
                               decoration: BoxDecoration(
-                                color: const Color(0xFFDDDDDD),
+                                color: isDark
+                                    ? const Color(0xFF444444)
+                                    : const Color(0xFFDDDDDD),
                                 borderRadius: BorderRadius.circular(10),
                               ),
                             ),
@@ -304,10 +325,10 @@ class _ScannedLayoutSheetState extends ConsumerState<ScannedLayoutSheet>
                   // Title
                   Text(
                     isCrypto ? 'Crypto wallet:' : 'Scanned link:',
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
-                      color: AppColors.textLight,
+                      color: headerTextColor,
                     ),
                   ),
                   const SizedBox(height: 6),

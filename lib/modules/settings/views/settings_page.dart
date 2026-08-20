@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../constants/app_colors.dart';
 import '../../../shared/models/scan_mode.dart';
+import '../../results/providers/scan_results_provider.dart';
 import '../models/app_settings.dart';
 import '../providers/settings_provider.dart';
 import '../ui/segment_button_group.dart';
@@ -11,13 +12,47 @@ import '../ui/setting_row.dart';
 class SettingsPage extends ConsumerWidget {
   const SettingsPage({super.key});
 
+  Future<void> _confirmClearHistory(BuildContext context, WidgetRef ref) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Clear Scan History?'),
+        content: const Text(
+          'This will permanently delete all saved scan results from this device. This action cannot be undone.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(false),
+            child: const Text('Cancel'),
+          ),
+          FilledButton(
+            style: FilledButton.styleFrom(backgroundColor: AppColors.malicious),
+            onPressed: () => Navigator.of(ctx).pop(true),
+            child: const Text('Delete All'),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed == true) {
+      ref.read(scanResultsProvider.notifier).clearScans();
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Scan history cleared.')),
+        );
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final settings = ref.watch(settingsProvider);
     final notifier = ref.read(settingsProvider.notifier);
+    final textColor = isDark ? AppColors.textDark : AppColors.textLight;
 
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: isDark ? AppColors.surfaceDark : Colors.white,
       body: SafeArea(
         child: ListView(
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
@@ -25,31 +60,31 @@ class SettingsPage extends ConsumerWidget {
             const SizedBox(height: 16),
             const Center(
               child: Icon(
-                Icons.settings,
-                size: 80,
+                Icons.settings_outlined,
+                size: 72,
                 color: AppColors.textSecondary,
               ),
             ),
             const SizedBox(height: 12),
-            const Center(
+            Center(
               child: Text(
                 'Settings',
                 style: TextStyle(
                   fontSize: 28,
                   fontWeight: FontWeight.bold,
-                  color: AppColors.textLight,
+                  color: textColor,
                 ),
               ),
             ),
             const SizedBox(height: 32),
 
             // Scanner Preferences Section
-            const Text(
+            Text(
               'Scanner Preferences',
               style: TextStyle(
-                fontSize: 22,
+                fontSize: 20,
                 fontWeight: FontWeight.bold,
-                color: AppColors.textLight,
+                color: textColor,
               ),
             ),
             const SizedBox(height: 12),
@@ -115,12 +150,12 @@ class SettingsPage extends ConsumerWidget {
             const SizedBox(height: 32),
 
             // Privacy & History Section
-            const Text(
+            Text(
               'Privacy & History',
               style: TextStyle(
-                fontSize: 22,
+                fontSize: 20,
                 fontWeight: FontWeight.bold,
-                color: AppColors.textLight,
+                color: textColor,
               ),
             ),
             const SizedBox(height: 12),
@@ -146,6 +181,27 @@ class SettingsPage extends ConsumerWidget {
                   SegmentItem(value: 20, label: '20'),
                 ],
                 onSelected: notifier.setHistorySizeLimit,
+              ),
+            ),
+
+            SettingRow(
+              title: 'Clear Scan History',
+              subtitle: 'Permanently remove all saved results',
+              trailing: OutlinedButton.icon(
+                style: OutlinedButton.styleFrom(
+                  foregroundColor: AppColors.malicious,
+                  side: const BorderSide(color: AppColors.malicious),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 8,
+                  ),
+                ),
+                onPressed: () => _confirmClearHistory(context, ref),
+                icon: const Icon(Icons.delete_outline_rounded, size: 18),
+                label: const Text(
+                  'Remove All',
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
+                ),
               ),
             ),
 
