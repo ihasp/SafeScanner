@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../constants/app_colors.dart';
+import '../../../l10n/l10n.dart';
+import '../../../shared/constants/app_colors.dart';
 import '../models/scan_result.dart';
 import '../providers/scan_results_notifier.dart';
 import '../ui/crypto_scan_accordion.dart';
@@ -11,22 +12,21 @@ class ResultsPage extends ConsumerWidget {
   const ResultsPage({super.key});
 
   Future<void> _confirmClearAll(BuildContext context, WidgetRef ref) async {
+    final l10n = context.l10n;
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Remove All Scan Results?'),
-        content: const Text(
-          'This will permanently delete all scan results. This action cannot be undone.',
-        ),
+        title: Text(l10n.removeAllResultsTitle),
+        content: Text(l10n.removeAllResultsContent),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(false),
-            child: const Text('Cancel'),
+            child: Text(l10n.cancel),
           ),
           FilledButton(
             style: FilledButton.styleFrom(backgroundColor: AppColors.malicious),
             onPressed: () => Navigator.of(ctx).pop(true),
-            child: const Text('Remove All'),
+            child: Text(l10n.removeAll),
           ),
         ],
       ),
@@ -35,9 +35,8 @@ class ResultsPage extends ConsumerWidget {
     if (confirmed == true) {
       ref.read(scanResultsProvider.notifier).clearScans();
       if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('All scan results removed.')),
-        );
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text(l10n.allResultsRemoved)));
       }
     }
   }
@@ -47,6 +46,7 @@ class ResultsPage extends ConsumerWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final groupedScans = ref.watch(groupedScansProvider);
     final textColor = isDark ? AppColors.textDark : AppColors.textLight;
+    final l10n = context.l10n;
 
     return Scaffold(
       backgroundColor: isDark ? AppColors.surfaceDark : Colors.white,
@@ -61,7 +61,7 @@ class ResultsPage extends ConsumerWidget {
                 children: [
                   const SizedBox(width: 40),
                   Text(
-                    'Scan results',
+                    l10n.scanResults,
                     style: TextStyle(
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
@@ -75,7 +75,7 @@ class ResultsPage extends ConsumerWidget {
                         color: AppColors.malicious,
                         size: 26,
                       ),
-                      tooltip: 'Remove all results',
+                      tooltip: l10n.removeAllResults,
                       onPressed: () => _confirmClearAll(context, ref),
                     )
                   else
@@ -98,7 +98,7 @@ class ResultsPage extends ConsumerWidget {
                             ),
                             const SizedBox(height: 12),
                             Text(
-                              'No scan results yet',
+                              l10n.noScanResultsYet,
                               style: TextStyle(
                                 fontSize: 18,
                                 fontWeight: FontWeight.bold,
@@ -106,12 +106,14 @@ class ResultsPage extends ConsumerWidget {
                               ),
                             ),
                             const SizedBox(height: 8),
-                            const Padding(
-                              padding: EdgeInsets.symmetric(horizontal: 24),
+                            Padding(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 24,
+                              ),
                               child: Text(
-                                'Scan a QR code or crypto address to save results and view them here.',
+                                l10n.noScanResultsDesc,
                                 textAlign: TextAlign.center,
-                                style: TextStyle(
+                                style: const TextStyle(
                                   fontSize: 14,
                                   color: AppColors.textSecondary,
                                 ),

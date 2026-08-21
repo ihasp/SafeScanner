@@ -6,8 +6,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:photo_manager/photo_manager.dart';
 
-import '../../../constants/app_colors.dart';
-import '../../../constants/app_constants.dart';
+import '../../../l10n/l10n.dart';
+import '../../../shared/constants/app_colors.dart';
+import '../../../shared/constants/app_constants.dart';
 import '../../../shared/models/scan_mode.dart';
 import '../../../shared/services/haptic_service.dart';
 import '../../results/providers/scan_results_notifier.dart';
@@ -245,9 +246,9 @@ class _GalleryPageState extends ConsumerState<GalleryPage>
             _isAnalyzing = false;
           });
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Unable to read selected photo.'),
-              duration: Duration(seconds: 3),
+            SnackBar(
+              content: Text(context.l10n.unableToReadPhoto),
+              duration: const Duration(seconds: 3),
             ),
           );
         }
@@ -265,9 +266,9 @@ class _GalleryPageState extends ConsumerState<GalleryPage>
             _isAnalyzing = false;
           });
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('No QR code found in the selected image.'),
-              duration: Duration(seconds: 3),
+            SnackBar(
+              content: Text(context.l10n.noQrFoundInImage),
+              duration: const Duration(seconds: 3),
             ),
           );
         }
@@ -278,9 +279,9 @@ class _GalleryPageState extends ConsumerState<GalleryPage>
           _isAnalyzing = false;
         });
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Failed to analyze the selected image.'),
-            duration: Duration(seconds: 3),
+          SnackBar(
+            content: Text(context.l10n.failedToAnalyzeImage),
+            duration: const Duration(seconds: 3),
           ),
         );
       }
@@ -295,9 +296,9 @@ class _GalleryPageState extends ConsumerState<GalleryPage>
           _isAnalyzing = false;
         });
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Scanned QR code contains no readable content.'),
-            duration: Duration(seconds: 3),
+          SnackBar(
+            content: Text(context.l10n.qrEmptyContent),
+            duration: const Duration(seconds: 3),
           ),
         );
       }
@@ -436,7 +437,7 @@ class _GalleryPageState extends ConsumerState<GalleryPage>
                 const SizedBox(height: 12),
                 Center(
                   child: Text(
-                    'Gallery',
+                    context.l10n.navGallery,
                     style: TextStyle(
                       fontSize: 28,
                       fontWeight: FontWeight.bold,
@@ -488,6 +489,7 @@ class _GalleryPageState extends ConsumerState<GalleryPage>
   }
 
   Widget _buildConfirmButton() {
+    final l10n = context.l10n;
     return Container(
       height: 52,
       decoration: BoxDecoration(
@@ -523,14 +525,17 @@ class _GalleryPageState extends ConsumerState<GalleryPage>
                   strokeWidth: 2.5,
                 ),
               )
-            : const Row(
+            : Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(Icons.qr_code_scanner_rounded, size: 22),
-                  SizedBox(width: 8),
+                  const Icon(Icons.qr_code_scanner_rounded, size: 22),
+                  const SizedBox(width: 8),
                   Text(
-                    'Scan Selected Image',
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                    l10n.scanSelectedImage,
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
                 ],
               ),
@@ -665,7 +670,7 @@ class _GalleryPageState extends ConsumerState<GalleryPage>
               ),
               const SizedBox(height: 6),
               Text(
-                'Add Photos',
+                context.l10n.addPhotos,
                 style: TextStyle(
                   fontSize: 12,
                   fontWeight: FontWeight.w600,
@@ -680,6 +685,7 @@ class _GalleryPageState extends ConsumerState<GalleryPage>
   }
 
   Widget _buildPermissionView(bool isDark) {
+    final l10n = context.l10n;
     return Center(
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 32),
@@ -693,7 +699,7 @@ class _GalleryPageState extends ConsumerState<GalleryPage>
             ),
             const SizedBox(height: 16),
             Text(
-              'Gallery Permission Needed',
+              l10n.galleryPermissionNeeded,
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
@@ -701,10 +707,13 @@ class _GalleryPageState extends ConsumerState<GalleryPage>
               ),
             ),
             const SizedBox(height: 8),
-            const Text(
-              'Allow access to your photos to scan QR codes and crypto addresses from images.',
+            Text(
+              l10n.galleryPermissionDesc,
               textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 14, color: AppColors.textSecondary),
+              style: const TextStyle(
+                fontSize: 14,
+                color: AppColors.textSecondary,
+              ),
             ),
             const SizedBox(height: 24),
             FilledButton.icon(
@@ -718,7 +727,7 @@ class _GalleryPageState extends ConsumerState<GalleryPage>
                 unawaited(PhotoManager.openSetting());
               },
               icon: const Icon(Icons.settings_rounded, size: 18),
-              label: const Text('Open Settings'),
+              label: Text(l10n.openSettings),
             ),
           ],
         ),
@@ -727,6 +736,7 @@ class _GalleryPageState extends ConsumerState<GalleryPage>
   }
 
   Widget _buildEmptyView(bool isDark) {
+    final l10n = context.l10n;
     if (_isLimitedPermission) {
       return Center(
         child: Padding(
@@ -741,7 +751,7 @@ class _GalleryPageState extends ConsumerState<GalleryPage>
               ),
               const SizedBox(height: 16),
               Text(
-                'No Photos Selected',
+                l10n.noPhotosSelected,
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
@@ -749,10 +759,13 @@ class _GalleryPageState extends ConsumerState<GalleryPage>
                 ),
               ),
               const SizedBox(height: 8),
-              const Text(
-                'You gave limited gallery access without selecting any photos. Choose photos from Android gallery to scan them.',
+              Text(
+                l10n.noPhotosSelectedDesc,
                 textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 14, color: AppColors.textSecondary),
+                style: const TextStyle(
+                  fontSize: 14,
+                  color: AppColors.textSecondary,
+                ),
               ),
               const SizedBox(height: 24),
               FilledButton.icon(
@@ -766,14 +779,14 @@ class _GalleryPageState extends ConsumerState<GalleryPage>
                   unawaited(_openLimitedMediaPicker());
                 },
                 icon: const Icon(Icons.add_photo_alternate_outlined, size: 18),
-                label: const Text('Select Photos'),
+                label: Text(l10n.selectPhotos),
               ),
               const SizedBox(height: 12),
               TextButton(
                 onPressed: () {
                   unawaited(PhotoManager.openSetting());
                 },
-                child: const Text('Manage in Settings'),
+                child: Text(l10n.manageInSettings),
               ),
             ],
           ),
@@ -792,7 +805,7 @@ class _GalleryPageState extends ConsumerState<GalleryPage>
           ),
           const SizedBox(height: 16),
           Text(
-            'No photos found',
+            l10n.noPhotosFound,
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.bold,

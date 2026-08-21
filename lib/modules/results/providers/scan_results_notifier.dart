@@ -1,6 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../helpers/shared/date_group_helper.dart';
+import '../../../shared/helpers/date_group_helper.dart';
 import '../../security/models/analysis.dart';
 import '../../security/models/crypto_wallet_scan.dart';
 import '../../settings/providers/settings_notifier.dart';

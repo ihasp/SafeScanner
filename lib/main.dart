@@ -4,10 +4,14 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'constants/app_colors.dart';
-import 'constants/app_constants.dart';
+import 'l10n/l10n.dart';
+
+import 'package:flutter_localizations/flutter_localizations.dart';
+
 import 'modules/settings/providers/settings_notifier.dart';
 import 'routing/tab_scaffold.dart';
+import 'shared/constants/app_colors.dart';
+import 'shared/constants/app_constants.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -32,14 +36,25 @@ Future<void> main() async {
   );
 }
 
-class CryptoScannerApp extends StatelessWidget {
+class CryptoScannerApp extends ConsumerWidget {
   const CryptoScannerApp({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final settings = ref.watch(settingsProvider);
+    final languageCode = settings.languageCode;
+
     return MaterialApp(
       title: AppConstants.appName,
       debugShowCheckedModeBanner: false,
+      localizationsDelegates: const [
+        AppLocalizations.delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      supportedLocales: AppLocalizations.supportedLocales,
+      locale: languageCode != null ? Locale(languageCode) : null,
       theme: ThemeData(
         useMaterial3: true,
         colorScheme: ColorScheme.fromSeed(

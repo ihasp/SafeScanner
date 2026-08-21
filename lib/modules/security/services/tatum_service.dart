@@ -2,8 +2,8 @@ import 'dart:convert';
 
 import 'package:http/http.dart' as http;
 
-import '../../../constants/api_keys.dart';
-import '../../../constants/app_constants.dart';
+import '../../../shared/constants/api_keys.dart';
+import '../../../shared/constants/app_constants.dart';
 import '../models/crypto_wallet_scan.dart';
 import '../models/tatum_chain.dart';
 

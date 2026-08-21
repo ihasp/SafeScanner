@@ -1,3 +1,4 @@
+import 'package:crypto_scanner/l10n/l10n.dart';
 import 'package:crypto_scanner/modules/security/models/analysis.dart';
 import 'package:crypto_scanner/modules/security/models/crypto_scan_state.dart';
 import 'package:crypto_scanner/modules/security/ui/scanned_layout_sheet.dart';
@@ -32,6 +33,8 @@ void main() {
             settingsServiceProvider.overrideWithValue(SettingsService(prefs)),
           ],
           child: MaterialApp(
+            localizationsDelegates: AppLocalizations.localizationsDelegates,
+            supportedLocales: AppLocalizations.supportedLocales,
             home: Scaffold(
               body: ScannedLayoutSheet(
                 data: 'https://example.com',
@@ -73,6 +76,8 @@ void main() {
             settingsServiceProvider.overrideWithValue(SettingsService(prefs)),
           ],
           child: MaterialApp(
+            localizationsDelegates: AppLocalizations.localizationsDelegates,
+            supportedLocales: AppLocalizations.supportedLocales,
             home: Scaffold(
               body: ScannedLayoutSheet(
                 data: '0x1234567890abcdef1234567890abcdef12345678',
@@ -111,6 +116,8 @@ void main() {
             settingsServiceProvider.overrideWithValue(SettingsService(prefs)),
           ],
           child: MaterialApp(
+            localizationsDelegates: AppLocalizations.localizationsDelegates,
+            supportedLocales: AppLocalizations.supportedLocales,
             home: Scaffold(
               body: ScannedLayoutSheet(
                 data: 'https://example.com',
@@ -140,6 +147,8 @@ void main() {
             settingsServiceProvider.overrideWithValue(SettingsService(prefs)),
           ],
           child: MaterialApp(
+            localizationsDelegates: AppLocalizations.localizationsDelegates,
+            supportedLocales: AppLocalizations.supportedLocales,
             home: Scaffold(
               body: ScannedLayoutSheet(
                 data: 'https://example.com',

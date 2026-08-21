@@ -8,6 +8,7 @@ class AppSettings {
   final bool incognitoMode;
   final int historySizeLimit;
   final int apiPollingRate;
+  final String? languageCode;
 
   const AppSettings({
     this.defaultCameraFacing = AppCameraFacing.back,
@@ -17,6 +18,7 @@ class AppSettings {
     this.incognitoMode = false,
     this.historySizeLimit = 20,
     this.apiPollingRate = 1000,
+    this.languageCode,
   });
 
   AppSettings copyWith({
@@ -27,6 +29,7 @@ class AppSettings {
     bool? incognitoMode,
     int? historySizeLimit,
     int? apiPollingRate,
+    Object? languageCode = _sentinel,
   }) {
     return AppSettings(
       defaultCameraFacing: defaultCameraFacing ?? this.defaultCameraFacing,
@@ -36,6 +39,9 @@ class AppSettings {
       incognitoMode: incognitoMode ?? this.incognitoMode,
       historySizeLimit: historySizeLimit ?? this.historySizeLimit,
       apiPollingRate: apiPollingRate ?? this.apiPollingRate,
+      languageCode: identical(languageCode, _sentinel)
+          ? this.languageCode
+          : (languageCode as String?),
     );
   }
 
@@ -47,6 +53,7 @@ class AppSettings {
     'incognitoMode': incognitoMode,
     'historySizeLimit': historySizeLimit,
     'apiPollingRate': apiPollingRate,
+    'languageCode': languageCode,
   };
 
   factory AppSettings.fromJson(Map<String, dynamic> json) {
@@ -62,9 +69,12 @@ class AppSettings {
       incognitoMode: json['incognitoMode'] as bool? ?? false,
       historySizeLimit: json['historySizeLimit'] as int? ?? 20,
       apiPollingRate: json['apiPollingRate'] as int? ?? 1000,
+      languageCode: json['languageCode'] as String?,
     );
   }
 }
+
+const Object _sentinel = Object();
 
 enum AppCameraFacing {
   back('back'),

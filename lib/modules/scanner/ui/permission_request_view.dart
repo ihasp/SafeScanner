@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
-import '../../../constants/app_colors.dart';
+import '../../../l10n/l10n.dart';
+import '../../../shared/constants/app_colors.dart';
 
 class PermissionRequestView extends StatelessWidget {
   final VoidCallback onRequestPermission;
@@ -10,6 +11,7 @@ class PermissionRequestView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final l10n = context.l10n;
 
     return Scaffold(
       backgroundColor: isDark ? AppColors.surfaceDark : Colors.white,
@@ -27,7 +29,7 @@ class PermissionRequestView extends StatelessWidget {
                 ),
                 const SizedBox(height: 24),
                 Text(
-                  'Camera Access Required',
+                  l10n.cameraAccessRequired,
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: 20,
@@ -36,10 +38,10 @@ class PermissionRequestView extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 12),
-                const Text(
-                  'The app needs camera access to scan QR codes and cryptocurrency addresses.',
+                Text(
+                  l10n.cameraAccessDesc,
                   textAlign: TextAlign.center,
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: 14,
                     color: AppColors.textSecondary,
                   ),
@@ -57,9 +59,9 @@ class PermissionRequestView extends StatelessWidget {
                         borderRadius: BorderRadius.circular(12),
                       ),
                     ),
-                    child: const Text(
-                      'Grant Permission',
-                      style: TextStyle(
+                    child: Text(
+                      l10n.grantPermission,
+                      style: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
                         color: Colors.white,

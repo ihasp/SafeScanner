@@ -1,0 +1,413 @@
+{
+  "@@locale": "en",
+
+  "appName": "QR Scanner",
+  "@appName": {
+    "description": "The title of the application"
+  },
+
+  "navScan": "Scan",
+  "@navScan": {
+    "description": "Bottom navigation label for scanner tab"
+  },
+
+  "navGallery": "Gallery",
+  "@navGallery": {
+    "description": "Bottom navigation label for gallery tab"
+  },
+
+  "navResults": "Results",
+  "@navResults": {
+    "description": "Bottom navigation label for results tab"
+  },
+
+  "navSettings": "Settings",
+  "@navSettings": {
+    "description": "Bottom navigation label for settings tab"
+  },
+
+  "settingsTitle": "Settings",
+  "@settingsTitle": {
+    "description": "Title on the settings screen"
+  },
+
+  "scannerPreferences": "Scanner Preferences",
+  "@scannerPreferences": {
+    "description": "Header for scanner preferences section"
+  },
+
+  "defaultCamera": "Default Camera",
+  "@defaultCamera": {
+    "description": "Setting label for default camera facing"
+  },
+
+  "cameraBack": "Back",
+  "@cameraBack": {
+    "description": "Back camera label"
+  },
+
+  "cameraFront": "Front",
+  "@cameraFront": {
+    "description": "Front camera label"
+  },
+
+  "defaultScanMode": "Default Scan Mode",
+  "@defaultScanMode": {
+    "description": "Setting label for default scan mode"
+  },
+
+  "scanModeQr": "QR",
+  "@scanModeQr": {
+    "description": "QR scan mode label"
+  },
+
+  "scanModeCrypto": "Crypto",
+  "@scanModeCrypto": {
+    "description": "Crypto scan mode label"
+  },
+
+  "hapticsOnScan": "Haptics on Scan",
+  "@hapticsOnScan": {
+    "description": "Setting label for haptic vibration feedback"
+  },
+
+  "hapticsSubtitle": "Vibrate on success/error",
+  "@hapticsSubtitle": {
+    "description": "Subtitle describing haptic vibration behavior"
+  },
+
+  "autoOpenSafeLinks": "Auto-Open Safe Links",
+  "@autoOpenSafeLinks": {
+    "description": "Setting label for automatically opening safe links"
+  },
+
+  "autoOpenSubtitle": "Open browser if 0 flags",
+  "@autoOpenSubtitle": {
+    "description": "Subtitle explaining auto-open safe links behavior"
+  },
+
+  "language": "Language",
+  "@language": {
+    "description": "Setting label for language selection"
+  },
+
+  "languageSubtitle": "Choose application language",
+  "@languageSubtitle": {
+    "description": "Subtitle describing language selection"
+  },
+
+  "systemLanguage": "System Default",
+  "@systemLanguage": {
+    "description": "Option to follow system default language"
+  },
+
+  "langEn": "English",
+  "@langEn": {
+    "description": "Language name for English"
+  },
+
+  "langPl": "Polski",
+  "@langPl": {
+    "description": "Language name for Polish"
+  },
+
+  "langEs": "Español",
+  "@langEs": {
+    "description": "Language name for Spanish"
+  },
+
+  "langDe": "Deutsch",
+  "@langDe": {
+    "description": "Language name for German"
+  },
+
+  "langFr": "Français",
+  "@langFr": {
+    "description": "Language name for French"
+  },
+
+  "langIt": "Italiano",
+  "@langIt": {
+    "description": "Language name for Italian"
+  },
+
+  "langPt": "Português",
+  "@langPt": {
+    "description": "Language name for Portuguese"
+  },
+
+  "cameraAccessRequired": "Camera Access Required",
+  "@cameraAccessRequired": {
+    "description": "Title when camera permission is needed"
+  },
+
+  "cameraAccessDesc": "The app needs camera access to scan QR codes and cryptocurrency addresses.",
+  "@cameraAccessDesc": {
+    "description": "Description explaining why camera permission is required"
+  },
+
+  "grantPermission": "Grant Permission",
+  "@grantPermission": {
+    "description": "Button label to request camera permission"
+  },
+
+  "galleryPermissionNeeded": "Gallery Permission Needed",
+  "@galleryPermissionNeeded": {
+    "description": "Title when photo gallery permission is needed"
+  },
+
+  "galleryPermissionDesc": "Allow access to your photos to scan QR codes and crypto addresses from images.",
+  "@galleryPermissionDesc": {
+    "description": "Description explaining why photo library access is required"
+  },
+
+  "openSettings": "Open Settings",
+  "@openSettings": {
+    "description": "Button label to open system app settings"
+  },
+
+  "selectPhotos": "Select Photos",
+  "@selectPhotos": {
+    "description": "Button label to select specific photos under limited permission"
+  },
+
+  "manageInSettings": "Manage in Settings",
+  "@manageInSettings": {
+    "description": "Button label to manage permissions in OS settings"
+  },
+
+  "addPhotos": "Add Photos",
+  "@addPhotos": {
+    "description": "Label on the gallery tile to add more photos"
+  },
+
+  "noPhotosSelected": "No Photos Selected",
+  "@noPhotosSelected": {
+    "description": "Title when limited permission is granted with zero photos"
+  },
+
+  "noPhotosSelectedDesc": "You gave limited gallery access without selecting any photos. Choose photos from Android gallery to scan them.",
+  "@noPhotosSelectedDesc": {
+    "description": "Explanation when user granted limited access with no photos selected"
+  },
+
+  "noPhotosFound": "No photos found",
+  "@noPhotosFound": {
+    "description": "Message displayed when the gallery is empty"
+  },
+
+  "scanSelectedImage": "Scan Selected Image",
+  "@scanSelectedImage": {
+    "description": "Button label to scan the selected gallery photo"
+  },
+
+  "unableToReadPhoto": "Unable to read selected photo.",
+  "@unableToReadPhoto": {
+    "description": "Error message when selected photo file cannot be loaded"
+  },
+
+  "noQrFoundInImage": "No QR code found in the selected image.",
+  "@noQrFoundInImage": {
+    "description": "Notification message when image contains no barcode or QR code"
+  },
+
+  "failedToAnalyzeImage": "Failed to analyze the selected image.",
+  "@failedToAnalyzeImage": {
+    "description": "Error message when image scanning fails"
+  },
+
+  "qrEmptyContent": "Scanned QR code contains no readable content.",
+  "@qrEmptyContent": {
+    "description": "Notification message when scanned QR code has empty payload"
+  },
+
+  "scanResults": "Scan results",
+  "@scanResults": {
+    "description": "Title of the scan results history page"
+  },
+
+  "removeAllResults": "Remove all results",
+  "@removeAllResults": {
+    "description": "Tooltip for removing all scan history items"
+  },
+
+  "removeAllResultsTitle": "Remove All Scan Results?",
+  "@removeAllResultsTitle": {
+    "description": "Confirmation dialog title for clearing scan history"
+  },
+
+  "removeAllResultsContent": "This will permanently delete all scan results. This action cannot be undone.",
+  "@removeAllResultsContent": {
+    "description": "Confirmation dialog body explaining scan results deletion"
+  },
+
+  "cancel": "Cancel",
+  "@cancel": {
+    "description": "Generic cancel button label"
+  },
+
+  "removeAll": "Remove All",
+  "@removeAll": {
+    "description": "Confirm button label in clear history dialog"
+  },
+
+  "allResultsRemoved": "All scan results removed.",
+  "@allResultsRemoved": {
+    "description": "Snackbar message shown after clearing scan history"
+  },
+
+  "noScanResultsYet": "No scan results yet",
+  "@noScanResultsYet": {
+    "description": "Title when scan history is empty"
+  },
+
+  "noScanResultsDesc": "Scan a QR code or crypto address to save results and view them here.",
+  "@noScanResultsDesc": {
+    "description": "Subtitle encouraging user to scan something"
+  },
+
+  "cryptoWalletTitle": "Crypto wallet:",
+  "@cryptoWalletTitle": {
+    "description": "Header label for cryptocurrency wallet sheet"
+  },
+
+  "scannedLinkTitle": "Scanned link:",
+  "@scannedLinkTitle": {
+    "description": "Header label for URL scan sheet"
+  },
+
+  "scanningLink": "Scanning the link...",
+  "@scanningLink": {
+    "description": "Progress indicator text while scanning URL"
+  },
+
+  "scanningWallet": "Scanning crypto wallet...",
+  "@scanningWallet": {
+    "description": "Progress indicator text while scanning crypto address"
+  },
+
+  "openLinkInBrowser": "Open Link in Browser",
+  "@openLinkInBrowser": {
+    "description": "Button label to open scanned URL in default browser"
+  },
+
+  "blockedLinkDesc": "Opening this link is blocked due to detected security threats.",
+  "@blockedLinkDesc": {
+    "description": "Warning message when opening a malicious link is blocked"
+  },
+
+  "analysisTimedOut": "Analysis timed out. The service is taking longer than expected.",
+  "@analysisTimedOut": {
+    "description": "Error message when security analysis exceeds time limit"
+  },
+
+  "unableToScanLink": "Unable to scan this link.",
+  "@unableToScanLink": {
+    "description": "Generic error message when link security check fails"
+  },
+
+  "unableToScanWallet": "Unable to scan this crypto wallet.",
+  "@unableToScanWallet": {
+    "description": "Generic error message when crypto wallet check fails"
+  },
+
+  "plainTextNotLink": "Scanned content is plain text, not a web link.",
+  "@plainTextNotLink": {
+    "description": "Message when scanned QR contains plain text instead of a URL"
+  },
+
+  "scanError": "Scan Error",
+  "@scanError": {
+    "description": "Error header title in scan sheet"
+  },
+
+  "safe": "Safe",
+  "@safe": {
+    "description": "Verdict label for safe links"
+  },
+
+  "safeDesc": "No security issues were found for this link.",
+  "@safeDesc": {
+    "description": "Description explaining safe link verdict"
+  },
+
+  "potentiallyUnsafe": "Potentially unsafe",
+  "@potentiallyUnsafe": {
+    "description": "Verdict label for suspicious links"
+  },
+
+  "potentiallyUnsafeDesc": "Security checks found warning signs. Only open this link if you trust the source.",
+  "@potentiallyUnsafeDesc": {
+    "description": "Description explaining warning link verdict"
+  },
+
+  "dangerousLink": "Dangerous link",
+  "@dangerousLink": {
+    "description": "Verdict label for dangerous/malicious links"
+  },
+
+  "dangerousLinkDesc": "Multiple security engines flagged this link as dangerous or malicious. Opening this link is strongly discouraged.",
+  "@dangerousLinkDesc": {
+    "description": "Description explaining malicious link verdict"
+  },
+
+  "malicious": "Malicious",
+  "@malicious": {
+    "description": "Status label for malicious crypto wallet"
+  },
+
+  "unverified": "Unverified",
+  "@unverified": {
+    "description": "Status label for unverified crypto wallet"
+  },
+
+  "unverifiedDesc": "Address unverified in threat databases. Verify recipient before sending funds.",
+  "@unverifiedDesc": {
+    "description": "Description for unverified crypto wallet"
+  },
+
+  "maliciousReportedDesc": "This wallet was reported by a malicious-address data source.",
+  "@maliciousReportedDesc": {
+    "description": "Description for flagged malicious crypto wallet"
+  },
+
+  "safety": "Safety",
+  "@safety": {
+    "description": "Label for wallet safety check"
+  },
+
+  "chain": "Chain",
+  "@chain": {
+    "description": "Label for blockchain network name"
+  },
+
+  "balance": "Balance",
+  "@balance": {
+    "description": "Label for wallet balance"
+  },
+
+  "transactions": "Transactions",
+  "@transactions": {
+    "description": "Label for transaction history count"
+  },
+
+  "signals": "Signals",
+  "@signals": {
+    "description": "Label for wallet threat signals"
+  },
+
+  "enginesScanning": "Engines Scanning",
+  "@enginesScanning": {
+    "description": "Label for number of scanning engines"
+  },
+
+  "showAllEngines": "Show All Engines",
+  "@showAllEngines": {
+    "description": "Button to expand all security engine results"
+  },
+
+  "showLess": "Show Less",
+  "@showLess": {
+    "description": "Button to collapse security engine results"
+  }
+}

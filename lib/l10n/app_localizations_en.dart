@@ -1,0 +1,269 @@
+// ignore: unused_import
+import 'package:intl/intl.dart' as intl;
+
+import 'app_localizations.dart';
+
+// ignore_for_file: type=lint
+
+/// The translations for English (`en`).
+class AppLocalizationsEn extends AppLocalizations {
+  AppLocalizationsEn([String locale = 'en']) : super(locale);
+
+  @override
+  String get appName => 'QR Scanner';
+
+  @override
+  String get navScan => 'Scan';
+
+  @override
+  String get navGallery => 'Gallery';
+
+  @override
+  String get navResults => 'Results';
+
+  @override
+  String get navSettings => 'Settings';
+
+  @override
+  String get settingsTitle => 'Settings';
+
+  @override
+  String get scannerPreferences => 'Scanner Preferences';
+
+  @override
+  String get defaultCamera => 'Default Camera';
+
+  @override
+  String get cameraBack => 'Back';
+
+  @override
+  String get cameraFront => 'Front';
+
+  @override
+  String get defaultScanMode => 'Default Scan Mode';
+
+  @override
+  String get scanModeQr => 'QR';
+
+  @override
+  String get scanModeCrypto => 'Crypto';
+
+  @override
+  String get hapticsOnScan => 'Haptics on Scan';
+
+  @override
+  String get hapticsSubtitle => 'Vibrate on success/error';
+
+  @override
+  String get autoOpenSafeLinks => 'Auto-Open Safe Links';
+
+  @override
+  String get autoOpenSubtitle => 'Open browser if 0 flags';
+
+  @override
+  String get language => 'Language';
+
+  @override
+  String get languageSubtitle => 'Choose application language';
+
+  @override
+  String get systemLanguage => 'System Default';
+
+  @override
+  String get langEn => 'English';
+
+  @override
+  String get langPl => 'Polski';
+
+  @override
+  String get langEs => 'Español';
+
+  @override
+  String get langDe => 'Deutsch';
+
+  @override
+  String get langFr => 'Français';
+
+  @override
+  String get langIt => 'Italiano';
+
+  @override
+  String get langPt => 'Português';
+
+  @override
+  String get cameraAccessRequired => 'Camera Access Required';
+
+  @override
+  String get cameraAccessDesc =>
+      'The app needs camera access to scan QR codes and cryptocurrency addresses.';
+
+  @override
+  String get grantPermission => 'Grant Permission';
+
+  @override
+  String get galleryPermissionNeeded => 'Gallery Permission Needed';
+
+  @override
+  String get galleryPermissionDesc =>
+      'Allow access to your photos to scan QR codes and crypto addresses from images.';
+
+  @override
+  String get openSettings => 'Open Settings';
+
+  @override
+  String get selectPhotos => 'Select Photos';
+
+  @override
+  String get manageInSettings => 'Manage in Settings';
+
+  @override
+  String get addPhotos => 'Add Photos';
+
+  @override
+  String get noPhotosSelected => 'No Photos Selected';
+
+  @override
+  String get noPhotosSelectedDesc =>
+      'You gave limited gallery access without selecting any photos. Choose photos from Android gallery to scan them.';
+
+  @override
+  String get noPhotosFound => 'No photos found';
+
+  @override
+  String get scanSelectedImage => 'Scan Selected Image';
+
+  @override
+  String get unableToReadPhoto => 'Unable to read selected photo.';
+
+  @override
+  String get noQrFoundInImage => 'No QR code found in the selected image.';
+
+  @override
+  String get failedToAnalyzeImage => 'Failed to analyze the selected image.';
+
+  @override
+  String get qrEmptyContent => 'Scanned QR code contains no readable content.';
+
+  @override
+  String get scanResults => 'Scan results';
+
+  @override
+  String get removeAllResults => 'Remove all results';
+
+  @override
+  String get removeAllResultsTitle => 'Remove All Scan Results?';
+
+  @override
+  String get removeAllResultsContent =>
+      'This will permanently delete all scan results. This action cannot be undone.';
+
+  @override
+  String get cancel => 'Cancel';
+
+  @override
+  String get removeAll => 'Remove All';
+
+  @override
+  String get allResultsRemoved => 'All scan results removed.';
+
+  @override
+  String get noScanResultsYet => 'No scan results yet';
+
+  @override
+  String get noScanResultsDesc =>
+      'Scan a QR code or crypto address to save results and view them here.';
+
+  @override
+  String get cryptoWalletTitle => 'Crypto wallet:';
+
+  @override
+  String get scannedLinkTitle => 'Scanned link:';
+
+  @override
+  String get scanningLink => 'Scanning the link...';
+
+  @override
+  String get scanningWallet => 'Scanning crypto wallet...';
+
+  @override
+  String get openLinkInBrowser => 'Open Link in Browser';
+
+  @override
+  String get blockedLinkDesc =>
+      'Opening this link is blocked due to detected security threats.';
+
+  @override
+  String get analysisTimedOut =>
+      'Analysis timed out. The service is taking longer than expected.';
+
+  @override
+  String get unableToScanLink => 'Unable to scan this link.';
+
+  @override
+  String get unableToScanWallet => 'Unable to scan this crypto wallet.';
+
+  @override
+  String get plainTextNotLink =>
+      'Scanned content is plain text, not a web link.';
+
+  @override
+  String get scanError => 'Scan Error';
+
+  @override
+  String get safe => 'Safe';
+
+  @override
+  String get safeDesc => 'No security issues were found for this link.';
+
+  @override
+  String get potentiallyUnsafe => 'Potentially unsafe';
+
+  @override
+  String get potentiallyUnsafeDesc =>
+      'Security checks found warning signs. Only open this link if you trust the source.';
+
+  @override
+  String get dangerousLink => 'Dangerous link';
+
+  @override
+  String get dangerousLinkDesc =>
+      'Multiple security engines flagged this link as dangerous or malicious. Opening this link is strongly discouraged.';
+
+  @override
+  String get malicious => 'Malicious';
+
+  @override
+  String get unverified => 'Unverified';
+
+  @override
+  String get unverifiedDesc =>
+      'Address unverified in threat databases. Verify recipient before sending funds.';
+
+  @override
+  String get maliciousReportedDesc =>
+      'This wallet was reported by a malicious-address data source.';
+
+  @override
+  String get safety => 'Safety';
+
+  @override
+  String get chain => 'Chain';
+
+  @override
+  String get balance => 'Balance';
+
+  @override
+  String get transactions => 'Transactions';
+
+  @override
+  String get signals => 'Signals';
+
+  @override
+  String get enginesScanning => 'Engines Scanning';
+
+  @override
+  String get showAllEngines => 'Show All Engines';
+
+  @override
+  String get showLess => 'Show Less';
+}

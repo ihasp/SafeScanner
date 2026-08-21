@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../../constants/app_colors.dart';
+import '../../../shared/constants/app_colors.dart';
 import '../logic/analysis_status_resolver.dart';
 import '../models/analysis.dart';
 

@@ -3,8 +3,9 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../constants/app_colors.dart';
-import '../../../helpers/shared/url_open_helper.dart';
+import '../../../l10n/l10n.dart';
+import '../../../shared/constants/app_colors.dart';
+import '../../../shared/helpers/url_open_helper.dart';
 import '../../../shared/models/scan_mode.dart';
 import '../../settings/providers/settings_notifier.dart';
 import '../logic/analysis_status_resolver.dart';
@@ -281,6 +282,7 @@ class _ScannedLayoutSheetState extends ConsumerState<ScannedLayoutSheet>
 
     final sheetBg = isDark ? const Color(0xFF1E2022) : Colors.white;
     final headerTextColor = isDark ? AppColors.textDark : AppColors.textLight;
+    final l10n = context.l10n;
 
     return Stack(
       children: [
@@ -358,7 +360,7 @@ class _ScannedLayoutSheetState extends ConsumerState<ScannedLayoutSheet>
 
                   // Title
                   Text(
-                    isCrypto ? 'Crypto wallet:' : 'Scanned link:',
+                    isCrypto ? l10n.cryptoWalletTitle : l10n.scannedLinkTitle,
                     style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
@@ -430,7 +432,11 @@ class _ScannedLayoutSheetState extends ConsumerState<ScannedLayoutSheet>
                       child: Column(
                         children: [
                           if (isScanning)
-                            const ScanningProgressView()
+                            ScanningProgressView(
+                              text: isCrypto
+                                  ? l10n.scanningWallet
+                                  : l10n.scanningLink,
+                            )
                           else if (!isCrypto &&
                               isUrlCompleted &&
                               widget.analysis != null) ...[
@@ -450,9 +456,9 @@ class _ScannedLayoutSheetState extends ConsumerState<ScannedLayoutSheet>
                                       Icons.open_in_browser_rounded,
                                       color: Colors.white,
                                     ),
-                                    label: const Text(
-                                      'Open Link in Browser',
-                                      style: TextStyle(
+                                    label: Text(
+                                      l10n.openLinkInBrowser,
+                                      style: const TextStyle(
                                         fontSize: 15,
                                         fontWeight: FontWeight.bold,
                                         color: Colors.white,
@@ -490,18 +496,18 @@ class _ScannedLayoutSheetState extends ConsumerState<ScannedLayoutSheet>
                                           : AppColors.malicious.withAlpha(50),
                                     ),
                                   ),
-                                  child: const Row(
+                                  child: Row(
                                     children: [
-                                      Icon(
+                                      const Icon(
                                         Icons.block_rounded,
                                         size: 20,
                                         color: AppColors.malicious,
                                       ),
-                                      SizedBox(width: 10),
+                                      const SizedBox(width: 10),
                                       Expanded(
                                         child: Text(
-                                          'Opening this link is blocked due to detected security threats.',
-                                          style: TextStyle(
+                                          l10n.blockedLinkDesc,
+                                          style: const TextStyle(
                                             fontSize: 12,
                                             fontWeight: FontWeight.w600,
                                             color: AppColors.malicious,
@@ -517,10 +523,11 @@ class _ScannedLayoutSheetState extends ConsumerState<ScannedLayoutSheet>
                               (widget.analysis != null || _isTimedOut))
                             _buildErrorBox(
                               _isTimedOut
-                                  ? 'Analysis timed out. The service is taking longer than expected.'
+                                  ? l10n.analysisTimedOut
                                   : (widget.analysis?.error ??
-                                        'Unable to scan this link.'),
+                                        l10n.unableToScanLink),
                               isDark,
+                              l10n,
                             )
                           else if (isCrypto &&
                               isCryptoCompleted &&
@@ -531,8 +538,9 @@ class _ScannedLayoutSheetState extends ConsumerState<ScannedLayoutSheet>
                           else if (isCrypto && isCryptoFailed)
                             _buildErrorBox(
                               widget.cryptoScan?.error ??
-                                  'Unable to scan this crypto wallet.',
+                                  l10n.unableToScanWallet,
                               isDark,
+                              l10n,
                             ),
                           const SizedBox(height: 20),
                         ],
@@ -551,7 +559,7 @@ class _ScannedLayoutSheetState extends ConsumerState<ScannedLayoutSheet>
     );
   }
 
-  Widget _buildErrorBox(String message, bool isDark) {
+  Widget _buildErrorBox(String message, bool isDark, AppLocalizations l10n) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
       child: Container(
@@ -580,9 +588,9 @@ class _ScannedLayoutSheetState extends ConsumerState<ScannedLayoutSheet>
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
-                    'Scan Error',
-                    style: TextStyle(
+                  Text(
+                    l10n.scanError,
+                    style: const TextStyle(
                       fontSize: 15,
                       fontWeight: FontWeight.w800,
                       color: AppColors.malicious,

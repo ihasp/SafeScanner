@@ -55,6 +55,10 @@ class SettingsNotifier extends Notifier<AppSettings> {
   void setApiPollingRate(int rate) {
     _update(state.copyWith(apiPollingRate: rate));
   }
+
+  void setLanguageCode(String? languageCode) {
+    _update(state.copyWith(languageCode: languageCode));
+  }
 }
 
 final settingsProvider = NotifierProvider<SettingsNotifier, AppSettings>(

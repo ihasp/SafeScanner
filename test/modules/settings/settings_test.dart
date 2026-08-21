@@ -30,6 +30,7 @@ void main() {
       expect(initialSettings.hapticsEnabled, isTrue);
       expect(initialSettings.autoOpenSafeLinks, isFalse);
       expect(initialSettings.historySizeLimit, equals(20));
+      expect(initialSettings.languageCode, isNull);
 
       container
           .read(settingsProvider.notifier)
@@ -44,6 +45,12 @@ void main() {
 
       container.read(settingsProvider.notifier).setHistorySizeLimit(5);
       expect(container.read(settingsProvider).historySizeLimit, equals(5));
+
+      container.read(settingsProvider.notifier).setLanguageCode('pl');
+      expect(container.read(settingsProvider).languageCode, equals('pl'));
+
+      container.read(settingsProvider.notifier).setLanguageCode(null);
+      expect(container.read(settingsProvider).languageCode, isNull);
     });
   });
 }

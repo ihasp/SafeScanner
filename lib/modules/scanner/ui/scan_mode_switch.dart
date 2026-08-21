@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import '../../../constants/app_colors.dart';
-import '../../../constants/app_constants.dart';
+import '../../../shared/constants/app_colors.dart';
+import '../../../shared/constants/app_constants.dart';
 import '../../../shared/models/scan_mode.dart';
 
 class ScanModeSwitch extends StatelessWidget {

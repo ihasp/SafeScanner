@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 
-import '../../../constants/app_constants.dart';
+import '../../../shared/constants/app_constants.dart';
 import '../../../routing/tab_scaffold.dart';
 import '../../../shared/models/scan_mode.dart';
 import '../../../shared/services/haptic_service.dart';

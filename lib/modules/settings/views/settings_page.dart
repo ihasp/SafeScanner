@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../constants/app_colors.dart';
+import '../../../l10n/l10n.dart';
+import '../../../shared/constants/app_colors.dart';
 import '../../../shared/models/scan_mode.dart';
 import '../models/app_settings.dart';
 import '../providers/settings_notifier.dart';
@@ -17,6 +18,7 @@ class SettingsPage extends ConsumerWidget {
     final settings = ref.watch(settingsProvider);
     final notifier = ref.read(settingsProvider.notifier);
     final textColor = isDark ? AppColors.textDark : AppColors.textLight;
+    final l10n = context.l10n;
 
     return Scaffold(
       backgroundColor: isDark ? AppColors.surfaceDark : Colors.white,
@@ -35,7 +37,7 @@ class SettingsPage extends ConsumerWidget {
             const SizedBox(height: 12),
             Center(
               child: Text(
-                'Settings',
+                l10n.settingsTitle,
                 style: TextStyle(
                   fontSize: 28,
                   fontWeight: FontWeight.bold,
@@ -45,9 +47,63 @@ class SettingsPage extends ConsumerWidget {
             ),
             const SizedBox(height: 32),
 
+            // Language Section / Setting
+            SettingRow(
+              title: l10n.language,
+              subtitle: l10n.languageSubtitle,
+              trailing: Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: 2,
+                ),
+                decoration: BoxDecoration(
+                  color: isDark
+                      ? const Color(0xFF24272B)
+                      : const Color(0xFFF1F5F9),
+                  borderRadius: BorderRadius.circular(10),
+                  border: Border.all(
+                    color: isDark ? AppColors.borderDark : AppColors.border,
+                  ),
+                ),
+                child: DropdownButtonHideUnderline(
+                  child: DropdownButton<String?>(
+                    value: settings.languageCode,
+                    dropdownColor: isDark
+                        ? const Color(0xFF24272B)
+                        : Colors.white,
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                      color: isDark ? AppColors.textDark : AppColors.textLight,
+                    ),
+                    icon: const Icon(
+                      Icons.arrow_drop_down_rounded,
+                      color: AppColors.primary,
+                    ),
+                    items: [
+                      DropdownMenuItem(
+                        value: null,
+                        child: Text(l10n.systemLanguage),
+                      ),
+                      DropdownMenuItem(value: 'en', child: Text(l10n.langEn)),
+                      DropdownMenuItem(value: 'pl', child: Text(l10n.langPl)),
+                      DropdownMenuItem(value: 'es', child: Text(l10n.langEs)),
+                      DropdownMenuItem(value: 'de', child: Text(l10n.langDe)),
+                      DropdownMenuItem(value: 'fr', child: Text(l10n.langFr)),
+                      DropdownMenuItem(value: 'it', child: Text(l10n.langIt)),
+                      DropdownMenuItem(value: 'pt', child: Text(l10n.langPt)),
+                    ],
+                    onChanged: notifier.setLanguageCode,
+                  ),
+                ),
+              ),
+            ),
+
+            const SizedBox(height: 20),
+
             // Scanner Preferences Section
             Text(
-              'Scanner Preferences',
+              l10n.scannerPreferences,
               style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
@@ -57,32 +113,41 @@ class SettingsPage extends ConsumerWidget {
             const SizedBox(height: 12),
 
             SettingRow(
-              title: 'Default Camera',
+              title: l10n.defaultCamera,
               trailing: SegmentButtonGroup<AppCameraFacing>(
                 selectedValue: settings.defaultCameraFacing,
-                items: const [
-                  SegmentItem(value: AppCameraFacing.back, label: 'Back'),
-                  SegmentItem(value: AppCameraFacing.front, label: 'Front'),
+                items: [
+                  SegmentItem(
+                    value: AppCameraFacing.back,
+                    label: l10n.cameraBack,
+                  ),
+                  SegmentItem(
+                    value: AppCameraFacing.front,
+                    label: l10n.cameraFront,
+                  ),
                 ],
                 onSelected: notifier.setDefaultCameraFacing,
               ),
             ),
 
             SettingRow(
-              title: 'Default Scan Mode',
+              title: l10n.defaultScanMode,
               trailing: SegmentButtonGroup<ScanMode>(
                 selectedValue: settings.defaultScanMode,
-                items: const [
-                  SegmentItem(value: ScanMode.qr, label: 'QR'),
-                  SegmentItem(value: ScanMode.crypto, label: 'Crypto'),
+                items: [
+                  SegmentItem(value: ScanMode.qr, label: l10n.scanModeQr),
+                  SegmentItem(
+                    value: ScanMode.crypto,
+                    label: l10n.scanModeCrypto,
+                  ),
                 ],
                 onSelected: notifier.setDefaultScanMode,
               ),
             ),
 
             SettingRow(
-              title: 'Haptics on Scan',
-              subtitle: 'Vibrate on success/error',
+              title: l10n.hapticsOnScan,
+              subtitle: l10n.hapticsSubtitle,
               trailing: Switch.adaptive(
                 value: settings.hapticsEnabled,
                 onChanged: notifier.setHapticsEnabled,
@@ -91,8 +156,8 @@ class SettingsPage extends ConsumerWidget {
             ),
 
             SettingRow(
-              title: 'Auto-Open Safe Links',
-              subtitle: 'Open browser if 0 flags',
+              title: l10n.autoOpenSafeLinks,
+              subtitle: l10n.autoOpenSubtitle,
               trailing: Switch.adaptive(
                 value: settings.autoOpenSafeLinks,
                 onChanged: notifier.setAutoOpenSafeLinks,
