@@ -46,6 +46,8 @@ class _ScannedLayoutSheetState extends ConsumerState<ScannedLayoutSheet>
   late final AnimationController _slideController;
   late final Animation<Offset> _slideAnimation;
 
+  static const int _maxPollAttempts = 30;
+
   Timer? _pollingTimer;
   Timer? _glowTimer;
   bool _isPolling = false;
@@ -53,6 +55,8 @@ class _ScannedLayoutSheetState extends ConsumerState<ScannedLayoutSheet>
   GlowSeverity _glowSeverity = GlowSeverity.safe;
   bool _hasTriggeredGlow = false;
   bool _hasOpenedAutoLink = false;
+  bool _isTimedOut = false;
+  int _pollAttempts = 0;
 
   @override
   void initState() {
@@ -76,6 +80,8 @@ class _ScannedLayoutSheetState extends ConsumerState<ScannedLayoutSheet>
     if (oldWidget.data != widget.data) {
       _hasTriggeredGlow = false;
       _hasOpenedAutoLink = false;
+      _isTimedOut = false;
+      _pollAttempts = 0;
     }
     _onWidgetUpdated();
   }
@@ -86,10 +92,12 @@ class _ScannedLayoutSheetState extends ConsumerState<ScannedLayoutSheet>
     if (widget.scanMode == ScanMode.qr) {
       final isCompleted =
           widget.analysis?.data.attributes.status == AnalysisStatus.completed;
+      final isFailed =
+          widget.analysis?.data.attributes.status == AnalysisStatus.failed;
 
       if (isCompleted) {
         _applyGlowState(widget.analysis);
-      } else {
+      } else if (!isFailed) {
         _startPolling(settings.apiPollingRate);
       }
     } else {
@@ -103,10 +111,12 @@ class _ScannedLayoutSheetState extends ConsumerState<ScannedLayoutSheet>
     if (widget.scanMode == ScanMode.qr) {
       final isCompleted =
           widget.analysis?.data.attributes.status == AnalysisStatus.completed;
+      final isFailed =
+          widget.analysis?.data.attributes.status == AnalysisStatus.failed;
 
-      if (isCompleted) {
+      if (isCompleted || isFailed || _isTimedOut) {
         _pollingTimer?.cancel();
-        if (!_hasTriggeredGlow) {
+        if (isCompleted && !_hasTriggeredGlow) {
           _applyGlowState(widget.analysis);
         }
       }
@@ -120,6 +130,8 @@ class _ScannedLayoutSheetState extends ConsumerState<ScannedLayoutSheet>
 
   void _startPolling(int pollingRate) {
     _pollingTimer?.cancel();
+    _pollAttempts = 0;
+    _isTimedOut = false;
     _pollingTimer = Timer.periodic(Duration(milliseconds: pollingRate), (
       timer,
     ) {
@@ -131,18 +143,33 @@ class _ScannedLayoutSheetState extends ConsumerState<ScannedLayoutSheet>
     if (_isPolling) return;
     final isCompleted =
         widget.analysis?.data.attributes.status == AnalysisStatus.completed;
-    if (isCompleted) {
+    final isFailed =
+        widget.analysis?.data.attributes.status == AnalysisStatus.failed;
+
+    if (isCompleted || isFailed || _isTimedOut) {
       timer.cancel();
-      if (!_hasTriggeredGlow) {
+      if (isCompleted && !_hasTriggeredGlow) {
         _triggerGlow(widget.analysis);
       }
-    } else {
-      _isPolling = true;
-      try {
-        await widget.onRetry();
-      } finally {
-        _isPolling = false;
+      return;
+    }
+
+    _pollAttempts++;
+    if (_pollAttempts >= _maxPollAttempts) {
+      timer.cancel();
+      if (mounted) {
+        setState(() {
+          _isTimedOut = true;
+        });
       }
+      return;
+    }
+
+    _isPolling = true;
+    try {
+      await widget.onRetry();
+    } finally {
+      _isPolling = false;
     }
   }
 
@@ -240,6 +267,7 @@ class _ScannedLayoutSheetState extends ConsumerState<ScannedLayoutSheet>
     final isUrlCompleted =
         widget.analysis?.data.attributes.status == AnalysisStatus.completed;
     final isUrlFailed =
+        _isTimedOut ||
         widget.analysis?.data.attributes.status == AnalysisStatus.failed;
 
     final isCryptoCompleted =
@@ -486,19 +514,13 @@ class _ScannedLayoutSheetState extends ConsumerState<ScannedLayoutSheet>
                               ),
                           ] else if (!isCrypto &&
                               isUrlFailed &&
-                              widget.analysis != null)
-                            Padding(
-                              padding: const EdgeInsets.all(24),
-                              child: Text(
-                                widget.analysis!.error ??
-                                    'Unable to scan this link.',
-                                textAlign: TextAlign.center,
-                                style: const TextStyle(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w700,
-                                  color: AppColors.malicious,
-                                ),
-                              ),
+                              (widget.analysis != null || _isTimedOut))
+                            _buildErrorBox(
+                              _isTimedOut
+                                  ? 'Analysis timed out. The service is taking longer than expected.'
+                                  : (widget.analysis?.error ??
+                                        'Unable to scan this link.'),
+                              isDark,
                             )
                           else if (isCrypto &&
                               isCryptoCompleted &&
@@ -507,18 +529,10 @@ class _ScannedLayoutSheetState extends ConsumerState<ScannedLayoutSheet>
                               scan: widget.cryptoScan!.result!,
                             )
                           else if (isCrypto && isCryptoFailed)
-                            Padding(
-                              padding: const EdgeInsets.all(24),
-                              child: Text(
-                                widget.cryptoScan?.error ??
-                                    'Unable to scan this crypto wallet.',
-                                textAlign: TextAlign.center,
-                                style: const TextStyle(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w700,
-                                  color: AppColors.malicious,
-                                ),
-                              ),
+                            _buildErrorBox(
+                              widget.cryptoScan?.error ??
+                                  'Unable to scan this crypto wallet.',
+                              isDark,
                             ),
                           const SizedBox(height: 20),
                         ],
@@ -534,6 +548,63 @@ class _ScannedLayoutSheetState extends ConsumerState<ScannedLayoutSheet>
           child: GlowOverlayView(severity: _glowSeverity, visible: _showGlow),
         ),
       ],
+    );
+  }
+
+  Widget _buildErrorBox(String message, bool isDark) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: isDark
+              ? AppColors.malicious.withAlpha(30)
+              : AppColors.maliciousBg,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(
+            color: isDark
+                ? AppColors.malicious.withAlpha(80)
+                : AppColors.malicious.withAlpha(60),
+          ),
+        ),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Icon(
+              Icons.error_outline_rounded,
+              color: AppColors.malicious,
+              size: 28,
+            ),
+            const SizedBox(width: 14),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    'Scan Error',
+                    style: TextStyle(
+                      fontSize: 15,
+                      fontWeight: FontWeight.w800,
+                      color: AppColors.malicious,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    message,
+                    style: TextStyle(
+                      fontSize: 13,
+                      height: 1.35,
+                      color: isDark
+                          ? const Color(0xFFE2E8F0)
+                          : const Color(0xFF334155),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

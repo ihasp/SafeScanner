@@ -50,55 +50,93 @@ class GlassTabBar extends StatelessWidget {
                 ),
               ],
             ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: List.generate(items.length, (index) {
-                final item = items[index];
-                final isFocused = selectedIndex == index;
+            child: Stack(
+              children: [
+                if (items.isNotEmpty)
+                  Positioned.fill(
+                    child: LayoutBuilder(
+                      builder: (context, constraints) {
+                        final tabWidth = constraints.maxWidth / items.length;
+                        final safeIndex = selectedIndex.clamp(
+                          0,
+                          items.length - 1,
+                        );
 
-                return Expanded(
-                  child: GestureDetector(
-                    onTap: () => onTabSelected(index),
-                    behavior: HitTestBehavior.opaque,
-                    child: AnimatedContainer(
-                      duration: const Duration(milliseconds: 200),
-                      padding: const EdgeInsets.symmetric(vertical: 6),
-                      decoration: BoxDecoration(
-                        color: isFocused
-                            ? (isDark
-                                  ? Colors.white.withAlpha(30)
-                                  : AppColors.primary.withAlpha(30))
-                            : Colors.transparent,
-                        borderRadius: BorderRadius.circular(100),
-                      ),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Icon(
-                            item.icon,
-                            size: 22,
-                            color: isFocused
-                                ? AppColors.primary
-                                : AppColors.textSecondary,
-                          ),
-                          const SizedBox(height: 2),
-                          Text(
-                            item.label,
-                            style: TextStyle(
-                              fontSize: 10,
-                              fontWeight: FontWeight.w600,
-                              letterSpacing: 0.3,
-                              color: isFocused
-                                  ? AppColors.primary
-                                  : AppColors.textSecondary,
+                        return Stack(
+                          children: [
+                            AnimatedPositioned(
+                              duration: const Duration(milliseconds: 250),
+                              curve: Curves.easeOutCubic,
+                              left: safeIndex * tabWidth,
+                              top: 0,
+                              bottom: 0,
+                              width: tabWidth,
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  color: isDark
+                                      ? Colors.white.withAlpha(30)
+                                      : AppColors.primary.withAlpha(30),
+                                  borderRadius: BorderRadius.circular(100),
+                                ),
+                              ),
                             ),
-                          ),
-                        ],
-                      ),
+                          ],
+                        );
+                      },
                     ),
                   ),
-                );
-              }),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: List.generate(items.length, (index) {
+                    final item = items[index];
+                    final isFocused = selectedIndex == index;
+
+                    return Expanded(
+                      child: GestureDetector(
+                        onTap: () => onTabSelected(index),
+                        behavior: HitTestBehavior.opaque,
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(vertical: 6),
+                          color: Colors.transparent,
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              TweenAnimationBuilder<Color?>(
+                                duration: const Duration(milliseconds: 200),
+                                tween: ColorTween(
+                                  end: isFocused
+                                      ? AppColors.primary
+                                      : AppColors.textSecondary,
+                                ),
+                                builder: (context, color, child) {
+                                  return Icon(
+                                    item.icon,
+                                    size: 22,
+                                    color: color,
+                                  );
+                                },
+                              ),
+                              const SizedBox(height: 2),
+                              AnimatedDefaultTextStyle(
+                                duration: const Duration(milliseconds: 200),
+                                style: TextStyle(
+                                  fontSize: 10,
+                                  fontWeight: FontWeight.w600,
+                                  letterSpacing: 0.3,
+                                  color: isFocused
+                                      ? AppColors.primary
+                                      : AppColors.textSecondary,
+                                ),
+                                child: Text(item.label),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    );
+                  }),
+                ),
+              ],
             ),
           ),
         ),

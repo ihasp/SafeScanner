@@ -17,6 +17,7 @@ import '../../security/ui/scanned_layout_sheet.dart';
 import '../../settings/models/app_settings.dart';
 import '../../settings/providers/settings_notifier.dart';
 import '../logic/qr_payload_parser.dart';
+import '../logic/url_validator.dart';
 import 'scan_mode_switch.dart';
 
 class ScannerView extends ConsumerStatefulWidget {
@@ -120,8 +121,23 @@ class _ScannerViewState extends ConsumerState<ScannerView>
         ref
             .read(scanResultsProvider.notifier)
             .updateUrlScan(_scannedData!, analysis);
-      } catch (_) {}
-      _isRetrying = false;
+      } catch (e) {
+        if (mounted) {
+          final failedAnalysis = Analysis.failed(
+            error: e is Exception
+                ? e.toString().replaceFirst('Exception: ', '')
+                : 'Unable to scan this link.',
+          );
+          setState(() {
+            _analysisData = failedAnalysis;
+          });
+          ref
+              .read(scanResultsProvider.notifier)
+              .updateUrlScan(_scannedData!, failedAnalysis);
+        }
+      } finally {
+        _isRetrying = false;
+      }
     }
   }
 
@@ -186,22 +202,7 @@ class _ScannerViewState extends ConsumerState<ScannerView>
       }
     } else {
       // URL / QR Mode
-      final uri = Uri.tryParse(sanitized);
-      final isLikelyUrl =
-          uri != null &&
-          ((uri.hasScheme &&
-                  (uri.scheme == 'http' ||
-                      uri.scheme == 'https' ||
-                      uri.scheme == 'ftp') &&
-                  uri.host.isNotEmpty) ||
-              (!uri.hasScheme &&
-                  !sanitized.contains('@') &&
-                  !sanitized.contains(' ') &&
-                  !sanitized.contains('\n') &&
-                  !sanitized.startsWith('WIFI:') &&
-                  !sanitized.startsWith('BEGIN:VCARD') &&
-                  RegExp(r'^(?:[a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}(?::\d+)?(?:/.*)?$')
-                      .hasMatch(sanitized)));
+      final isLikelyUrl = UrlValidator.isLikelyUrl(sanitized);
 
       if (!isLikelyUrl) {
         if (!mounted) return;

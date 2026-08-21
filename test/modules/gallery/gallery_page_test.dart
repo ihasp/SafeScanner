@@ -27,7 +27,7 @@ void main() {
 
       // Verify Gallery header
       expect(find.text('Gallery'), findsOneWidget);
-      expect(find.byIcon(Icons.photo_library_outlined), findsOneWidget);
+      expect(find.byIcon(Icons.photo_library_outlined), findsWidgets);
     });
   });
 }

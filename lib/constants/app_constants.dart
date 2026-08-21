@@ -1,5 +1,5 @@
 abstract final class AppConstants {
-  static const String appName = 'Crypto Scanner';
+  static const String appName = 'QR Scanner';
   static const String virustotalApiUrl = 'https://www.virustotal.com/api/v3';
   static const String tatumApiUrl = 'https://api.tatum.io';
 

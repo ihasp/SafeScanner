@@ -8,7 +8,7 @@ try {
 
     dart format .\lib
     dart analyze .\lib
-    dcm analyze .\lib
+    dcm analyze .\lib --fatal-warnings --fatal-style
     flutter test
 
 } catch {

@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:photo_manager/photo_manager.dart';
@@ -11,6 +12,7 @@ import '../../../shared/models/scan_mode.dart';
 import '../../../shared/services/haptic_service.dart';
 import '../../results/providers/scan_results_notifier.dart';
 import '../../scanner/logic/qr_payload_parser.dart';
+import '../../scanner/logic/url_validator.dart';
 import '../../security/logic/address_decoder.dart';
 import '../../security/models/analysis.dart';
 import '../../security/models/crypto_scan_state.dart';
@@ -26,10 +28,12 @@ class GalleryPage extends ConsumerStatefulWidget {
   ConsumerState<GalleryPage> createState() => _GalleryPageState();
 }
 
-class _GalleryPageState extends ConsumerState<GalleryPage> {
+class _GalleryPageState extends ConsumerState<GalleryPage>
+    with WidgetsBindingObserver {
   late final MobileScannerController _scannerController;
   bool _isLoading = true;
   bool _permissionDenied = false;
+  bool _isLimitedPermission = false;
   bool _isAnalyzing = false;
   bool _showScannedLayout = false;
   List<AssetEntity> _assets = [];
@@ -45,43 +49,92 @@ class _GalleryPageState extends ConsumerState<GalleryPage> {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     _scannerController = MobileScannerController(autoStart: false);
+    PhotoManager.addChangeCallback(_onPhotoManagerChange);
     _loadGalleryAssets();
   }
 
   @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    PhotoManager.removeChangeCallback(_onPhotoManagerChange);
     _scannerController.dispose();
     super.dispose();
   }
 
-  Future<void> _loadGalleryAssets() async {
-    setState(() {
-      _isLoading = true;
-      _permissionDenied = false;
-    });
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      _loadGalleryAssets();
+    }
+  }
 
-    final permission = await PhotoManager.requestPermissionExtend();
-    if (!permission.isAuth && !permission.hasAccess) {
+  void _onPhotoManagerChange(MethodCall call) {
+    if (mounted) {
+      _loadGalleryAssets();
+    }
+  }
+
+  Future<void> _openLimitedMediaPicker() async {
+    try {
+      await PhotoManager.presentLimited();
+      if (mounted) {
+        await _loadGalleryAssets();
+      }
+    } catch (_) {}
+  }
+
+  Future<void> _loadGalleryAssets() async {
+    if (_assets.isEmpty) {
+      setState(() {
+        _isLoading = true;
+        _permissionDenied = false;
+      });
+    }
+
+    final permission = await PhotoManager.requestPermissionExtend(
+      requestOption: const PermissionRequestOption(
+        androidPermission: AndroidPermission(
+          type: RequestType.image,
+          mediaLocation: false,
+        ),
+      ),
+    );
+    final hasAccess = permission.isAuth || permission.hasAccess;
+    final isLimited = permission == PermissionState.limited;
+
+    if (!hasAccess) {
       if (mounted) {
         setState(() {
           _isLoading = false;
           _permissionDenied = true;
+          _isLimitedPermission = false;
+          _selectedAsset = null;
         });
       }
       return;
     }
 
     try {
+      final filterOption = FilterOptionGroup(
+        orders: [
+          const OrderOption(type: OrderOptionType.createDate, asc: false),
+        ],
+      );
+
       final paths = await PhotoManager.getAssetPathList(
         type: RequestType.image,
         onlyAll: true,
+        filterOption: filterOption,
       );
 
       if (paths.isEmpty) {
         if (mounted) {
           setState(() {
             _assets = [];
+            _selectedAsset = null;
+            _isLimitedPermission = isLimited;
             _isLoading = false;
           });
         }
@@ -89,23 +142,38 @@ class _GalleryPageState extends ConsumerState<GalleryPage> {
       }
 
       // Load assets ordered from newest to oldest
-      final recentAlbum = paths.first;
+      final recentAlbum = paths.firstWhere(
+        (p) => p.isAll,
+        orElse: () => paths.first,
+      );
       final assetCount = await recentAlbum.assetCountAsync;
       final assets = await recentAlbum.getAssetListPaged(
         page: 0,
         size: assetCount > 120 ? 120 : assetCount,
       );
 
+      assets.sort((a, b) {
+        final cmp = b.createDateTime.compareTo(a.createDateTime);
+        if (cmp != 0) return cmp;
+        return b.modifiedDateTime.compareTo(a.modifiedDateTime);
+      });
+
       if (mounted) {
         setState(() {
           _assets = assets;
+          _isLimitedPermission = isLimited;
           _isLoading = false;
+          if (_selectedAsset != null &&
+              !_assets.any((a) => a.id == _selectedAsset!.id)) {
+            _selectedAsset = null;
+          }
         });
       }
     } catch (_) {
       if (mounted) {
         setState(() {
           _isLoading = false;
+          _isLimitedPermission = isLimited;
           _permissionDenied = true;
         });
       }
@@ -142,8 +210,23 @@ class _GalleryPageState extends ConsumerState<GalleryPage> {
         ref
             .read(scanResultsProvider.notifier)
             .updateUrlScan(_scannedData!, analysis);
-      } catch (_) {}
-      _isRetrying = false;
+      } catch (e) {
+        if (mounted) {
+          final failedAnalysis = Analysis.failed(
+            error: e is Exception
+                ? e.toString().replaceFirst('Exception: ', '')
+                : 'Unable to scan this link.',
+          );
+          setState(() {
+            _analysisData = failedAnalysis;
+          });
+          ref
+              .read(scanResultsProvider.notifier)
+              .updateUrlScan(_scannedData!, failedAnalysis);
+        }
+      } finally {
+        _isRetrying = false;
+      }
     }
   }
 
@@ -207,9 +290,17 @@ class _GalleryPageState extends ConsumerState<GalleryPage> {
   Future<void> _onBarcodeScanned(String rawData) async {
     final sanitized = QrPayloadParser.sanitize(rawData);
     if (sanitized.isEmpty) {
-      setState(() {
-        _isAnalyzing = false;
-      });
+      if (mounted) {
+        setState(() {
+          _isAnalyzing = false;
+        });
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Scanned QR code contains no readable content.'),
+            duration: Duration(seconds: 3),
+          ),
+        );
+      }
       return;
     }
 
@@ -267,22 +358,7 @@ class _GalleryPageState extends ConsumerState<GalleryPage> {
         }
       }
     } else {
-      final uri = Uri.tryParse(sanitized);
-      final isLikelyUrl =
-          uri != null &&
-          ((uri.hasScheme &&
-                  (uri.scheme == 'http' ||
-                      uri.scheme == 'https' ||
-                      uri.scheme == 'ftp') &&
-                  uri.host.isNotEmpty) ||
-              (!uri.hasScheme &&
-                  !sanitized.contains('@') &&
-                  !sanitized.contains(' ') &&
-                  !sanitized.contains('\n') &&
-                  !sanitized.startsWith('WIFI:') &&
-                  !sanitized.startsWith('BEGIN:VCARD') &&
-                  RegExp(r'^(?:[a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}(?::\d+)?(?:/.*)?$')
-                      .hasMatch(sanitized)));
+      final isLikelyUrl = UrlValidator.isLikelyUrl(sanitized);
 
       if (!isLikelyUrl) {
         if (!mounted) return;
@@ -368,7 +444,7 @@ class _GalleryPageState extends ConsumerState<GalleryPage> {
                     ),
                   ),
                 ),
-                const SizedBox(height: 20),
+                const SizedBox(height: 16),
                 Expanded(
                   child: _isLoading
                       ? const Center(
@@ -380,7 +456,7 @@ class _GalleryPageState extends ConsumerState<GalleryPage> {
                       ? _buildPermissionView(isDark)
                       : _assets.isEmpty
                       ? _buildEmptyView(isDark)
-                      : _buildThumbnailGrid(bottomInset),
+                      : _buildThumbnailGrid(bottomInset, isDark),
                 ),
               ],
             ),
@@ -462,63 +538,144 @@ class _GalleryPageState extends ConsumerState<GalleryPage> {
     );
   }
 
-  Widget _buildThumbnailGrid(double bottomInset) {
-    return GridView.builder(
-      padding: EdgeInsets.only(
-        left: 12,
-        right: 12,
-        top: 4,
-        bottom: bottomInset + 150,
-      ),
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 3,
-        crossAxisSpacing: 6,
-        mainAxisSpacing: 6,
-      ),
-      itemCount: _assets.length,
-      itemBuilder: (context, index) {
-        final asset = _assets[index];
-        final isSelected = _selectedAsset?.id == asset.id;
+  Widget _buildThumbnailGrid(double bottomInset, bool isDark) {
+    final showAddTile = _isLimitedPermission;
+    final totalCount = _assets.length + (showAddTile ? 1 : 0);
 
-        return GestureDetector(
-          onTap: () {
-            setState(() {
-              _selectedAsset = isSelected ? null : asset;
-            });
-          },
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(8),
-            child: Stack(
-              fit: StackFit.expand,
-              children: [
-                AssetThumbnail(asset: asset),
-                if (isSelected) ...[
-                  Container(
-                    decoration: BoxDecoration(
-                      color: AppColors.primary.withAlpha(80),
-                      border: Border.all(color: AppColors.primary, width: 3.5),
-                      borderRadius: BorderRadius.circular(8),
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 16),
+      decoration: BoxDecoration(
+        color: isDark ? const Color(0xFF1B1D1F) : const Color(0xFFF7F9FB),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(
+          color: isDark ? AppColors.borderDark : AppColors.border,
+          width: 1,
+        ),
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(20),
+        child: GridView.builder(
+          padding: EdgeInsets.only(
+            left: 12,
+            right: 12,
+            top: 12,
+            bottom: bottomInset + 120,
+          ),
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 3,
+            crossAxisSpacing: 8,
+            mainAxisSpacing: 8,
+          ),
+          itemCount: totalCount,
+          itemBuilder: (context, index) {
+            if (showAddTile && index == 0) {
+              return _buildAddPhotosTile(
+                isDark,
+                key: const ValueKey('gallery_add_photos_tile'),
+              );
+            }
+
+            final assetIndex = showAddTile ? index - 1 : index;
+            final asset = _assets[assetIndex];
+            final isSelected = _selectedAsset?.id == asset.id;
+
+            return GestureDetector(
+              key: ValueKey(asset.id),
+              onTap: () {
+                setState(() {
+                  _selectedAsset = isSelected ? null : asset;
+                });
+              },
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(12),
+                child: Stack(
+                  fit: StackFit.expand,
+                  children: [
+                    AssetThumbnail(
+                      key: ValueKey('thumb_${asset.id}'),
+                      asset: asset,
                     ),
-                  ),
-                  const Positioned(
-                    top: 6,
-                    right: 6,
-                    child: CircleAvatar(
-                      radius: 12,
-                      backgroundColor: AppColors.primary,
-                      child: Icon(
-                        Icons.check_rounded,
-                        size: 16,
-                        color: Colors.white,
+                    if (isSelected) ...[
+                      Container(
+                        decoration: BoxDecoration(
+                          color: AppColors.primary.withAlpha(80),
+                          border: Border.all(
+                            color: AppColors.primary,
+                            width: 3.5,
+                          ),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
                       ),
-                    ),
-                  ),
-                ],
-              ],
+                      const Positioned(
+                        top: 6,
+                        right: 6,
+                        child: CircleAvatar(
+                          radius: 12,
+                          backgroundColor: AppColors.primary,
+                          child: Icon(
+                            Icons.check_rounded,
+                            size: 16,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ],
+                ),
+              ),
+            );
+          },
+        ),
+      ),
+    );
+  }
+
+  Widget _buildAddPhotosTile(bool isDark, {Key? key}) {
+    return Material(
+      key: key,
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: () {
+          unawaited(_openLimitedMediaPicker());
+        },
+        borderRadius: BorderRadius.circular(12),
+        child: Container(
+          decoration: BoxDecoration(
+            color: isDark ? const Color(0xFF24272B) : const Color(0xFFEDF2F7),
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(
+              color: isDark ? const Color(0xFF383E48) : const Color(0xFFCBD5E1),
+              width: 1.5,
             ),
           ),
-        );
-      },
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: AppColors.primary.withAlpha(isDark ? 50 : 30),
+                  shape: BoxShape.circle,
+                ),
+                child: const Icon(
+                  Icons.add_photo_alternate_rounded,
+                  color: AppColors.primary,
+                  size: 24,
+                ),
+              ),
+              const SizedBox(height: 6),
+              Text(
+                'Add Photos',
+                style: TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w600,
+                  color: isDark ? AppColors.textDark : AppColors.textLight,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 
@@ -570,6 +727,60 @@ class _GalleryPageState extends ConsumerState<GalleryPage> {
   }
 
   Widget _buildEmptyView(bool isDark) {
+    if (_isLimitedPermission) {
+      return Center(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 32),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Icon(
+                Icons.photo_library_outlined,
+                size: 56,
+                color: AppColors.textSecondary,
+              ),
+              const SizedBox(height: 16),
+              Text(
+                'No Photos Selected',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: isDark ? AppColors.textDark : AppColors.textLight,
+                ),
+              ),
+              const SizedBox(height: 8),
+              const Text(
+                'You gave limited gallery access without selecting any photos. Choose photos from Android gallery to scan them.',
+                textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 14, color: AppColors.textSecondary),
+              ),
+              const SizedBox(height: 24),
+              FilledButton.icon(
+                style: FilledButton.styleFrom(
+                  backgroundColor: AppColors.primary,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+                onPressed: () {
+                  unawaited(_openLimitedMediaPicker());
+                },
+                icon: const Icon(Icons.add_photo_alternate_outlined, size: 18),
+                label: const Text('Select Photos'),
+              ),
+              const SizedBox(height: 12),
+              TextButton(
+                onPressed: () {
+                  unawaited(PhotoManager.openSetting());
+                },
+                child: const Text('Manage in Settings'),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,

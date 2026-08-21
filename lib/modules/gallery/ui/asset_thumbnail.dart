@@ -22,6 +22,16 @@ class _AssetThumbnailState extends State<AssetThumbnail> {
     _loadThumbnail();
   }
 
+  @override
+  void didUpdateWidget(covariant AssetThumbnail oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.asset.id != widget.asset.id) {
+      _bytes = null;
+      _hasError = false;
+      _loadThumbnail();
+    }
+  }
+
   Future<void> _loadThumbnail() async {
     try {
       final bytes = await widget.asset.thumbnailDataWithSize(
