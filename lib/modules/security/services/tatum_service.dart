@@ -59,6 +59,8 @@ class TatumService {
   Future<Object?> _tatumFetch(
     String path, {
     Map<String, String>? queryParams,
+    int retryCount = 1,
+    Duration retryDelay = const Duration(milliseconds: 350),
   }) async {
     final baseUri = Uri.parse(AppConstants.tatumApiUrl);
     final uri = Uri(
@@ -73,6 +75,16 @@ class TatumService {
       uri,
       headers: {'accept': 'application/json', 'x-api-key': _apiKey},
     );
+
+    if (response.statusCode == 429 && retryCount > 0) {
+      await Future<void>.delayed(retryDelay);
+      return _tatumFetch(
+        path,
+        queryParams: queryParams,
+        retryCount: retryCount - 1,
+        retryDelay: retryDelay * 2,
+      );
+    }
 
     _handleStatusCode(response);
 
@@ -146,26 +158,38 @@ class TatumService {
     }
   }
 
-  Future<CryptoWalletScan> getCryptoWalletAnalysis(CryptoWallet wallet) async {
-    final results = await Future.wait([
+  Future<CryptoWalletScan> getCryptoWalletAnalysis(
+    CryptoWallet wallet, {
+    Duration bufferDelay = const Duration(milliseconds: 350),
+  }) async {
+    // Stage 1: Essential checks (malicious threat intelligence & native balance)
+    final stage1Results = await Future.wait([
       getNativeBalance(wallet),
-      getPortfolioBalances(wallet, 'native'),
-      getPortfolioBalances(wallet, 'fungible'),
-      getPortfolioBalances(wallet, 'nft,multitoken'),
       checkMaliciousAddress(wallet),
     ]);
 
-    final nativeBalance = results.first as TatumNativeBalance?;
-    final nativeAssets = results[1] as List<TatumAssetBalance>;
-    final fungibleAssets = results[2] as List<TatumAssetBalance>;
-    final collectibleAssets = results[3] as List<TatumAssetBalance>;
-    final safety = results[4] as TatumMaliciousAddressCheck;
+    final nativeBalance = stage1Results.first as TatumNativeBalance?;
+    final safety = stage1Results[1] as TatumMaliciousAddressCheck;
 
-    final allAssets = <TatumAssetBalance>[
-      ...nativeAssets,
-      ...fungibleAssets,
-      ...collectibleAssets,
-    ];
+    // Stage 2: Token portfolio balances (staggered with rate-limit buffer)
+    var allAssets = <TatumAssetBalance>[];
+    if (_portfolioChains.contains(wallet.chain)) {
+      if (bufferDelay > Duration.zero) {
+        await Future<void>.delayed(bufferDelay);
+      }
+
+      final stage2Results = await Future.wait([
+        getPortfolioBalances(wallet, 'native'),
+        getPortfolioBalances(wallet, 'fungible'),
+        getPortfolioBalances(wallet, 'nft,multitoken'),
+      ]);
+
+      final nativeAssets = stage2Results.first;
+      final fungibleAssets = stage2Results[1];
+      final collectibleAssets = stage2Results[2];
+
+      allAssets = [...nativeAssets, ...fungibleAssets, ...collectibleAssets];
+    }
 
     return CryptoWalletScan(
       wallet: wallet,

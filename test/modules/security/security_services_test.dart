@@ -344,6 +344,39 @@ void main() {
     );
 
     test(
+      '429 Rate Limit Auto-Retry: recovers on second attempt after 429 response',
+      () async {
+        int callCount = 0;
+        final mockClient = MockClient((request) async {
+          callCount++;
+          if (callCount == 1) {
+            return http.Response(
+              jsonEncode({'message': 'Rate limit hit'}),
+              429,
+            );
+          }
+          return http.Response(
+            jsonEncode({
+              'balance': '5.0',
+              'incoming': '10.0',
+              'outgoing': '5.0',
+            }),
+            200,
+          );
+        });
+
+        final service = TatumService(
+          client: mockClient,
+          apiKey: 'test-tatum-key',
+        );
+
+        final balance = await service.getNativeBalance(testWallet);
+        expect(callCount, equals(2));
+        expect(balance?.balance, equals('5.0'));
+      },
+    );
+
+    test(
       '500 Server Error: checkMaliciousAddress fallback returns unknown status',
       () async {
         final mockClient = MockClient((request) async {

@@ -7,6 +7,7 @@ import '../../../l10n/l10n.dart';
 import '../../../shared/constants/app_colors.dart';
 import '../../../shared/helpers/url_open_helper.dart';
 import '../../../shared/models/scan_mode.dart';
+import '../../../shared/services/haptic_service.dart';
 import '../../settings/providers/settings_notifier.dart';
 import '../logic/analysis_status_resolver.dart';
 import '../logic/decision_maker.dart';
@@ -187,6 +188,15 @@ class _ScannedLayoutSheetState extends ConsumerState<ScannedLayoutSheet>
     _showGlow = true;
 
     final settings = ref.read(settingsProvider);
+    switch (resolved.verdict) {
+      case AnalysisVerdict.malicious:
+        HapticService.threat(enabled: settings.hapticsEnabled);
+      case AnalysisVerdict.warning:
+        HapticService.warning(enabled: settings.hapticsEnabled);
+      case AnalysisVerdict.safe:
+        break;
+    }
+
     final isCompleted =
         analysis.data.attributes.status == AnalysisStatus.completed;
     if (settings.autoOpenSafeLinks &&
@@ -218,6 +228,13 @@ class _ScannedLayoutSheetState extends ConsumerState<ScannedLayoutSheet>
         ? GlowSeverity.safe
         : (isMalicious ? GlowSeverity.malicious : GlowSeverity.warning);
     _showGlow = true;
+
+    final settings = ref.read(settingsProvider);
+    if (isMalicious) {
+      HapticService.threat(enabled: settings.hapticsEnabled);
+    } else if (!isSafe) {
+      HapticService.warning(enabled: settings.hapticsEnabled);
+    }
 
     _glowTimer?.cancel();
     _glowTimer = Timer(const Duration(milliseconds: 2000), () {
