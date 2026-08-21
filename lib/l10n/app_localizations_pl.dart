@@ -147,7 +147,7 @@ class AppLocalizationsPl extends AppLocalizations {
       'Zeskanowany kod QR nie zawiera czytelnej treści.';
 
   @override
-  String get scanResults => 'Wyniki skanowania';
+  String get scanResults => 'Wyniki skanowań';
 
   @override
   String get removeAllResults => 'Usuń wszystkie wyniki';
@@ -157,7 +157,7 @@ class AppLocalizationsPl extends AppLocalizations {
 
   @override
   String get removeAllResultsContent =>
-      'Spowoduje to trwałe usunięcie wszystkich wyników skanowania. Tej operacji nie można cofnąć.';
+      'Spowoduje to trwałe usunięcie wszystkich wyników skanowań. Tej operacji nie można cofnąć.';
 
   @override
   String get cancel => 'Anuluj';
@@ -166,7 +166,7 @@ class AppLocalizationsPl extends AppLocalizations {
   String get removeAll => 'Usuń wszystkie';
 
   @override
-  String get allResultsRemoved => 'Usunięto wszystkie wyniki skanowania.';
+  String get allResultsRemoved => 'Usunięto wszystkie wyniki skanowań';
 
   @override
   String get noScanResultsYet => 'Brak wyników skanowania';
