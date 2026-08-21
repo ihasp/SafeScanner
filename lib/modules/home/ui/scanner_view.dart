@@ -283,6 +283,8 @@ class _ScannerViewState extends ConsumerState<ScannerView>
       }
     });
 
+    final bottomInset = MediaQuery.of(context).padding.bottom;
+
     return Stack(
       children: [
         // Camera View
@@ -305,7 +307,7 @@ class _ScannerViewState extends ConsumerState<ScannerView>
         // QR / Crypto Switch at bottom center
         if (!_showScannedLayout)
           Positioned(
-            bottom: 100,
+            bottom: bottomInset + 88,
             left: 0,
             right: 0,
             child: Center(

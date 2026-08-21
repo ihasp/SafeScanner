@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../constants/app_colors.dart';
 import '../../../shared/models/scan_mode.dart';
-import '../../results/providers/scan_results_notifier.dart';
 import '../models/app_settings.dart';
 import '../providers/settings_notifier.dart';
 import '../ui/segment_button_group.dart';
@@ -11,38 +10,6 @@ import '../ui/setting_row.dart';
 
 class SettingsPage extends ConsumerWidget {
   const SettingsPage({super.key});
-
-  Future<void> _confirmClearHistory(BuildContext context, WidgetRef ref) async {
-    final confirmed = await showDialog<bool>(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        title: const Text('Clear Scan History?'),
-        content: const Text(
-          'This will permanently delete all saved scan results from this device. This action cannot be undone.',
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(ctx).pop(false),
-            child: const Text('Cancel'),
-          ),
-          FilledButton(
-            style: FilledButton.styleFrom(backgroundColor: AppColors.malicious),
-            onPressed: () => Navigator.of(ctx).pop(true),
-            child: const Text('Delete All'),
-          ),
-        ],
-      ),
-    );
-
-    if (confirmed == true) {
-      ref.read(scanResultsProvider.notifier).clearScans();
-      if (context.mounted) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(const SnackBar(content: Text('Scan history cleared.')));
-      }
-    }
-  }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -130,78 +97,6 @@ class SettingsPage extends ConsumerWidget {
                 value: settings.autoOpenSafeLinks,
                 onChanged: notifier.setAutoOpenSafeLinks,
                 activeTrackColor: AppColors.primary,
-              ),
-            ),
-
-            SettingRow(
-              title: 'Polling Interval',
-              subtitle: 'API check rate',
-              trailing: SegmentButtonGroup<int>(
-                selectedValue: settings.apiPollingRate,
-                items: const [
-                  SegmentItem(value: 500, label: '0.5s'),
-                  SegmentItem(value: 1000, label: '1s'),
-                  SegmentItem(value: 3000, label: '3s'),
-                ],
-                onSelected: notifier.setApiPollingRate,
-              ),
-            ),
-
-            const SizedBox(height: 32),
-
-            // Privacy & History Section
-            Text(
-              'Privacy & History',
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-                color: textColor,
-              ),
-            ),
-            const SizedBox(height: 12),
-
-            SettingRow(
-              title: 'Incognito Mode',
-              subtitle: 'Do not save scans to history',
-              trailing: Switch.adaptive(
-                value: settings.incognitoMode,
-                onChanged: notifier.setIncognitoMode,
-                activeTrackColor: AppColors.primary,
-              ),
-            ),
-
-            SettingRow(
-              title: 'History Size',
-              subtitle: 'Max saved scans',
-              trailing: SegmentButtonGroup<int>(
-                selectedValue: settings.historySizeLimit,
-                items: const [
-                  SegmentItem(value: 5, label: '5'),
-                  SegmentItem(value: 10, label: '10'),
-                  SegmentItem(value: 20, label: '20'),
-                ],
-                onSelected: notifier.setHistorySizeLimit,
-              ),
-            ),
-
-            SettingRow(
-              title: 'Clear Scan History',
-              subtitle: 'Permanently remove all saved results',
-              trailing: OutlinedButton.icon(
-                style: OutlinedButton.styleFrom(
-                  foregroundColor: AppColors.malicious,
-                  side: const BorderSide(color: AppColors.malicious),
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 12,
-                    vertical: 8,
-                  ),
-                ),
-                onPressed: () => _confirmClearHistory(context, ref),
-                icon: const Icon(Icons.delete_outline_rounded, size: 18),
-                label: const Text(
-                  'Remove All',
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
-                ),
               ),
             ),
 

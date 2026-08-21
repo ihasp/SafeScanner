@@ -89,7 +89,22 @@ abstract final class AnalysisStatusResolver {
     final hasDangerous =
         maliciousCount > 0 || phishingCount > 0 || suspiciousCount > 0;
     final riskCount = maliciousCount + phishingCount + suspiciousCount;
-    final isSafe = isCompleted && !hasDangerous;
+
+    final AnalysisVerdict verdict;
+    if (maliciousCount >= 2) {
+      verdict = AnalysisVerdict.malicious;
+    } else if (maliciousCount == 1 ||
+        phishingCount > 0 ||
+        suspiciousCount > 0) {
+      verdict = AnalysisVerdict.warning;
+    } else {
+      verdict = AnalysisVerdict.safe;
+    }
+
+    final isSafe = isCompleted && verdict == AnalysisVerdict.safe;
+    final isWarning = isCompleted && verdict == AnalysisVerdict.warning;
+    final isMalicious = isCompleted && verdict == AnalysisVerdict.malicious;
+    final canOpenLink = isCompleted && verdict != AnalysisVerdict.malicious;
 
     return ResolvedAnalysisStatus(
       sortedResults: formattedList,
@@ -103,10 +118,16 @@ abstract final class AnalysisStatusResolver {
       riskCount: riskCount,
       hasDangerousResults: hasDangerous,
       isSafe: isSafe,
+      isWarning: isWarning,
+      isMalicious: isMalicious,
+      canOpenLink: canOpenLink,
+      verdict: verdict,
       status: analysis.data.attributes.status,
     );
   }
 }
+
+enum AnalysisVerdict { safe, warning, malicious }
 
 class FormattedEngineResult {
   final String key;
@@ -144,6 +165,10 @@ class ResolvedAnalysisStatus {
   final int riskCount;
   final bool hasDangerousResults;
   final bool isSafe;
+  final bool isWarning;
+  final bool isMalicious;
+  final bool canOpenLink;
+  final AnalysisVerdict verdict;
   final AnalysisStatus status;
 
   const ResolvedAnalysisStatus({
@@ -152,6 +177,10 @@ class ResolvedAnalysisStatus {
     required this.riskCount,
     required this.hasDangerousResults,
     required this.isSafe,
+    required this.isWarning,
+    required this.isMalicious,
+    required this.canOpenLink,
+    required this.verdict,
     required this.status,
   });
 }

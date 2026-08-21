@@ -11,6 +11,7 @@ import '../../../shared/models/scan_mode.dart';
 import '../../home/models/crypto_scan_state.dart';
 import '../../settings/providers/settings_notifier.dart';
 import '../models/Analysis.dart';
+import '../models/tatum_chain.dart';
 import 'crypto_wallet_results_view.dart';
 import 'custom_flatlist_view.dart';
 import 'glow_overlay_view.dart';
@@ -49,7 +50,7 @@ class _ScannedLayoutSheetState extends ConsumerState<ScannedLayoutSheet>
   Timer? _glowTimer;
   bool _isPolling = false;
   bool _showGlow = false;
-  bool _glowIsSafe = true;
+  GlowSeverity _glowSeverity = GlowSeverity.safe;
   bool _hasTriggeredGlow = false;
   bool _hasOpenedAutoLink = false;
 
@@ -85,10 +86,8 @@ class _ScannedLayoutSheetState extends ConsumerState<ScannedLayoutSheet>
     if (widget.scanMode == ScanMode.qr) {
       final isCompleted =
           widget.analysis?.data.attributes.status == AnalysisStatus.completed;
-      final hasResults =
-          widget.analysis?.data.attributes.results.isNotEmpty ?? false;
 
-      if (isCompleted || hasResults) {
+      if (isCompleted) {
         _applyGlowState(widget.analysis);
       } else {
         _startPolling(settings.apiPollingRate);
@@ -104,13 +103,9 @@ class _ScannedLayoutSheetState extends ConsumerState<ScannedLayoutSheet>
     if (widget.scanMode == ScanMode.qr) {
       final isCompleted =
           widget.analysis?.data.attributes.status == AnalysisStatus.completed;
-      final hasResults =
-          widget.analysis?.data.attributes.results.isNotEmpty ?? false;
 
-      if (isCompleted || hasResults) {
-        if (isCompleted) {
-          _pollingTimer?.cancel();
-        }
+      if (isCompleted) {
+        _pollingTimer?.cancel();
         if (!_hasTriggeredGlow) {
           _applyGlowState(widget.analysis);
         }
@@ -156,7 +151,11 @@ class _ScannedLayoutSheetState extends ConsumerState<ScannedLayoutSheet>
     _hasTriggeredGlow = true;
 
     final resolved = AnalysisStatusResolver.resolve(analysis);
-    _glowIsSafe = resolved.isSafe;
+    _glowSeverity = switch (resolved.verdict) {
+      AnalysisVerdict.safe => GlowSeverity.safe,
+      AnalysisVerdict.warning => GlowSeverity.warning,
+      AnalysisVerdict.malicious => GlowSeverity.malicious,
+    };
     _showGlow = true;
 
     final settings = ref.read(settingsProvider);
@@ -185,7 +184,11 @@ class _ScannedLayoutSheetState extends ConsumerState<ScannedLayoutSheet>
     _hasTriggeredGlow = true;
 
     final isSafe = DecisionMaker.isWalletSafe(cryptoState!.result!);
-    _glowIsSafe = isSafe;
+    final isMalicious =
+        cryptoState.result!.safety.status == MaliciousCheckStatus.invalid;
+    _glowSeverity = isSafe
+        ? GlowSeverity.safe
+        : (isMalicious ? GlowSeverity.malicious : GlowSeverity.warning);
     _showGlow = true;
 
     _glowTimer?.cancel();
@@ -231,10 +234,9 @@ class _ScannedLayoutSheetState extends ConsumerState<ScannedLayoutSheet>
         ? AnalysisStatusResolver.resolve(widget.analysis!)
         : null;
 
-    final canOpenLink = !isCrypto && resolvedUrl != null && resolvedUrl.isSafe;
+    final canOpenLink =
+        !isCrypto && resolvedUrl != null && resolvedUrl.canOpenLink;
 
-    final hasUrlResults =
-        widget.analysis?.data.attributes.results.isNotEmpty ?? false;
     final isUrlCompleted =
         widget.analysis?.data.attributes.status == AnalysisStatus.completed;
     final isUrlFailed =
@@ -247,16 +249,13 @@ class _ScannedLayoutSheetState extends ConsumerState<ScannedLayoutSheet>
 
     final isScanning = isCrypto
         ? (!isCryptoCompleted && !isCryptoFailed)
-        : (!isUrlCompleted && !hasUrlResults && !isUrlFailed);
+        : (!isUrlCompleted && !isUrlFailed);
 
     final sheetBg = isDark ? const Color(0xFF1E2022) : Colors.white;
     final headerTextColor = isDark ? AppColors.textDark : AppColors.textLight;
 
     return Stack(
       children: [
-        Positioned.fill(
-          child: GlowOverlayView(isSafe: _glowIsSafe, visible: _showGlow),
-        ),
         SlideTransition(
           position: _slideAnimation,
           child: Align(
@@ -405,7 +404,7 @@ class _ScannedLayoutSheetState extends ConsumerState<ScannedLayoutSheet>
                           if (isScanning)
                             const ScanningProgressView()
                           else if (!isCrypto &&
-                              (isUrlCompleted || hasUrlResults) &&
+                              isUrlCompleted &&
                               widget.analysis != null) ...[
                             CustomFlatlistView(analysis: widget.analysis!),
                             if (canOpenLink)
@@ -432,12 +431,56 @@ class _ScannedLayoutSheetState extends ConsumerState<ScannedLayoutSheet>
                                       ),
                                     ),
                                     style: ElevatedButton.styleFrom(
-                                      backgroundColor: AppColors.primary,
+                                      backgroundColor: resolvedUrl.isWarning
+                                          ? AppColors.warning
+                                          : AppColors.primary,
                                       shape: RoundedRectangleBorder(
                                         borderRadius: BorderRadius.circular(10),
                                       ),
                                       elevation: 0,
                                     ),
+                                  ),
+                                ),
+                              )
+                            else if (resolvedUrl != null &&
+                                resolvedUrl.isMalicious)
+                              Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 24,
+                                  vertical: 8,
+                                ),
+                                child: Container(
+                                  padding: const EdgeInsets.all(12),
+                                  decoration: BoxDecoration(
+                                    color: isDark
+                                        ? AppColors.malicious.withAlpha(30)
+                                        : AppColors.maliciousBg,
+                                    borderRadius: BorderRadius.circular(8),
+                                    border: Border.all(
+                                      color: isDark
+                                          ? AppColors.malicious.withAlpha(80)
+                                          : AppColors.malicious.withAlpha(50),
+                                    ),
+                                  ),
+                                  child: const Row(
+                                    children: [
+                                      Icon(
+                                        Icons.block_rounded,
+                                        size: 20,
+                                        color: AppColors.malicious,
+                                      ),
+                                      SizedBox(width: 10),
+                                      Expanded(
+                                        child: Text(
+                                          'Opening this link is blocked due to detected security threats.',
+                                          style: TextStyle(
+                                            fontSize: 12,
+                                            fontWeight: FontWeight.w600,
+                                            color: AppColors.malicious,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ),
                               ),
@@ -486,6 +529,9 @@ class _ScannedLayoutSheetState extends ConsumerState<ScannedLayoutSheet>
               ),
             ),
           ),
+        ),
+        Positioned.fill(
+          child: GlowOverlayView(severity: _glowSeverity, visible: _showGlow),
         ),
       ],
     );

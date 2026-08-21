@@ -15,7 +15,7 @@ class AppSettings {
     this.hapticsEnabled = true,
     this.autoOpenSafeLinks = false,
     this.incognitoMode = false,
-    this.historySizeLimit = 10,
+    this.historySizeLimit = 20,
     this.apiPollingRate = 1000,
   });
 
@@ -60,7 +60,7 @@ class AppSettings {
       hapticsEnabled: json['hapticsEnabled'] as bool? ?? true,
       autoOpenSafeLinks: json['autoOpenSafeLinks'] as bool? ?? false,
       incognitoMode: json['incognitoMode'] as bool? ?? false,
-      historySizeLimit: json['historySizeLimit'] as int? ?? 10,
+      historySizeLimit: json['historySizeLimit'] as int? ?? 20,
       apiPollingRate: json['apiPollingRate'] as int? ?? 1000,
     );
   }

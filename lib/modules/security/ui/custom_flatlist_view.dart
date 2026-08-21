@@ -30,19 +30,35 @@ class _CustomFlatlistViewState extends State<CustomFlatlistView> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final status = AnalysisStatusResolver.resolve(widget.analysis);
 
-    final verdictTitle = status.isSafe ? 'Safe' : 'Potentially unsafe';
-    final verdictMessage = status.isSafe
-        ? 'No security issues were found for this link.'
-        : 'Security checks found warning signs. Only open this link if you trust the source.';
-    final verdictColor = status.isSafe ? AppColors.safe : AppColors.malicious;
-    final verdictBg = isDark
-        ? (status.isSafe
-              ? AppColors.safe.withAlpha(40)
-              : AppColors.malicious.withAlpha(40))
-        : (status.isSafe ? AppColors.safeBg : AppColors.maliciousBg);
-    final verdictIcon = status.isSafe
-        ? Icons.verified_user_outlined
-        : Icons.gpp_bad_outlined;
+    final (
+      verdictTitle,
+      verdictMessage,
+      verdictColor,
+      verdictBg,
+      verdictIcon,
+    ) = switch (status.verdict) {
+      AnalysisVerdict.safe => (
+        'Safe',
+        'No security issues were found for this link.',
+        AppColors.safe,
+        isDark ? AppColors.safe.withAlpha(40) : AppColors.safeBg,
+        Icons.verified_user_outlined,
+      ),
+      AnalysisVerdict.warning => (
+        'Potentially unsafe',
+        'Security checks found warning signs. Only open this link if you trust the source.',
+        AppColors.warning,
+        isDark ? AppColors.warning.withAlpha(40) : AppColors.warningBg,
+        Icons.warning_amber_rounded,
+      ),
+      AnalysisVerdict.malicious => (
+        'Dangerous link',
+        'Multiple security engines flagged this link as dangerous or malicious. Opening this link is strongly discouraged.',
+        AppColors.malicious,
+        isDark ? AppColors.malicious.withAlpha(40) : AppColors.maliciousBg,
+        Icons.gpp_bad_outlined,
+      ),
+    };
 
     final resultsToShow = _showAllEngines || status.sortedResults.length <= 5
         ? status.sortedResults
@@ -164,9 +180,11 @@ class _CustomFlatlistViewState extends State<CustomFlatlistView> {
                         style: TextStyle(
                           fontSize: 22,
                           fontWeight: FontWeight.w900,
-                          color: status.riskCount > 0
-                              ? AppColors.malicious
-                              : AppColors.safe,
+                          color: status.riskCount == 0
+                              ? AppColors.safe
+                              : (status.verdict == AnalysisVerdict.warning
+                                    ? AppColors.warning
+                                    : AppColors.malicious),
                         ),
                       ),
                       const SizedBox(height: 2),
@@ -197,18 +215,21 @@ class _CustomFlatlistViewState extends State<CustomFlatlistView> {
                     _buildWarningRow(
                       'Malicious',
                       '${status.resultCounts.malicious}',
+                      AppColors.malicious,
                       isDark,
                     ),
                   if (status.resultCounts.phishing > 0)
                     _buildWarningRow(
                       'Phishing',
                       '${status.resultCounts.phishing}',
+                      AppColors.phishing,
                       isDark,
                     ),
                   if (status.resultCounts.suspicious > 0)
                     _buildWarningRow(
                       'Suspicious',
                       '${status.resultCounts.suspicious}',
+                      AppColors.suspicious,
                       isDark,
                     ),
                 ],
@@ -296,7 +317,12 @@ class _CustomFlatlistViewState extends State<CustomFlatlistView> {
     );
   }
 
-  Widget _buildWarningRow(String label, String value, bool isDark) {
+  Widget _buildWarningRow(
+    String label,
+    String value,
+    Color color,
+    bool isDark,
+  ) {
     return Container(
       constraints: const BoxConstraints(minHeight: 42),
       decoration: BoxDecoration(
@@ -319,10 +345,10 @@ class _CustomFlatlistViewState extends State<CustomFlatlistView> {
           ),
           Text(
             value,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 13,
               fontWeight: FontWeight.w800,
-              color: AppColors.malicious,
+              color: color,
             ),
           ),
         ],

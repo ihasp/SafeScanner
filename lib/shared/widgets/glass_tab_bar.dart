@@ -22,8 +22,8 @@ class GlassTabBar extends StatelessWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Positioned(
-      left: 50,
-      right: 50,
+      left: 24,
+      right: 24,
       bottom: bottomInset + 8,
       child: ClipRRect(
         borderRadius: BorderRadius.circular(100),

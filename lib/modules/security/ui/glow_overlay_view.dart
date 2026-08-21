@@ -4,13 +4,13 @@ import '../../../constants/app_colors.dart';
 import '../../../constants/app_constants.dart';
 
 class GlowOverlayView extends StatefulWidget {
-  final bool isSafe;
+  final GlowSeverity severity;
   final bool visible;
   final int durationMs;
 
   const GlowOverlayView({
     super.key,
-    required this.isSafe,
+    this.severity = GlowSeverity.safe,
     required this.visible,
     this.durationMs = AppConstants.glowDurationMs,
   });
@@ -61,9 +61,11 @@ class _GlowOverlayViewState extends State<GlowOverlayView>
   Widget build(BuildContext context) {
     if (!widget.visible) return const SizedBox.shrink();
 
-    final glowColor = widget.isSafe
-        ? AppColors.glowSafe
-        : AppColors.glowMalicious;
+    final glowColor = switch (widget.severity) {
+      GlowSeverity.safe => AppColors.glowSafe,
+      GlowSeverity.warning => AppColors.glowWarning,
+      GlowSeverity.malicious => AppColors.glowMalicious,
+    };
 
     return IgnorePointer(
       child: AnimatedBuilder(
@@ -78,3 +80,5 @@ class _GlowOverlayViewState extends State<GlowOverlayView>
     );
   }
 }
+
+enum GlowSeverity { safe, warning, malicious }

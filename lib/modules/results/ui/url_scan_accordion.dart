@@ -26,10 +26,29 @@ class _UrlScanAccordionState extends State<UrlScanAccordion> {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final status = AnalysisStatusResolver.resolve(widget.scan.analysis);
-    final resultLabel = status.isSafe
-        ? 'Safe'
-        : '${status.riskCount} warning${status.riskCount == 1 ? '' : 's'}';
-    final resultColor = status.isSafe ? AppColors.safe : AppColors.malicious;
+    final (resultLabel, resultColor) = switch (status.verdict) {
+      AnalysisVerdict.safe => ('Safe', AppColors.safe),
+      AnalysisVerdict.warning => (
+        '${status.riskCount} warning${status.riskCount == 1 ? '' : 's'}',
+        AppColors.warning,
+      ),
+      AnalysisVerdict.malicious => (
+        '${status.resultCounts.malicious} threat${status.resultCounts.malicious == 1 ? '' : 's'}',
+        AppColors.malicious,
+      ),
+    };
+
+    final canOpenLink = status.canOpenLink;
+    final linkColor = status.isSafe
+        ? (isDark ? const Color(0xFF58A6FF) : AppColors.primaryLight)
+        : (status.isWarning
+              ? AppColors.warning
+              : (isDark ? AppColors.textSecondary : const Color(0xFF888888)));
+    final linkSubtext = status.isSafe
+        ? 'Tap link to open in browser'
+        : (status.isWarning
+              ? 'Review warnings before opening'
+              : 'Link blocked due to security threats');
 
     return Container(
       margin: const EdgeInsets.only(bottom: 10),
@@ -48,10 +67,12 @@ class _UrlScanAccordionState extends State<UrlScanAccordion> {
             padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
             child: Row(
               children: [
-                // Entire Link Area is directly touchable to navigate
+                // Entire Link Area is touchable if link is not malicious
                 Expanded(
                   child: InkWell(
-                    onTap: () => _openUrl(widget.scan.data),
+                    onTap: canOpenLink
+                        ? () => _openUrl(widget.scan.data)
+                        : null,
                     borderRadius: BorderRadius.circular(6),
                     child: Padding(
                       padding: const EdgeInsets.symmetric(
@@ -71,14 +92,8 @@ class _UrlScanAccordionState extends State<UrlScanAccordion> {
                                   style: TextStyle(
                                     fontSize: 14,
                                     fontWeight: FontWeight.w700,
-                                    color: status.isSafe
-                                        ? (isDark
-                                              ? const Color(0xFF58A6FF)
-                                              : AppColors.primaryLight)
-                                        : (isDark
-                                              ? AppColors.textDark
-                                              : AppColors.textLight),
-                                    decoration: status.isSafe
+                                    color: linkColor,
+                                    decoration: canOpenLink
                                         ? TextDecoration.underline
                                         : TextDecoration.none,
                                   ),
@@ -86,24 +101,24 @@ class _UrlScanAccordionState extends State<UrlScanAccordion> {
                               ),
                               const SizedBox(width: 6),
                               Icon(
-                                Icons.open_in_new_rounded,
+                                canOpenLink
+                                    ? Icons.open_in_new_rounded
+                                    : Icons.block_rounded,
                                 size: 14,
-                                color: status.isSafe
-                                    ? (isDark
-                                          ? const Color(0xFF58A6FF)
-                                          : AppColors.primaryLight)
-                                    : AppColors.textSecondary,
+                                color: canOpenLink
+                                    ? linkColor
+                                    : AppColors.malicious,
                               ),
                             ],
                           ),
                           const SizedBox(height: 3),
                           Text(
-                            status.isSafe
-                                ? 'Tap link to open in browser'
-                                : 'Review threats before opening',
-                            style: const TextStyle(
+                            linkSubtext,
+                            style: TextStyle(
                               fontSize: 11,
-                              color: AppColors.textSecondary,
+                              color: status.isMalicious
+                                  ? AppColors.malicious
+                                  : AppColors.textSecondary,
                             ),
                           ),
                         ],

@@ -38,6 +38,7 @@ dependencies:
   intl: ^0.20.3
   url_launcher: ^6.3.2
   shared_preferences: ^2.5.5
+  photo_manager: ^3.12.0
 dev_dependencies:
   flutter_test:
     sdk: flutter

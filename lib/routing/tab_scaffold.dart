@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../modules/gallery/views/gallery_page.dart';
 import '../modules/home/views/home_page.dart';
 import '../modules/results/views/results_page.dart';
 import '../modules/settings/views/settings_page.dart';
@@ -11,6 +12,7 @@ class TabScaffold extends ConsumerWidget {
 
   static const List<TabBarItem> _tabItems = [
     TabBarItem(icon: Icons.qr_code_scanner_rounded, label: 'Scan'),
+    TabBarItem(icon: Icons.photo_library_outlined, label: 'Gallery'),
     TabBarItem(icon: Icons.format_list_bulleted_rounded, label: 'Results'),
     TabBarItem(icon: Icons.settings_outlined, label: 'Settings'),
   ];
@@ -24,7 +26,12 @@ class TabScaffold extends ConsumerWidget {
         children: [
           IndexedStack(
             index: selectedIndex,
-            children: const [HomePage(), ResultsPage(), SettingsPage()],
+            children: const [
+              HomePage(),
+              GalleryPage(),
+              ResultsPage(),
+              SettingsPage(),
+            ],
           ),
           GlassTabBar(
             selectedIndex: selectedIndex,

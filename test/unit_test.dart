@@ -7,11 +7,15 @@ import 'package:crypto_scanner/modules/settings/models/app_settings.dart';
 import 'package:crypto_scanner/modules/settings/providers/settings_notifier.dart';
 import 'package:crypto_scanner/modules/settings/services/settings_service.dart';
 import 'package:crypto_scanner/shared/models/scan_mode.dart';
+import 'package:crypto_scanner/shared/services/haptic_service.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
+  TestWidgetsFlutterBinding.ensureInitialized();
+
   setUp(() {
     SharedPreferences.setMockInitialValues({});
   });
@@ -49,6 +53,8 @@ void main() {
       expect(initialSettings.defaultCameraFacing, equals(AppCameraFacing.back));
       expect(initialSettings.defaultScanMode, equals(ScanMode.qr));
       expect(initialSettings.hapticsEnabled, isTrue);
+      expect(initialSettings.autoOpenSafeLinks, isFalse);
+      expect(initialSettings.historySizeLimit, equals(20));
 
       container
           .read(settingsProvider.notifier)
@@ -125,6 +131,44 @@ void main() {
           );
 
       expect(container.read(scanResultsProvider), isEmpty);
+    });
+  });
+
+  group('HapticService Unit Tests', () {
+    test('Does not trigger haptic feedback when enabled is false', () async {
+      final log = <MethodCall>[];
+      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+          .setMockMethodCallHandler(SystemChannels.platform, (call) async {
+            log.add(call);
+            return null;
+          });
+
+      await HapticService.success(enabled: false);
+      await HapticService.error(enabled: false);
+      await HapticService.selection(enabled: false);
+      await HapticService.vibrate(enabled: false);
+
+      expect(log, isEmpty);
+    });
+
+    test('Triggers haptic feedback when enabled is true', () async {
+      final log = <MethodCall>[];
+      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+          .setMockMethodCallHandler(SystemChannels.platform, (call) async {
+            log.add(call);
+            return null;
+          });
+
+      await HapticService.success(enabled: true);
+      await HapticService.error(enabled: true);
+      await HapticService.selection(enabled: true);
+      await HapticService.vibrate(enabled: true);
+
+      expect(log.length, equals(4));
+      expect(
+        log.map((call) => call.method).toList(),
+        everyElement(equals('HapticFeedback.vibrate')),
+      );
     });
   });
 }

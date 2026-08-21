@@ -16,6 +16,8 @@ abstract final class AppColors {
   // Status colors
   static const Color safe = Color(0xFF00A83B);
   static const Color safeBg = Color(0xFFEEFAF2);
+  static const Color warning = Color(0xFFFF8F00);
+  static const Color warningBg = Color(0xFFFFF4E5);
   static const Color malicious = Color(0xFFD72845);
   static const Color maliciousBg = Color(0xFFFFF1F3);
   static const Color phishing = Color(0xFFFF8F00);
@@ -25,5 +27,6 @@ abstract final class AppColors {
   // Switch button & overlay colors
   static const Color switchBackground = Color.fromARGB(77, 9, 9, 9);
   static const Color glowSafe = Color(0x9F00FF00);
+  static const Color glowWarning = Color(0x9FFF8F00);
   static const Color glowMalicious = Color(0x9FFF0000);
 }
