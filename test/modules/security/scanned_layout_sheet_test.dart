@@ -1,3 +1,5 @@
+// ignore_for_file: no-empty-block
+
 import 'package:crypto_scanner/l10n/l10n.dart';
 import 'package:crypto_scanner/modules/security/models/analysis.dart';
 import 'package:crypto_scanner/modules/security/models/crypto_scan_state.dart';
@@ -9,6 +11,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+void _noOp() {
+  // Intentionally empty: no-op callback for widget testing.
+}
+
+Future<void> _noOpAsync() => Future<void>.value();
 
 void main() {
   group('ScannedLayoutSheet Tests', () {
@@ -40,9 +48,9 @@ void main() {
                 data: 'https://example.com',
                 analysis: failedAnalysis,
                 scanMode: ScanMode.qr,
-                onClose: () {},
-                onCloseStart: () {},
-                onRetry: () async {},
+                onClose: _noOp,
+                onCloseStart: _noOp,
+                onRetry: _noOpAsync,
               ),
             ),
           ),
@@ -83,9 +91,9 @@ void main() {
                 data: '0x1234567890abcdef1234567890abcdef12345678',
                 cryptoScan: cryptoScan,
                 scanMode: ScanMode.crypto,
-                onClose: () {},
-                onCloseStart: () {},
-                onRetry: () async {},
+                onClose: _noOp,
+                onCloseStart: _noOp,
+                onRetry: _noOpAsync,
               ),
             ),
           ),
@@ -96,80 +104,127 @@ void main() {
       await tester.pump(const Duration(milliseconds: 300));
 
       expect(find.text('Scan Error'), findsOneWidget);
-      expect(
-        find.text('Unable to scan this crypto wallet.'),
-        findsOneWidget,
-      );
+      expect(find.text('Unable to scan this crypto wallet.'), findsOneWidget);
       expect(find.byIcon(Icons.error_outline_rounded), findsOneWidget);
     });
 
-    testWidgets('Stops polling and displays error when updated to failed state', (
-      tester,
-    ) async {
-      int retryCalls = 0;
-      final queuedAnalysis = Analysis.queued();
+    testWidgets(
+      'Stops polling and displays error when updated to failed state',
+      (tester) async {
+        int retryCalls = 0;
+        final queuedAnalysis = Analysis.queued();
 
-      await tester.pumpWidget(
-        ProviderScope(
-          overrides: [
-            sharedPreferencesProvider.overrideWithValue(prefs),
-            settingsServiceProvider.overrideWithValue(SettingsService(prefs)),
-          ],
-          child: MaterialApp(
-            localizationsDelegates: AppLocalizations.localizationsDelegates,
-            supportedLocales: AppLocalizations.supportedLocales,
-            home: Scaffold(
-              body: ScannedLayoutSheet(
-                data: 'https://example.com',
-                analysis: queuedAnalysis,
-                scanMode: ScanMode.qr,
-                onClose: () {},
-                onCloseStart: () {},
-                onRetry: () async {
-                  retryCalls++;
-                },
+        await tester.pumpWidget(
+          ProviderScope(
+            overrides: [
+              sharedPreferencesProvider.overrideWithValue(prefs),
+              settingsServiceProvider.overrideWithValue(SettingsService(prefs)),
+            ],
+            child: MaterialApp(
+              localizationsDelegates: AppLocalizations.localizationsDelegates,
+              supportedLocales: AppLocalizations.supportedLocales,
+              home: Scaffold(
+                body: ScannedLayoutSheet(
+                  data: 'https://example.com',
+                  analysis: queuedAnalysis,
+                  scanMode: ScanMode.qr,
+                  onClose: _noOp,
+                  onCloseStart: _noOp,
+                  onRetry: () async {
+                    retryCalls++;
+                  },
+                ),
               ),
             ),
           ),
-        ),
-      );
+        );
 
-      await tester.pump();
-      await tester.pump(const Duration(milliseconds: 1050));
-      expect(retryCalls, greaterThanOrEqualTo(1));
+        await tester.pump();
+        await tester.pump(const Duration(milliseconds: 1050));
+        expect(retryCalls, greaterThanOrEqualTo(1));
 
-      // Update widget with failed analysis
-      final failedAnalysis = Analysis.failed(error: 'Network connection lost.');
-      await tester.pumpWidget(
-        ProviderScope(
-          overrides: [
-            sharedPreferencesProvider.overrideWithValue(prefs),
-            settingsServiceProvider.overrideWithValue(SettingsService(prefs)),
-          ],
-          child: MaterialApp(
-            localizationsDelegates: AppLocalizations.localizationsDelegates,
-            supportedLocales: AppLocalizations.supportedLocales,
-            home: Scaffold(
-              body: ScannedLayoutSheet(
-                data: 'https://example.com',
-                analysis: failedAnalysis,
-                scanMode: ScanMode.qr,
-                onClose: () {},
-                onCloseStart: () {},
-                onRetry: () async {
-                  retryCalls++;
-                },
+        // Update widget with failed analysis
+        final failedAnalysis = Analysis.failed(
+          error: 'Network connection lost.',
+        );
+        await tester.pumpWidget(
+          ProviderScope(
+            overrides: [
+              sharedPreferencesProvider.overrideWithValue(prefs),
+              settingsServiceProvider.overrideWithValue(SettingsService(prefs)),
+            ],
+            child: MaterialApp(
+              localizationsDelegates: AppLocalizations.localizationsDelegates,
+              supportedLocales: AppLocalizations.supportedLocales,
+              home: Scaffold(
+                body: ScannedLayoutSheet(
+                  data: 'https://example.com',
+                  analysis: failedAnalysis,
+                  scanMode: ScanMode.qr,
+                  onClose: _noOp,
+                  onCloseStart: _noOp,
+                  onRetry: () async {
+                    retryCalls++;
+                  },
+                ),
               ),
             ),
           ),
-        ),
-      );
+        );
 
-      final callsAfterFail = retryCalls;
-      await tester.pump(const Duration(milliseconds: 2000));
-      expect(retryCalls, equals(callsAfterFail));
-      expect(find.text('Scan Error'), findsOneWidget);
-      expect(find.text('Network connection lost.'), findsOneWidget);
-    });
+        final callsAfterFail = retryCalls;
+        await tester.pump(const Duration(milliseconds: 2000));
+        expect(retryCalls, equals(callsAfterFail));
+        expect(find.text('Scan Error'), findsOneWidget);
+        expect(find.text('Network connection lost.'), findsOneWidget);
+      },
+    );
+
+    testWidgets(
+      'Triggers onCloseStart and onClose when close button is tapped',
+      (tester) async {
+        bool closeStartCalled = false;
+        bool closeCalled = false;
+
+        await tester.pumpWidget(
+          ProviderScope(
+            overrides: [
+              sharedPreferencesProvider.overrideWithValue(prefs),
+              settingsServiceProvider.overrideWithValue(SettingsService(prefs)),
+            ],
+            child: MaterialApp(
+              localizationsDelegates: AppLocalizations.localizationsDelegates,
+              supportedLocales: AppLocalizations.supportedLocales,
+              home: Scaffold(
+                body: ScannedLayoutSheet(
+                  data: 'https://example.com',
+                  scanMode: ScanMode.qr,
+                  onClose: () {
+                    closeCalled = true;
+                  },
+                  onCloseStart: () {
+                    closeStartCalled = true;
+                  },
+                  onRetry: _noOpAsync,
+                ),
+              ),
+            ),
+          ),
+        );
+
+        await tester.pump();
+        await tester.pump(const Duration(milliseconds: 300));
+
+        final closeButtonFinder = find.byIcon(Icons.close_rounded);
+        expect(closeButtonFinder, findsOneWidget);
+
+        await tester.tap(closeButtonFinder);
+        await tester.pump();
+        expect(closeStartCalled, isTrue);
+
+        await tester.pumpAndSettle();
+        expect(closeCalled, isTrue);
+      },
+    );
   });
 }
