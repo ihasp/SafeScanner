@@ -9,12 +9,16 @@ Certain api keys has to be set in windows' enviornments:
 
 Valid app has to pass all of these:
 
-```
+```pwsh
 dart format lib
 dart analyze
 dcm analyze lib
 flutter test
 
 ```
+
+this script `./scripts/check.ps1` runs these checks
+
+Update to Powershell 7 to use the scripts.
 
 To build the app run the build scripts from `/scripts` folder
