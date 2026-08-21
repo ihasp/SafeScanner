@@ -10,13 +10,13 @@ import '../../../helpers/scanner/qr_payload_parser.dart';
 import '../../../routing/tab_scaffold.dart';
 import '../../../shared/models/scan_mode.dart';
 import '../../../shared/services/haptic_service.dart';
-import '../../results/providers/scan_results_provider.dart';
-import '../../security/models/analysis_model.dart';
+import '../../results/providers/scan_results_notifier.dart';
+import '../../security/models/Analysis.dart';
 import '../../security/services/tatum_service.dart';
 import '../../security/services/virustotal_service.dart';
 import '../../security/ui/scanned_layout_sheet.dart';
 import '../../settings/models/app_settings.dart';
-import '../../settings/providers/settings_provider.dart';
+import '../../settings/providers/settings_notifier.dart';
 import '../models/crypto_scan_state.dart';
 import 'scan_mode_switch.dart';
 

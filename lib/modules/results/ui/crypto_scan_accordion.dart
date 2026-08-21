@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../constants/app_colors.dart';
-import '../../security/models/tatum_models.dart';
+import '../../security/models/tatum_chain.dart';
 import '../../security/ui/crypto_wallet_results_view.dart';
 import '../models/scan_result.dart';
 

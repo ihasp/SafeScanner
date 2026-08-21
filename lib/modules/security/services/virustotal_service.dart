@@ -4,7 +4,7 @@ import 'package:http/http.dart' as http;
 
 import '../../../constants/api_keys.dart';
 import '../../../constants/app_constants.dart';
-import '../models/analysis_model.dart';
+import '../models/Analysis.dart';
 
 class VirusTotalService {
   final http.Client _client;

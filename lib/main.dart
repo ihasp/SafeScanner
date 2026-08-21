@@ -6,14 +6,14 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import 'constants/app_colors.dart';
 import 'constants/app_constants.dart';
-import 'modules/settings/providers/settings_provider.dart';
+import 'modules/settings/providers/settings_notifier.dart';
 import 'routing/tab_scaffold.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   SystemChrome.setSystemUIOverlayStyle(
     const SystemUiOverlayStyle(
-      statusBarColor: Colors.transparent,
+      statusBarColor: Color.fromARGB(31, 0, 0, 0),
       statusBarIconBrightness: Brightness.dark,
     ),
   );

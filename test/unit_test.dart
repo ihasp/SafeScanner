@@ -1,10 +1,10 @@
 import 'package:crypto_scanner/helpers/crypto/address_decoder.dart';
-import 'package:crypto_scanner/modules/results/providers/scan_results_provider.dart';
+import 'package:crypto_scanner/modules/results/providers/scan_results_notifier.dart';
 import 'package:crypto_scanner/modules/results/services/scan_results_storage_service.dart';
-import 'package:crypto_scanner/modules/security/models/analysis_model.dart';
-import 'package:crypto_scanner/modules/security/models/tatum_models.dart';
+import 'package:crypto_scanner/modules/security/models/Analysis.dart';
+import 'package:crypto_scanner/modules/security/models/tatum_chain.dart';
 import 'package:crypto_scanner/modules/settings/models/app_settings.dart';
-import 'package:crypto_scanner/modules/settings/providers/settings_provider.dart';
+import 'package:crypto_scanner/modules/settings/providers/settings_notifier.dart';
 import 'package:crypto_scanner/modules/settings/services/settings_service.dart';
 import 'package:crypto_scanner/shared/models/scan_mode.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -19,7 +19,8 @@ void main() {
   group('AddressDecoder Word Boundary Tests', () {
     test('EVM regex does not match 64-char transaction hashes as standard address', () {
       // 64-char hex transaction hash
-      const txHash = '0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef';
+      const txHash =
+          '0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef';
       final wallet = AddressDecoder.decode(txHash);
       expect(wallet, isNull);
     });
@@ -49,8 +50,13 @@ void main() {
       expect(initialSettings.defaultScanMode, equals(ScanMode.qr));
       expect(initialSettings.hapticsEnabled, isTrue);
 
-      container.read(settingsProvider.notifier).setDefaultCameraFacing(AppCameraFacing.front);
-      expect(container.read(settingsProvider).defaultCameraFacing, equals(AppCameraFacing.front));
+      container
+          .read(settingsProvider.notifier)
+          .setDefaultCameraFacing(AppCameraFacing.front);
+      expect(
+        container.read(settingsProvider).defaultCameraFacing,
+        equals(AppCameraFacing.front),
+      );
 
       container.read(settingsProvider.notifier).setIncognitoMode(true);
       expect(container.read(settingsProvider).incognitoMode, isTrue);
@@ -67,7 +73,9 @@ void main() {
         overrides: [
           sharedPreferencesProvider.overrideWithValue(prefs),
           settingsServiceProvider.overrideWithValue(SettingsService(prefs)),
-          scanResultsStorageServiceProvider.overrideWithValue(ScanResultsStorageService(prefs)),
+          scanResultsStorageServiceProvider.overrideWithValue(
+            ScanResultsStorageService(prefs),
+          ),
         ],
       );
       addTearDown(container.dispose);
@@ -76,18 +84,15 @@ void main() {
       container.read(settingsProvider.notifier).setHistorySizeLimit(2);
 
       // Add 3 scans
-      container.read(scanResultsProvider.notifier).addUrlScan(
-            data: 'https://site1.com',
-            analysis: Analysis.queued(),
-          );
-      container.read(scanResultsProvider.notifier).addUrlScan(
-            data: 'https://site2.com',
-            analysis: Analysis.queued(),
-          );
-      container.read(scanResultsProvider.notifier).addUrlScan(
-            data: 'https://site3.com',
-            analysis: Analysis.queued(),
-          );
+      container
+          .read(scanResultsProvider.notifier)
+          .addUrlScan(data: 'https://site1.com', analysis: Analysis.queued());
+      container
+          .read(scanResultsProvider.notifier)
+          .addUrlScan(data: 'https://site2.com', analysis: Analysis.queued());
+      container
+          .read(scanResultsProvider.notifier)
+          .addUrlScan(data: 'https://site3.com', analysis: Analysis.queued());
 
       final scans = container.read(scanResultsProvider);
       expect(scans.length, equals(2));
@@ -104,13 +109,17 @@ void main() {
         overrides: [
           sharedPreferencesProvider.overrideWithValue(prefs),
           settingsServiceProvider.overrideWithValue(SettingsService(prefs)),
-          scanResultsStorageServiceProvider.overrideWithValue(ScanResultsStorageService(prefs)),
+          scanResultsStorageServiceProvider.overrideWithValue(
+            ScanResultsStorageService(prefs),
+          ),
         ],
       );
       addTearDown(container.dispose);
 
       container.read(settingsProvider.notifier).setIncognitoMode(true);
-      container.read(scanResultsProvider.notifier).addUrlScan(
+      container
+          .read(scanResultsProvider.notifier)
+          .addUrlScan(
             data: 'https://incognito-test.com',
             analysis: Analysis.queued(),
           );

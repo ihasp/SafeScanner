@@ -1,10 +1,9 @@
-// ignore_for_file: prefer-match-file-name
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../helpers/shared/date_group_helper.dart';
-import '../../security/models/analysis_model.dart';
+import '../../security/models/Analysis.dart';
 import '../../security/models/crypto_wallet_scan.dart';
-import '../../settings/providers/settings_provider.dart';
+import '../../settings/providers/settings_notifier.dart';
 import '../models/scan_group.dart';
 import '../models/scan_result.dart';
 import '../services/scan_results_storage_service.dart';

@@ -5,7 +5,7 @@ import 'package:http/http.dart' as http;
 import '../../../constants/api_keys.dart';
 import '../../../constants/app_constants.dart';
 import '../models/crypto_wallet_scan.dart';
-import '../models/tatum_models.dart';
+import '../models/tatum_chain.dart';
 
 class TatumService {
   final http.Client _client;

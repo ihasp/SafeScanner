@@ -1,4 +1,3 @@
-// ignore_for_file: prefer-match-file-name
 class Analysis {
   final String? error;
   final AnalysisData data;
@@ -30,10 +29,7 @@ class Analysis {
 
   factory Analysis.fromJson(Map<String, dynamic> json) {
     final rawData = json['data'] as Map<String, dynamic>? ?? {};
-    return Analysis(
-      error: json['error'] as String?,
-      data: AnalysisData.fromJson(rawData),
-    );
+    return Analysis(error: json['error'], data: AnalysisData.fromJson(rawData));
   }
 
   Map<String, dynamic> toJson() => {
@@ -72,10 +68,7 @@ class EngineResult {
   const EngineResult({this.category, this.result});
 
   factory EngineResult.fromJson(Map<String, dynamic> json) {
-    return EngineResult(
-      category: json['category'] as String?,
-      result: json['result'] as String?,
-    );
+    return EngineResult(category: json['category'], result: json['result']);
   }
 
   Map<String, dynamic> toJson() => {'category': category, 'result': result};
@@ -99,7 +92,7 @@ class AnalysisAttributes {
     );
 
     return AnalysisAttributes(
-      status: AnalysisStatus.fromString(json['status'] as String?),
+      status: AnalysisStatus.fromString(json['status']),
       results: parsedResults,
     );
   }

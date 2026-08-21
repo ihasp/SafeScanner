@@ -3,9 +3,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../constants/app_colors.dart';
 import '../../../shared/models/scan_mode.dart';
-import '../../results/providers/scan_results_provider.dart';
+import '../../results/providers/scan_results_notifier.dart';
 import '../models/app_settings.dart';
-import '../providers/settings_provider.dart';
+import '../providers/settings_notifier.dart';
 import '../ui/segment_button_group.dart';
 import '../ui/setting_row.dart';
 

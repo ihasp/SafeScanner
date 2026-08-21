@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../constants/app_colors.dart';
 import '../models/scan_result.dart';
-import '../providers/scan_results_provider.dart';
+import '../providers/scan_results_notifier.dart';
 import '../ui/crypto_scan_accordion.dart';
 import '../ui/url_scan_accordion.dart';
 

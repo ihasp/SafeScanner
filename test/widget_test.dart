@@ -2,10 +2,10 @@ import 'package:crypto_scanner/helpers/crypto/address_decoder.dart';
 import 'package:crypto_scanner/helpers/crypto/decision_maker.dart';
 import 'package:crypto_scanner/helpers/scanner/scan_mode_detector.dart';
 import 'package:crypto_scanner/helpers/security/analysis_status_resolver.dart';
-import 'package:crypto_scanner/modules/security/models/analysis_model.dart';
+import 'package:crypto_scanner/modules/security/models/Analysis.dart';
 import 'package:crypto_scanner/modules/security/models/crypto_decision.dart';
 import 'package:crypto_scanner/modules/security/models/crypto_wallet_scan.dart';
-import 'package:crypto_scanner/modules/security/models/tatum_models.dart';
+import 'package:crypto_scanner/modules/security/models/tatum_chain.dart';
 import 'package:crypto_scanner/shared/models/scan_mode.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -48,7 +48,8 @@ void main() {
     });
 
     test('Returns null for URL containing 32-44 char token in path', () {
-      const url = 'https://example.com/verify/7xKXtg2CW87d97TXJSDpbD5jBkheTqA83TZRuJosgAsU';
+      const url =
+          'https://example.com/verify/7xKXtg2CW87d97TXJSDpbD5jBkheTqA83TZRuJosgAsU';
       final wallet = AddressDecoder.decode(url);
       expect(wallet, isNull);
     });
@@ -118,7 +119,9 @@ void main() {
         ),
         nativeBalance: TatumNativeBalance(balance: '10.5'),
         assets: [],
-        safety: TatumMaliciousAddressCheck(status: MaliciousCheckStatus.unknown),
+        safety: TatumMaliciousAddressCheck(
+          status: MaliciousCheckStatus.unknown,
+        ),
       );
 
       final decision = DecisionMaker.decide(scan);
@@ -161,7 +164,10 @@ void main() {
           attributes: AnalysisAttributes(
             status: AnalysisStatus.completed,
             results: {
-              'Kaspersky': EngineResult(category: 'malicious', result: 'malware'),
+              'Kaspersky': EngineResult(
+                category: 'malicious',
+                result: 'malware',
+              ),
               'Google': EngineResult(category: 'harmless', result: 'clean'),
             },
           ),

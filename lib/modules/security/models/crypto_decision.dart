@@ -1,4 +1,4 @@
-import 'tatum_models.dart';
+import 'tatum_chain.dart';
 
 class CryptoDecision {
   final MaliciousCheckStatus status;
