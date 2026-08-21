@@ -335,7 +335,7 @@ class AppLocalizationsPl extends AppLocalizations {
 
   @override
   String get reviewWarningsBeforeOpening =>
-      'Przejrzyj ostrzeżenia przed otwarciem';
+      'Zweryfikuj ostrzeżenia przed otwarciem';
 
   @override
   String get linkBlockedDueToThreats =>
