@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../../l10n/l10n.dart';
 import '../../../shared/constants/app_colors.dart';
 import '../logic/analysis_status_resolver.dart';
 import '../models/analysis.dart';
@@ -27,6 +28,7 @@ class _CustomFlatlistViewState extends State<CustomFlatlistView> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final status = AnalysisStatusResolver.resolve(widget.analysis);
 
@@ -38,22 +40,22 @@ class _CustomFlatlistViewState extends State<CustomFlatlistView> {
       verdictIcon,
     ) = switch (status.verdict) {
       AnalysisVerdict.safe => (
-        'Safe',
-        'No security issues were found for this link.',
+        l10n.safe,
+        l10n.safeDesc,
         AppColors.safe,
         isDark ? AppColors.safe.withAlpha(40) : AppColors.safeBg,
         Icons.verified_user_outlined,
       ),
       AnalysisVerdict.warning => (
-        'Potentially unsafe',
-        'Security checks found warning signs. Only open this link if you trust the source.',
+        l10n.potentiallyUnsafe,
+        l10n.potentiallyUnsafeDesc,
         AppColors.warning,
         isDark ? AppColors.warning.withAlpha(40) : AppColors.warningBg,
         Icons.warning_amber_rounded,
       ),
       AnalysisVerdict.malicious => (
-        'Dangerous link',
-        'Multiple security engines flagged this link as dangerous or malicious. Opening this link is strongly discouraged.',
+        l10n.dangerousLink,
+        l10n.dangerousLinkDesc,
         AppColors.malicious,
         isDark ? AppColors.malicious.withAlpha(40) : AppColors.maliciousBg,
         Icons.gpp_bad_outlined,
@@ -145,9 +147,9 @@ class _CustomFlatlistViewState extends State<CustomFlatlistView> {
                         ),
                       ),
                       const SizedBox(height: 2),
-                      const Text(
-                        'checks completed',
-                        style: TextStyle(
+                      Text(
+                        l10n.checksCompleted,
+                        style: const TextStyle(
                           fontSize: 12,
                           color: AppColors.textSecondary,
                         ),
@@ -188,9 +190,9 @@ class _CustomFlatlistViewState extends State<CustomFlatlistView> {
                         ),
                       ),
                       const SizedBox(height: 2),
-                      const Text(
-                        'warnings found',
-                        style: TextStyle(
+                      Text(
+                        l10n.warningsFound,
+                        style: const TextStyle(
                           fontSize: 12,
                           color: AppColors.textSecondary,
                         ),
@@ -213,21 +215,21 @@ class _CustomFlatlistViewState extends State<CustomFlatlistView> {
                 children: [
                   if (status.resultCounts.malicious > 0)
                     _buildWarningRow(
-                      'Malicious',
+                      l10n.malicious,
                       '${status.resultCounts.malicious}',
                       AppColors.malicious,
                       isDark,
                     ),
                   if (status.resultCounts.phishing > 0)
                     _buildWarningRow(
-                      'Phishing',
+                      l10n.phishing,
                       '${status.resultCounts.phishing}',
                       AppColors.phishing,
                       isDark,
                     ),
                   if (status.resultCounts.suspicious > 0)
                     _buildWarningRow(
-                      'Suspicious',
+                      l10n.suspicious,
                       '${status.resultCounts.suspicious}',
                       AppColors.suspicious,
                       isDark,
@@ -252,7 +254,7 @@ class _CustomFlatlistViewState extends State<CustomFlatlistView> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        'Scanner results',
+                        l10n.scannerResults,
                         style: TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.w800,
@@ -260,7 +262,7 @@ class _CustomFlatlistViewState extends State<CustomFlatlistView> {
                         ),
                       ),
                       Text(
-                        '${status.sortedResults.length} engines',
+                        l10n.enginesCount(status.sortedResults.length),
                         style: const TextStyle(
                           fontSize: 12,
                           color: AppColors.textSecondary,
@@ -275,7 +277,7 @@ class _CustomFlatlistViewState extends State<CustomFlatlistView> {
                     alignment: Alignment.topCenter,
                     child: Column(
                       children: resultsToShow
-                          .map((item) => _buildScannerRow(item, isDark))
+                          .map((item) => _buildScannerRow(item, isDark, l10n))
                           .toList(),
                     ),
                   ),
@@ -297,8 +299,10 @@ class _CustomFlatlistViewState extends State<CustomFlatlistView> {
                         ),
                         label: Text(
                           _showAllEngines
-                              ? 'Show fewer engines'
-                              : 'Show all ${status.sortedResults.length} engines',
+                              ? l10n.showFewerEngines
+                              : l10n.showAllEnginesCount(
+                                  status.sortedResults.length,
+                                ),
                           style: const TextStyle(
                             fontSize: 13,
                             fontWeight: FontWeight.w600,
@@ -356,7 +360,21 @@ class _CustomFlatlistViewState extends State<CustomFlatlistView> {
     );
   }
 
-  Widget _buildScannerRow(FormattedEngineResult item, bool isDark) {
+  String _getLocalizedEngineStatus(String rawText, AppLocalizations l10n) {
+    return switch (rawText.toLowerCase()) {
+      'malicious' || 'malware' => l10n.malicious,
+      'phishing' => l10n.phishing,
+      'suspicious' => l10n.suspicious,
+      'safe' || 'clean' || 'harmless' => l10n.safe,
+      _ => rawText,
+    };
+  }
+
+  Widget _buildScannerRow(
+    FormattedEngineResult item,
+    bool isDark,
+    AppLocalizations l10n,
+  ) {
     return Container(
       constraints: const BoxConstraints(minHeight: 38),
       decoration: BoxDecoration(
@@ -383,7 +401,7 @@ class _CustomFlatlistViewState extends State<CustomFlatlistView> {
           ),
           const SizedBox(width: 12),
           Text(
-            item.text,
+            _getLocalizedEngineStatus(item.text, l10n),
             style: TextStyle(
               fontSize: 12,
               fontWeight: FontWeight.w800,

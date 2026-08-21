@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../../l10n/l10n.dart';
 import '../../../shared/constants/app_colors.dart';
 import '../../security/models/tatum_chain.dart';
 import '../../security/ui/crypto_wallet_results_view.dart';
@@ -19,15 +20,16 @@ class _CryptoScanAccordionState extends State<CryptoScanAccordion> {
 
   ({String label, Color color}) _getSafetyDisplay(
     TatumMaliciousAddressCheck safety,
+    AppLocalizations l10n,
   ) {
     return switch (safety.status) {
-      MaliciousCheckStatus.valid => (label: 'Safe', color: AppColors.safe),
+      MaliciousCheckStatus.valid => (label: l10n.safe, color: AppColors.safe),
       MaliciousCheckStatus.invalid => (
-        label: 'Malicious',
+        label: l10n.malicious,
         color: AppColors.malicious,
       ),
       MaliciousCheckStatus.unknown => (
-        label: 'Unverified',
+        label: l10n.unverified,
         color: AppColors.phishing,
       ),
     };
@@ -35,8 +37,9 @@ class _CryptoScanAccordionState extends State<CryptoScanAccordion> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final safety = _getSafetyDisplay(widget.scan.cryptoScan.safety);
+    final safety = _getSafetyDisplay(widget.scan.cryptoScan.safety, l10n);
 
     return Container(
       margin: const EdgeInsets.only(bottom: 10),
@@ -79,7 +82,7 @@ class _CryptoScanAccordionState extends State<CryptoScanAccordion> {
                         ),
                         const SizedBox(height: 4),
                         Text(
-                          '${widget.scan.cryptoScan.wallet.label} wallet',
+                          l10n.walletType(widget.scan.cryptoScan.wallet.label),
                           style: const TextStyle(
                             fontSize: 12,
                             color: AppColors.textSecondary,
@@ -117,7 +120,7 @@ class _CryptoScanAccordionState extends State<CryptoScanAccordion> {
                       ),
                       const SizedBox(height: 2),
                       Text(
-                        '${widget.scan.cryptoScan.assets.length} assets',
+                        l10n.assetsCount(widget.scan.cryptoScan.assets.length),
                         style: const TextStyle(
                           fontSize: 11,
                           color: AppColors.textSecondary,

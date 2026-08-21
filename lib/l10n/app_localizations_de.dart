@@ -271,4 +271,98 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get showLess => 'Weniger anzeigen';
+
+  @override
+  String get checksCompleted => 'Prüfungen abgeschlossen';
+
+  @override
+  String get warningsFound => 'Warnungen gefunden';
+
+  @override
+  String get phishing => 'Phishing';
+
+  @override
+  String get suspicious => 'Verdächtig';
+
+  @override
+  String get scannerResults => 'Scanner-Ergebnisse';
+
+  @override
+  String enginesCount(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Engines',
+      one: '1 Engine',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get showFewerEngines => 'Weniger Engines anzeigen';
+
+  @override
+  String showAllEnginesCount(int count) {
+    return 'Alle $count Engines anzeigen';
+  }
+
+  @override
+  String warningsCount(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Warnungen',
+      one: '1 Warnung',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String threatsCount(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Bedrohungen',
+      one: '1 Bedrohung',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get tapToOpenInBrowser => 'Tippen, um im Browser zu öffnen';
+
+  @override
+  String get reviewWarningsBeforeOpening => 'Warnungen vor dem Öffnen prüfen';
+
+  @override
+  String get linkBlockedDueToThreats =>
+      'Link aufgrund von Bedrohungen blockiert';
+
+  @override
+  String walletType(String label) {
+    return '$label-Wallet';
+  }
+
+  @override
+  String assetsCount(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Assets',
+      one: '1 Asset',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get network => 'Netzwerk';
+
+  @override
+  String get nativeBalance => 'Natives Guthaben';
+
+  @override
+  String get walletAssets => 'Wallet-Assets';
+
+  @override
+  String get noAssetsFound => 'Keine Assets für dieses Wallet gefunden.';
 }

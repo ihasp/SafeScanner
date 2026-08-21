@@ -409,5 +409,130 @@
   "showLess": "Show Less",
   "@showLess": {
     "description": "Button to collapse security engine results"
+  },
+
+  "checksCompleted": "checks completed",
+  "@checksCompleted": {
+    "description": "Label indicating number of security checks completed"
+  },
+
+  "warningsFound": "warnings found",
+  "@warningsFound": {
+    "description": "Label indicating number of warnings found"
+  },
+
+  "phishing": "Phishing",
+  "@phishing": {
+    "description": "Verdict or category label for phishing"
+  },
+
+  "suspicious": "Suspicious",
+  "@suspicious": {
+    "description": "Verdict or category label for suspicious"
+  },
+
+  "scannerResults": "Scanner results",
+  "@scannerResults": {
+    "description": "Section header for scanner engines results"
+  },
+
+  "enginesCount": "{count, plural, =1{1 engine} other{{count} engines}}",
+  "@enginesCount": {
+    "description": "Count of scanner engines",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+
+  "showFewerEngines": "Show fewer engines",
+  "@showFewerEngines": {
+    "description": "Button to collapse list of security engines"
+  },
+
+  "showAllEnginesCount": "Show all {count} engines",
+  "@showAllEnginesCount": {
+    "description": "Button to expand list of all security engines",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+
+  "warningsCount": "{count, plural, =1{1 warning} other{{count} warnings}}",
+  "@warningsCount": {
+    "description": "Badge text for number of warnings in accordion header",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+
+  "threatsCount": "{count, plural, =1{1 threat} other{{count} threats}}",
+  "@threatsCount": {
+    "description": "Badge text for number of threats in accordion header",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+
+  "tapToOpenInBrowser": "Tap link to open in browser",
+  "@tapToOpenInBrowser": {
+    "description": "Subtext for safe URL item in results"
+  },
+
+  "reviewWarningsBeforeOpening": "Review warnings before opening",
+  "@reviewWarningsBeforeOpening": {
+    "description": "Subtext for warning URL item in results"
+  },
+
+  "linkBlockedDueToThreats": "Link blocked due to security threats",
+  "@linkBlockedDueToThreats": {
+    "description": "Subtext for malicious URL item in results"
+  },
+
+  "walletType": "{label} wallet",
+  "@walletType": {
+    "description": "Crypto wallet subtitle with network/chain label",
+    "placeholders": {
+      "label": {
+        "type": "String"
+      }
+    }
+  },
+
+  "assetsCount": "{count, plural, =1{1 asset} other{{count} assets}}",
+  "@assetsCount": {
+    "description": "Number of assets in wallet accordion header",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+
+  "network": "Network",
+  "@network": {
+    "description": "Label for blockchain network"
+  },
+
+  "nativeBalance": "Native balance",
+  "@nativeBalance": {
+    "description": "Label for wallet native balance"
+  },
+
+  "walletAssets": "Wallet assets",
+  "@walletAssets": {
+    "description": "Section header for wallet assets"
+  },
+
+  "noAssetsFound": "No assets found for this wallet.",
+  "@noAssetsFound": {
+    "description": "Message when no assets are found for wallet"
   }
 }

@@ -599,6 +599,120 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Show Less'**
   String get showLess;
+
+  /// Label indicating number of security checks completed
+  ///
+  /// In en, this message translates to:
+  /// **'checks completed'**
+  String get checksCompleted;
+
+  /// Label indicating number of warnings found
+  ///
+  /// In en, this message translates to:
+  /// **'warnings found'**
+  String get warningsFound;
+
+  /// Verdict or category label for phishing
+  ///
+  /// In en, this message translates to:
+  /// **'Phishing'**
+  String get phishing;
+
+  /// Verdict or category label for suspicious
+  ///
+  /// In en, this message translates to:
+  /// **'Suspicious'**
+  String get suspicious;
+
+  /// Section header for scanner engines results
+  ///
+  /// In en, this message translates to:
+  /// **'Scanner results'**
+  String get scannerResults;
+
+  /// Count of scanner engines
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 engine} other{{count} engines}}'**
+  String enginesCount(num count);
+
+  /// Button to collapse list of security engines
+  ///
+  /// In en, this message translates to:
+  /// **'Show fewer engines'**
+  String get showFewerEngines;
+
+  /// Button to expand list of all security engines
+  ///
+  /// In en, this message translates to:
+  /// **'Show all {count} engines'**
+  String showAllEnginesCount(int count);
+
+  /// Badge text for number of warnings in accordion header
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 warning} other{{count} warnings}}'**
+  String warningsCount(num count);
+
+  /// Badge text for number of threats in accordion header
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 threat} other{{count} threats}}'**
+  String threatsCount(num count);
+
+  /// Subtext for safe URL item in results
+  ///
+  /// In en, this message translates to:
+  /// **'Tap link to open in browser'**
+  String get tapToOpenInBrowser;
+
+  /// Subtext for warning URL item in results
+  ///
+  /// In en, this message translates to:
+  /// **'Review warnings before opening'**
+  String get reviewWarningsBeforeOpening;
+
+  /// Subtext for malicious URL item in results
+  ///
+  /// In en, this message translates to:
+  /// **'Link blocked due to security threats'**
+  String get linkBlockedDueToThreats;
+
+  /// Crypto wallet subtitle with network/chain label
+  ///
+  /// In en, this message translates to:
+  /// **'{label} wallet'**
+  String walletType(String label);
+
+  /// Number of assets in wallet accordion header
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 asset} other{{count} assets}}'**
+  String assetsCount(num count);
+
+  /// Label for blockchain network
+  ///
+  /// In en, this message translates to:
+  /// **'Network'**
+  String get network;
+
+  /// Label for wallet native balance
+  ///
+  /// In en, this message translates to:
+  /// **'Native balance'**
+  String get nativeBalance;
+
+  /// Section header for wallet assets
+  ///
+  /// In en, this message translates to:
+  /// **'Wallet assets'**
+  String get walletAssets;
+
+  /// Message when no assets are found for wallet
+  ///
+  /// In en, this message translates to:
+  /// **'No assets found for this wallet.'**
+  String get noAssetsFound;
 }
 
 class _AppLocalizationsDelegate

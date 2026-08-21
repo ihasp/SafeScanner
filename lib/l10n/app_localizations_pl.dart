@@ -267,4 +267,107 @@ class AppLocalizationsPl extends AppLocalizations {
 
   @override
   String get showLess => 'Pokaż mniej';
+
+  @override
+  String get checksCompleted => 'zakończonych testów';
+
+  @override
+  String get warningsFound => 'wykrytych ostrzeżeń';
+
+  @override
+  String get phishing => 'Phishing';
+
+  @override
+  String get suspicious => 'Podejrzany';
+
+  @override
+  String get scannerResults => 'Wyniki skanerów';
+
+  @override
+  String enginesCount(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count silników',
+      many: '$count silników',
+      few: '$count silniki',
+      one: '1 silnik',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get showFewerEngines => 'Pokaż mniej silników';
+
+  @override
+  String showAllEnginesCount(int count) {
+    return 'Pokaż wszystkie ($count) silniki';
+  }
+
+  @override
+  String warningsCount(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count ostrzeżeń',
+      many: '$count ostrzeżeń',
+      few: '$count ostrzeżenia',
+      one: '1 ostrzeżenie',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String threatsCount(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count zagrożeń',
+      many: '$count zagrożeń',
+      few: '$count zagrożenia',
+      one: '1 zagrożenie',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get tapToOpenInBrowser => 'Dotknij linku, aby otworzyć w przeglądarce';
+
+  @override
+  String get reviewWarningsBeforeOpening =>
+      'Przejrzyj ostrzeżenia przed otwarciem';
+
+  @override
+  String get linkBlockedDueToThreats =>
+      'Link zablokowany z powodu zagrożeń bezpieczeństwa';
+
+  @override
+  String walletType(String label) {
+    return 'Portfel $label';
+  }
+
+  @override
+  String assetsCount(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count aktywów',
+      many: '$count aktywów',
+      few: '$count aktywa',
+      one: '1 aktyw',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get network => 'Sieć';
+
+  @override
+  String get nativeBalance => 'Saldo natywne';
+
+  @override
+  String get walletAssets => 'Aktywa portfela';
+
+  @override
+  String get noAssetsFound => 'Nie znaleziono aktywów dla tego portfela.';
 }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../../l10n/l10n.dart';
 import '../../../shared/constants/app_colors.dart';
 import '../../../shared/helpers/url_open_helper.dart';
 import '../../security/logic/analysis_status_resolver.dart';
@@ -24,16 +25,17 @@ class _UrlScanAccordionState extends State<UrlScanAccordion> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final status = AnalysisStatusResolver.resolve(widget.scan.analysis);
     final (resultLabel, resultColor) = switch (status.verdict) {
-      AnalysisVerdict.safe => ('Safe', AppColors.safe),
+      AnalysisVerdict.safe => (l10n.safe, AppColors.safe),
       AnalysisVerdict.warning => (
-        '${status.riskCount} warning${status.riskCount == 1 ? '' : 's'}',
+        l10n.warningsCount(status.riskCount),
         AppColors.warning,
       ),
       AnalysisVerdict.malicious => (
-        '${status.resultCounts.malicious} threat${status.resultCounts.malicious == 1 ? '' : 's'}',
+        l10n.threatsCount(status.resultCounts.malicious),
         AppColors.malicious,
       ),
     };
@@ -45,10 +47,10 @@ class _UrlScanAccordionState extends State<UrlScanAccordion> {
               ? AppColors.warning
               : (isDark ? AppColors.textSecondary : const Color(0xFF888888)));
     final linkSubtext = status.isSafe
-        ? 'Tap link to open in browser'
+        ? l10n.tapToOpenInBrowser
         : (status.isWarning
-              ? 'Review warnings before opening'
-              : 'Link blocked due to security threats');
+              ? l10n.reviewWarningsBeforeOpening
+              : l10n.linkBlockedDueToThreats);
 
     return Container(
       margin: const EdgeInsets.only(bottom: 10),

@@ -266,4 +266,97 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get showLess => 'Show Less';
+
+  @override
+  String get checksCompleted => 'checks completed';
+
+  @override
+  String get warningsFound => 'warnings found';
+
+  @override
+  String get phishing => 'Phishing';
+
+  @override
+  String get suspicious => 'Suspicious';
+
+  @override
+  String get scannerResults => 'Scanner results';
+
+  @override
+  String enginesCount(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count engines',
+      one: '1 engine',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get showFewerEngines => 'Show fewer engines';
+
+  @override
+  String showAllEnginesCount(int count) {
+    return 'Show all $count engines';
+  }
+
+  @override
+  String warningsCount(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count warnings',
+      one: '1 warning',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String threatsCount(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count threats',
+      one: '1 threat',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get tapToOpenInBrowser => 'Tap link to open in browser';
+
+  @override
+  String get reviewWarningsBeforeOpening => 'Review warnings before opening';
+
+  @override
+  String get linkBlockedDueToThreats => 'Link blocked due to security threats';
+
+  @override
+  String walletType(String label) {
+    return '$label wallet';
+  }
+
+  @override
+  String assetsCount(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count assets',
+      one: '1 asset',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get network => 'Network';
+
+  @override
+  String get nativeBalance => 'Native balance';
+
+  @override
+  String get walletAssets => 'Wallet assets';
+
+  @override
+  String get noAssetsFound => 'No assets found for this wallet.';
 }

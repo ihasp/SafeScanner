@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../l10n/l10n.dart';
 import '../../../shared/constants/app_colors.dart';
+import '../../../shared/helpers/date_group_helper.dart';
 import '../models/scan_result.dart';
 import '../providers/scan_results_notifier.dart';
 import '../ui/crypto_scan_accordion.dart';
@@ -137,7 +138,13 @@ class ResultsPage extends ConsumerWidget {
                                   bottom: 10,
                                 ),
                                 child: Text(
-                                  group.title,
+                                  group.scans.isNotEmpty
+                                      ? DateGroupHelper.getGroupTitle(
+                                          group.scans.first.scannedAt,
+                                          Localizations.localeOf(context)
+                                              .toString(),
+                                        )
+                                      : group.title,
                                   style: TextStyle(
                                     fontSize: 13,
                                     fontWeight: FontWeight.w700,

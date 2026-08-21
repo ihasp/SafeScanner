@@ -9,13 +9,13 @@ abstract final class DateGroupHelper {
     return '$y-$m-$d $h:00';
   }
 
-  static String getGroupTitle(DateTime dateTime) {
+  static String getGroupTitle(DateTime dateTime, [String? locale]) {
     final rounded = DateTime(
       dateTime.year,
       dateTime.month,
       dateTime.day,
       dateTime.hour,
     );
-    return DateFormat.yMMMd().add_jm().format(rounded);
+    return DateFormat.yMMMd(locale).add_jm().format(rounded);
   }
 }

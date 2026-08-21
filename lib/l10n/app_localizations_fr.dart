@@ -271,4 +271,100 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get showLess => 'Afficher moins';
+
+  @override
+  String get checksCompleted => 'analyses terminées';
+
+  @override
+  String get warningsFound => 'avertissements trouvés';
+
+  @override
+  String get phishing => 'Phishing';
+
+  @override
+  String get suspicious => 'Suspect';
+
+  @override
+  String get scannerResults => 'Résultats d\'analyse';
+
+  @override
+  String enginesCount(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count moteurs',
+      one: '1 moteur',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get showFewerEngines => 'Afficher moins de moteurs';
+
+  @override
+  String showAllEnginesCount(int count) {
+    return 'Afficher les $count moteurs';
+  }
+
+  @override
+  String warningsCount(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count avertissements',
+      one: '1 avertissement',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String threatsCount(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count menaces',
+      one: '1 menace',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get tapToOpenInBrowser =>
+      'Appuyez sur le lien pour l\'ouvrir dans le navigateur';
+
+  @override
+  String get reviewWarningsBeforeOpening =>
+      'Vérifiez les avertissements avant d\'ouvrir';
+
+  @override
+  String get linkBlockedDueToThreats =>
+      'Lien bloqué en raison de menaces de sécurité';
+
+  @override
+  String walletType(String label) {
+    return 'Portefeuille $label';
+  }
+
+  @override
+  String assetsCount(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count actifs',
+      one: '1 actif',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get network => 'Réseau';
+
+  @override
+  String get nativeBalance => 'Solde natif';
+
+  @override
+  String get walletAssets => 'Actifs du portefeuille';
+
+  @override
+  String get noAssetsFound => 'Aucun actif trouvé pour ce portefeuille.';
 }

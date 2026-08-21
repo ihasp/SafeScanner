@@ -269,4 +269,98 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get showLess => 'Mostrar menos';
+
+  @override
+  String get checksCompleted => 'verificações concluídas';
+
+  @override
+  String get warningsFound => 'avisos encontrados';
+
+  @override
+  String get phishing => 'Phishing';
+
+  @override
+  String get suspicious => 'Suspeito';
+
+  @override
+  String get scannerResults => 'Resultados do scanner';
+
+  @override
+  String enginesCount(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count mecanismos',
+      one: '1 mecanismo',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get showFewerEngines => 'Mostrar menos mecanismos';
+
+  @override
+  String showAllEnginesCount(int count) {
+    return 'Mostrar todos os $count mecanismos';
+  }
+
+  @override
+  String warningsCount(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count avisos',
+      one: '1 aviso',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String threatsCount(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count ameaças',
+      one: '1 ameaça',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get tapToOpenInBrowser => 'Toque no link para abrir no navegador';
+
+  @override
+  String get reviewWarningsBeforeOpening => 'Revise os avisos antes de abrir';
+
+  @override
+  String get linkBlockedDueToThreats =>
+      'Link bloqueado devido a ameaças de segurança';
+
+  @override
+  String walletType(String label) {
+    return 'Carteira $label';
+  }
+
+  @override
+  String assetsCount(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count ativos',
+      one: '1 ativo',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get network => 'Rede';
+
+  @override
+  String get nativeBalance => 'Saldo nativo';
+
+  @override
+  String get walletAssets => 'Ativos da carteira';
+
+  @override
+  String get noAssetsFound => 'Nenhum ativo encontrado para esta carteira.';
 }

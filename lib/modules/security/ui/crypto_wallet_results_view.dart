@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../../l10n/l10n.dart';
 import '../../../shared/constants/app_colors.dart';
 import '../../../shared/helpers/balance_formatter.dart';
 import '../models/crypto_wallet_scan.dart';
@@ -16,15 +17,16 @@ class CryptoWalletResultsView extends StatelessWidget {
 
   ({String label, Color color}) _getSafetyDisplay(
     TatumMaliciousAddressCheck safety,
+    AppLocalizations l10n,
   ) {
     return switch (safety.status) {
-      MaliciousCheckStatus.valid => (label: 'Safe', color: AppColors.safe),
+      MaliciousCheckStatus.valid => (label: l10n.safe, color: AppColors.safe),
       MaliciousCheckStatus.invalid => (
-        label: 'Malicious',
+        label: l10n.malicious,
         color: AppColors.malicious,
       ),
       MaliciousCheckStatus.unknown => (
-        label: 'Unverified',
+        label: l10n.unverified,
         color: AppColors.phishing,
       ),
     };
@@ -32,8 +34,9 @@ class CryptoWalletResultsView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final safetyDisplay = _getSafetyDisplay(scan.safety);
+    final safetyDisplay = _getSafetyDisplay(scan.safety, l10n);
     final textColor = isDark ? AppColors.textDark : AppColors.textLight;
     final borderColor = isDark ? AppColors.borderDark : AppColors.border;
 
@@ -44,7 +47,7 @@ class CryptoWalletResultsView extends StatelessWidget {
         children: [
           // Safety row
           _buildSummaryRow(
-            'Safety',
+            l10n.safety,
             safetyDisplay.label,
             valueColor: safetyDisplay.color,
             defaultTextColor: textColor,
@@ -62,7 +65,7 @@ class CryptoWalletResultsView extends StatelessWidget {
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Text(
-                scan.safety.description ?? 'This wallet was reported by a malicious-address data source.',
+                scan.safety.description ?? l10n.maliciousReportedDesc,
                 style: const TextStyle(
                   fontSize: 12,
                   fontWeight: FontWeight.w700,
@@ -81,9 +84,9 @@ class CryptoWalletResultsView extends StatelessWidget {
                     : const Color(0xFFFFF8E1),
                 borderRadius: BorderRadius.circular(8),
               ),
-              child: const Text(
-                'Address unverified in threat databases. Verify recipient before sending funds.',
-                style: TextStyle(
+              child: Text(
+                l10n.unverifiedDesc,
+                style: const TextStyle(
                   fontSize: 12,
                   fontWeight: FontWeight.w700,
                   color: AppColors.phishing,
@@ -111,21 +114,21 @@ class CryptoWalletResultsView extends StatelessWidget {
 
           // Network row
           _buildSummaryRow(
-            'Network',
+            l10n.network,
             scan.wallet.label,
             defaultTextColor: textColor,
           ),
 
           // Native balance row
           _buildSummaryRow(
-            'Native balance',
+            l10n.nativeBalance,
             BalanceFormatter.format(scan.nativeBalance?.balance),
             defaultTextColor: textColor,
           ),
 
           const SizedBox(height: 18),
           Text(
-            'Wallet assets',
+            l10n.walletAssets,
             style: TextStyle(
               fontSize: 15,
               fontWeight: FontWeight.w800,
@@ -136,11 +139,14 @@ class CryptoWalletResultsView extends StatelessWidget {
 
           // Assets list
           if (scan.assets.isEmpty)
-            const Padding(
-              padding: EdgeInsets.symmetric(vertical: 8),
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 8),
               child: Text(
-                'No assets found for this wallet.',
-                style: TextStyle(fontSize: 13, color: AppColors.textSecondary),
+                l10n.noAssetsFound,
+                style: const TextStyle(
+                  fontSize: 13,
+                  color: AppColors.textSecondary,
+                ),
               ),
             )
           else

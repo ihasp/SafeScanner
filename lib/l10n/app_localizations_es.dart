@@ -270,4 +270,99 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get showLess => 'Mostrar menos';
+
+  @override
+  String get checksCompleted => 'pruebas completadas';
+
+  @override
+  String get warningsFound => 'advertencias detectadas';
+
+  @override
+  String get phishing => 'Phishing';
+
+  @override
+  String get suspicious => 'Sospechoso';
+
+  @override
+  String get scannerResults => 'Resultados del escáner';
+
+  @override
+  String enginesCount(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count motores',
+      one: '1 motor',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get showFewerEngines => 'Mostrar menos motores';
+
+  @override
+  String showAllEnginesCount(int count) {
+    return 'Mostrar todos los $count motores';
+  }
+
+  @override
+  String warningsCount(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count advertencias',
+      one: '1 advertencia',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String threatsCount(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count amenazas',
+      one: '1 amenaza',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get tapToOpenInBrowser => 'Toca el enlace para abrir en el navegador';
+
+  @override
+  String get reviewWarningsBeforeOpening =>
+      'Revisa las advertencias antes de abrir';
+
+  @override
+  String get linkBlockedDueToThreats =>
+      'Enlace bloqueado por amenazas de seguridad';
+
+  @override
+  String walletType(String label) {
+    return 'Billetera $label';
+  }
+
+  @override
+  String assetsCount(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count activos',
+      one: '1 activo',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get network => 'Red';
+
+  @override
+  String get nativeBalance => 'Saldo nativo';
+
+  @override
+  String get walletAssets => 'Activos de la billetera';
+
+  @override
+  String get noAssetsFound => 'No se encontraron activos para esta billetera.';
 }
