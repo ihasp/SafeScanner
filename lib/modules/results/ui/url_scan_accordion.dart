@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../l10n/l10n.dart';
 import '../../../shared/constants/app_colors.dart';
 import '../../../shared/helpers/url_open_helper.dart';
+import '../../ai/ui/ai_explain_button.dart';
 import '../../security/logic/analysis_status_resolver.dart';
 import '../../security/ui/custom_flatlist_view.dart';
 import '../models/scan_result.dart';
@@ -189,10 +190,22 @@ class _UrlScanAccordionState extends State<UrlScanAccordion> {
                       ),
                     ),
                     padding: const EdgeInsets.only(top: 8),
-                    child: CustomFlatlistView(
-                      analysis: widget.scan.analysis,
-                      variant: CustomFlatlistVariant.details,
-                      scrollEnabled: false,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        CustomFlatlistView(
+                          analysis: widget.scan.analysis,
+                          variant: CustomFlatlistVariant.details,
+                          scrollEnabled: false,
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(24, 6, 24, 16),
+                          child: SizedBox(
+                            width: double.infinity,
+                            child: AiExplainButton(scan: widget.scan),
+                          ),
+                        ),
+                      ],
                     ),
                   )
                 : const SizedBox.shrink(),

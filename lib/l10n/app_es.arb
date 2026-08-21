@@ -100,5 +100,13 @@
   "network": "Red",
   "nativeBalance": "Saldo nativo",
   "walletAssets": "Activos de la billetera",
-  "noAssetsFound": "No se encontraron activos para esta billetera."
+  "noAssetsFound": "No se encontraron activos para esta billetera.",
+  "explainWithAi": "Explicar con IA",
+  "aiSecurityReport": "Informe de seguridad con IA",
+  "analyzingWithAi": "Gemini IA está analizando datos de seguridad...",
+  "aiAnalysisFailed": "No se pudo completar el análisis de IA",
+  "keyFindings": "Hallazgos clave",
+  "recommendedAction": "Acción recomendada",
+  "regenerate": "Regenerar",
+  "apiKeyMissingDesc": "La clave API de Gemini no está configurada. Ejecute la aplicación con --dart-define=GEMINI_API_KEY=su_clave."
 }

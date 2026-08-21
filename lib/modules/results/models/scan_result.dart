@@ -1,3 +1,4 @@
+import '../../ai/models/ai_security_explanation.dart';
 import '../../security/models/analysis.dart';
 import '../../security/models/crypto_wallet_scan.dart';
 
@@ -5,11 +6,13 @@ sealed class ScanResult {
   final String id;
   final String data;
   final DateTime scannedAt;
+  final AiSecurityExplanation? aiExplanation;
 
   const ScanResult({
     required this.id,
     required this.data,
     required this.scannedAt,
+    this.aiExplanation,
   });
 
   Map<String, dynamic> toJson();
@@ -30,6 +33,7 @@ class UrlScanResult extends ScanResult {
     required super.id,
     required super.data,
     required super.scannedAt,
+    super.aiExplanation,
     required this.analysis,
   });
 
@@ -38,12 +42,16 @@ class UrlScanResult extends ScanResult {
     String? data,
     DateTime? scannedAt,
     Analysis? analysis,
+    Object? aiExplanation = _sentinel,
   }) {
     return UrlScanResult(
       id: id ?? this.id,
       data: data ?? this.data,
       scannedAt: scannedAt ?? this.scannedAt,
       analysis: analysis ?? this.analysis,
+      aiExplanation: identical(aiExplanation, _sentinel)
+          ? this.aiExplanation
+          : (aiExplanation as AiSecurityExplanation?),
     );
   }
 
@@ -53,6 +61,7 @@ class UrlScanResult extends ScanResult {
     'type': 'url',
     'data': data,
     'analysis': analysis.toJson(),
+    if (aiExplanation != null) 'aiExplanation': aiExplanation!.toJson(),
     'scannedAt': scannedAt.toIso8601String(),
   };
 
@@ -66,6 +75,11 @@ class UrlScanResult extends ScanResult {
       analysis: Analysis.fromJson(
         json['analysis'] as Map<String, dynamic>? ?? {},
       ),
+      aiExplanation: json['aiExplanation'] != null
+          ? AiSecurityExplanation.fromJson(
+              json['aiExplanation'] as Map<String, dynamic>,
+            )
+          : null,
     );
   }
 }
@@ -77,6 +91,7 @@ class CryptoScanResult extends ScanResult {
     required super.id,
     required super.data,
     required super.scannedAt,
+    super.aiExplanation,
     required this.cryptoScan,
   });
 
@@ -85,12 +100,16 @@ class CryptoScanResult extends ScanResult {
     String? data,
     DateTime? scannedAt,
     CryptoWalletScan? cryptoScan,
+    Object? aiExplanation = _sentinel,
   }) {
     return CryptoScanResult(
       id: id ?? this.id,
       data: data ?? this.data,
       scannedAt: scannedAt ?? this.scannedAt,
       cryptoScan: cryptoScan ?? this.cryptoScan,
+      aiExplanation: identical(aiExplanation, _sentinel)
+          ? this.aiExplanation
+          : (aiExplanation as AiSecurityExplanation?),
     );
   }
 
@@ -100,6 +119,7 @@ class CryptoScanResult extends ScanResult {
     'type': 'crypto',
     'data': data,
     'cryptoScan': cryptoScan.toJson(),
+    if (aiExplanation != null) 'aiExplanation': aiExplanation!.toJson(),
     'scannedAt': scannedAt.toIso8601String(),
   };
 
@@ -113,6 +133,13 @@ class CryptoScanResult extends ScanResult {
       cryptoScan: CryptoWalletScan.fromJson(
         json['cryptoScan'] as Map<String, dynamic>? ?? {},
       ),
+      aiExplanation: json['aiExplanation'] != null
+          ? AiSecurityExplanation.fromJson(
+              json['aiExplanation'] as Map<String, dynamic>,
+            )
+          : null,
     );
   }
 }
+
+const Object _sentinel = Object();

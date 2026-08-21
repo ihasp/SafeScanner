@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../shared/helpers/date_group_helper.dart';
+import '../../ai/models/ai_security_explanation.dart';
 import '../../security/models/analysis.dart';
 import '../../security/models/crypto_wallet_scan.dart';
 import '../../settings/providers/settings_notifier.dart';
@@ -74,6 +75,21 @@ class ScanResultsNotifier extends Notifier<List<ScanResult>> {
     final limit = settings.historySizeLimit;
     state = updated.length > limit ? updated.sublist(0, limit) : updated;
     _persist();
+  }
+
+  void updateAiExplanation(String scanId, AiSecurityExplanation explanation) {
+    final index = state.indexWhere((s) => s.id == scanId);
+    if (index != -1) {
+      final updated = List<ScanResult>.of(state);
+      final existing = updated[index];
+      if (existing is UrlScanResult) {
+        updated[index] = existing.copyWith(aiExplanation: explanation);
+      } else if (existing is CryptoScanResult) {
+        updated[index] = existing.copyWith(aiExplanation: explanation);
+      }
+      state = updated;
+      _persist();
+    }
   }
 
   void clearScans() {

@@ -363,8 +363,33 @@ class AppLocalizationsFr extends AppLocalizations {
   String get nativeBalance => 'Solde natif';
 
   @override
-  String get walletAssets => 'Actifs du portefeuille';
+  String get walletAssets => 'Activos du portefeuille';
 
   @override
   String get noAssetsFound => 'Aucun actif trouvé pour ce portefeuille.';
+
+  @override
+  String get explainWithAi => 'Expliquer avec l\'IA';
+
+  @override
+  String get aiSecurityReport => 'Rapport de sécurité IA';
+
+  @override
+  String get analyzingWithAi => 'Gemini IA analyse les données de sécurité...';
+
+  @override
+  String get aiAnalysisFailed => 'L\'analyse IA n\'a pas pu aboutir';
+
+  @override
+  String get keyFindings => 'Principaux constats';
+
+  @override
+  String get recommendedAction => 'Action recommandée';
+
+  @override
+  String get regenerate => 'Régénérer';
+
+  @override
+  String get apiKeyMissingDesc =>
+      'La clé API Gemini n\'est pas configurée. Lancez l\'application avec --dart-define=GEMINI_API_KEY=votre_cle.';
 }

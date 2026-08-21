@@ -713,6 +713,54 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'No assets found for this wallet.'**
   String get noAssetsFound;
+
+  /// Button label to request Gemini AI security explanation
+  ///
+  /// In en, this message translates to:
+  /// **'Explain with AI'**
+  String get explainWithAi;
+
+  /// Title of the AI security modal
+  ///
+  /// In en, this message translates to:
+  /// **'AI Security Report'**
+  String get aiSecurityReport;
+
+  /// Loading state message while generating AI explanation
+  ///
+  /// In en, this message translates to:
+  /// **'Gemini AI is analyzing security data...'**
+  String get analyzingWithAi;
+
+  /// Error title when AI analysis fails
+  ///
+  /// In en, this message translates to:
+  /// **'AI analysis could not be completed'**
+  String get aiAnalysisFailed;
+
+  /// Section header for AI key security findings
+  ///
+  /// In en, this message translates to:
+  /// **'Key Findings'**
+  String get keyFindings;
+
+  /// Section header for AI recommended action
+  ///
+  /// In en, this message translates to:
+  /// **'Recommended Action'**
+  String get recommendedAction;
+
+  /// Button to re-run AI analysis
+  ///
+  /// In en, this message translates to:
+  /// **'Regenerate'**
+  String get regenerate;
+
+  /// Explanation when Gemini API key is missing
+  ///
+  /// In en, this message translates to:
+  /// **'Gemini API key is not configured. Run the app with --dart-define=GEMINI_API_KEY=your_key.'**
+  String get apiKeyMissingDesc;
 }
 
 class _AppLocalizationsDelegate

@@ -534,5 +534,45 @@
   "noAssetsFound": "No assets found for this wallet.",
   "@noAssetsFound": {
     "description": "Message when no assets are found for wallet"
+  },
+
+  "explainWithAi": "Explain with AI",
+  "@explainWithAi": {
+    "description": "Button label to request Gemini AI security explanation"
+  },
+
+  "aiSecurityReport": "AI Security Report",
+  "@aiSecurityReport": {
+    "description": "Title of the AI security modal"
+  },
+
+  "analyzingWithAi": "Gemini AI is analyzing security data...",
+  "@analyzingWithAi": {
+    "description": "Loading state message while generating AI explanation"
+  },
+
+  "aiAnalysisFailed": "AI analysis could not be completed",
+  "@aiAnalysisFailed": {
+    "description": "Error title when AI analysis fails"
+  },
+
+  "keyFindings": "Key Findings",
+  "@keyFindings": {
+    "description": "Section header for AI key security findings"
+  },
+
+  "recommendedAction": "Recommended Action",
+  "@recommendedAction": {
+    "description": "Section header for AI recommended action"
+  },
+
+  "regenerate": "Regenerate",
+  "@regenerate": {
+    "description": "Button to re-run AI analysis"
+  },
+
+  "apiKeyMissingDesc": "Gemini API key is not configured. Run the app with --dart-define=GEMINI_API_KEY=your_key.",
+  "@apiKeyMissingDesc": {
+    "description": "Explanation when Gemini API key is missing"
   }
 }

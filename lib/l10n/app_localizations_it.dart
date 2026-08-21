@@ -365,4 +365,30 @@ class AppLocalizationsIt extends AppLocalizations {
 
   @override
   String get noAssetsFound => 'Nessun asset trovato per questo portafoglio.';
+
+  @override
+  String get explainWithAi => 'Spiega con l\'IA';
+
+  @override
+  String get aiSecurityReport => 'Rapporto di sicurezza IA';
+
+  @override
+  String get analyzingWithAi =>
+      'Gemini IA sta analizzando i dati di sicurezza...';
+
+  @override
+  String get aiAnalysisFailed => 'Impossibile completare l\'analisi IA';
+
+  @override
+  String get keyFindings => 'Risultati principali';
+
+  @override
+  String get recommendedAction => 'Azione consigliata';
+
+  @override
+  String get regenerate => 'Rigenera';
+
+  @override
+  String get apiKeyMissingDesc =>
+      'La chiave API Gemini non è configurata. Esegui l\'app con --dart-define=GEMINI_API_KEY=tua_chiave.';
 }

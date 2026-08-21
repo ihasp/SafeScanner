@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../l10n/l10n.dart';
 import '../../../shared/constants/app_colors.dart';
+import '../../ai/ui/ai_explain_button.dart';
 import '../../security/models/tatum_chain.dart';
 import '../../security/ui/crypto_wallet_results_view.dart';
 import '../models/scan_result.dart';
@@ -150,8 +151,18 @@ class _CryptoScanAccordionState extends State<CryptoScanAccordion> {
                       ),
                     ),
                     padding: const EdgeInsets.only(top: 8),
-                    child: CryptoWalletResultsView(
-                      scan: widget.scan.cryptoScan,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        CryptoWalletResultsView(scan: widget.scan.cryptoScan),
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(24, 6, 24, 16),
+                          child: SizedBox(
+                            width: double.infinity,
+                            child: AiExplainButton(scan: widget.scan),
+                          ),
+                        ),
+                      ],
                     ),
                   )
                 : const SizedBox.shrink(),

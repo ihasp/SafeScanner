@@ -359,4 +359,29 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get noAssetsFound => 'No assets found for this wallet.';
+
+  @override
+  String get explainWithAi => 'Explain with AI';
+
+  @override
+  String get aiSecurityReport => 'AI Security Report';
+
+  @override
+  String get analyzingWithAi => 'Gemini AI is analyzing security data...';
+
+  @override
+  String get aiAnalysisFailed => 'AI analysis could not be completed';
+
+  @override
+  String get keyFindings => 'Key Findings';
+
+  @override
+  String get recommendedAction => 'Recommended Action';
+
+  @override
+  String get regenerate => 'Regenerate';
+
+  @override
+  String get apiKeyMissingDesc =>
+      'Gemini API key is not configured. Run the app with --dart-define=GEMINI_API_KEY=your_key.';
 }

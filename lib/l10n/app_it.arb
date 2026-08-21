@@ -100,5 +100,13 @@
   "network": "Rete",
   "nativeBalance": "Saldo nativo",
   "walletAssets": "Asset del portafoglio",
-  "noAssetsFound": "Nessun asset trovato per questo portafoglio."
+  "noAssetsFound": "Nessun asset trovato per questo portafoglio.",
+  "explainWithAi": "Spiega con l'IA",
+  "aiSecurityReport": "Rapporto di sicurezza IA",
+  "analyzingWithAi": "Gemini IA sta analizzando i dati di sicurezza...",
+  "aiAnalysisFailed": "Impossibile completare l'analisi IA",
+  "keyFindings": "Risultati principali",
+  "recommendedAction": "Azione consigliata",
+  "regenerate": "Rigenera",
+  "apiKeyMissingDesc": "La chiave API Gemini non è configurata. Esegui l'app con --dart-define=GEMINI_API_KEY=tua_chiave."
 }

@@ -12,7 +12,8 @@ param(
     [switch]$SplitPerAbi,
     [switch]$Clean,
     [string]$VirusTotalApiKey = $env:VIRUSTOTAL_API_KEY,
-    [string]$TatumApiKey = $env:TATUM_API_KEY
+    [string]$TatumApiKey = $env:TATUM_API_KEY,
+    [string]$GeminiApiKey = $env:GEMINI_API_KEY
 )
 
 $ErrorActionPreference = 'Stop'
@@ -30,6 +31,7 @@ Write-Host ""
 # Check environment variable presence without printing values
 $vtConfigured = -not [string]::IsNullOrWhiteSpace($VirusTotalApiKey)
 $tatumConfigured = -not [string]::IsNullOrWhiteSpace($TatumApiKey)
+$geminiConfigured = -not [string]::IsNullOrWhiteSpace($GeminiApiKey)
 
 Write-Host "Environment Variables Check:" -ForegroundColor Yellow
 if ($vtConfigured) {
@@ -43,11 +45,17 @@ if ($tatumConfigured) {
 } else {
     Write-Host " - TATUM_API_KEY:       [Not Set]" -ForegroundColor DarkGray
 }
+
+if ($geminiConfigured) {
+    Write-Host " - GEMINI_API_KEY:      [Configured]" -ForegroundColor Green
+} else {
+    Write-Host " - GEMINI_API_KEY:      [Not Set]" -ForegroundColor DarkGray
+}
 Write-Host ""
 
-if (-not $vtConfigured -or -not $tatumConfigured) {
-    Write-Warning "One or more API keys (VIRUSTOTAL_API_KEY, TATUM_API_KEY) are not configured."
-    Write-Warning "Debug build will continue without them, but security/blockchain scanning features may fail at runtime."
+if (-not $vtConfigured -or -not $tatumConfigured -or -not $geminiConfigured) {
+    Write-Warning "One or more API keys (VIRUSTOTAL_API_KEY, TATUM_API_KEY, GEMINI_API_KEY) are not configured."
+    Write-Warning "Debug build will continue without them, but security/blockchain/AI scanning features may fail at runtime."
     Write-Host ""
 }
 
@@ -76,6 +84,11 @@ if ($vtConfigured) {
 if ($tatumConfigured) {
     $buildArgs += "--dart-define=TATUM_API_KEY=$TatumApiKey"
     $displayArgs += "--dart-define=TATUM_API_KEY=***"
+}
+
+if ($geminiConfigured) {
+    $buildArgs += "--dart-define=GEMINI_API_KEY=$GeminiApiKey"
+    $displayArgs += "--dart-define=GEMINI_API_KEY=***"
 }
 
 Write-Host "Executing build command:" -ForegroundColor Green

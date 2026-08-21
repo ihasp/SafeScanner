@@ -99,6 +99,14 @@
   "assetsCount": "{count, plural, =1{1 actif} other{{count} actifs}}",
   "network": "Réseau",
   "nativeBalance": "Solde natif",
-  "walletAssets": "Actifs du portefeuille",
-  "noAssetsFound": "Aucun actif trouvé pour ce portefeuille."
+  "walletAssets": "Activos du portefeuille",
+  "noAssetsFound": "Aucun actif trouvé pour ce portefeuille.",
+  "explainWithAi": "Expliquer avec l'IA",
+  "aiSecurityReport": "Rapport de sécurité IA",
+  "analyzingWithAi": "Gemini IA analyse les données de sécurité...",
+  "aiAnalysisFailed": "L'analyse IA n'a pas pu aboutir",
+  "keyFindings": "Principaux constats",
+  "recommendedAction": "Action recommandée",
+  "regenerate": "Régénérer",
+  "apiKeyMissingDesc": "La clé API Gemini n'est pas configurée. Lancez l'application avec --dart-define=GEMINI_API_KEY=votre_cle."
 }
