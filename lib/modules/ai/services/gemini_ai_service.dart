@@ -4,7 +4,9 @@ import 'package:google_generative_ai/google_generative_ai.dart';
 
 import '../../../shared/constants/api_keys.dart';
 import '../../security/logic/analysis_status_resolver.dart';
+import '../../security/logic/decision_maker.dart';
 import '../../security/models/analysis.dart';
+import '../../security/models/crypto_decision.dart';
 import '../../security/models/crypto_wallet_scan.dart';
 import '../models/ai_security_explanation.dart';
 
@@ -25,6 +27,18 @@ class GeminiAiService {
     return model.trim().replaceFirst(RegExp(r'^models/'), '');
   }
 
+  static String _resolveLanguageName(String code) {
+    return switch (code.toLowerCase().trim()) {
+      'pl' => 'Polish (Polski)',
+      'de' => 'German (Deutsch)',
+      'es' => 'Spanish (Español)',
+      'fr' => 'French (Français)',
+      'it' => 'Italian (Italiano)',
+      'pt' => 'Portuguese (Português)',
+      _ => 'English',
+    };
+  }
+
   GenerativeModel _createModel(String apiKey, String modelName) {
     return GenerativeModel(
       model: _normalizeModel(modelName),
@@ -37,15 +51,17 @@ class GeminiAiService {
         'You are an expert cybersecurity advisor in a mobile QR and Crypto Scanner app. '
         'Your goal is to provide concise, non-technical, high-signal security explanations '
         'to everyday users who just scanned a QR code, link, or crypto address.\n'
+        'When the scanner flags an item as not safe, malicious, phishing, or unverified, '
+        'prioritize explaining the exact risk, why it was flagged, and actionable steps to protect assets or private data.\n'
         'Respond ONLY with valid JSON matching this exact structure:\n'
         '{\n'
-        '  "headline": "Short punchy verdict (e.g. Phishing Threat Detected)",\n'
+        '  "headline": "Short punchy verdict (e.g. Malicious Wallet Drainer Flagged)",\n'
         '  "summary": "2-3 sentences explaining in simple words what this is, why it is safe/dangerous, and what will happen if interacted with.",\n'
         '  "riskLevel": "safe" | "warning" | "malicious" | "unverified",\n'
         '  "keyFindings": ["Point 1", "Point 2"],\n'
         '  "recommendedAction": "Single clear actionable sentence for the user."\n'
         '}\n'
-        'Always write the JSON response values in the language specified in the prompt.',
+        'CRITICAL: Always write the entire JSON response values in the exact language requested in the prompt.',
       ),
     );
   }
@@ -68,10 +84,16 @@ class GeminiAiService {
         .take(10)
         .toList();
 
+    final isNotSafe = resolved.verdict != AnalysisVerdict.safe;
+    final langName = _resolveLanguageName(languageCode);
+
     final promptData = {
       'targetType': 'url',
       'url': url,
       'verdict': resolved.verdict.name,
+      'isFlaggedUnsafe': isNotSafe,
+      'targetLanguage': langName,
+      'targetLanguageCode': languageCode,
       'stats': {
         'totalEnginesChecked': resolved.resultCounts.total,
         'maliciousCount': resolved.resultCounts.malicious,
@@ -80,12 +102,19 @@ class GeminiAiService {
         'safeCount': resolved.resultCounts.safe,
       },
       'flaggedEngines': maliciousEngines,
-      'targetLanguageCode': languageCode,
+      if (isNotSafe)
+        'scannerThreatAlert': {
+          'status': resolved.verdict.name,
+          'threatDescription': resolved.verdict == AnalysisVerdict.malicious
+              ? 'Automated security scan flagged this URL as MALICIOUS/PHISHING. Instruct the user not to open or enter passwords.'
+              : 'Automated security scan found suspicious flags for this URL. Advise extreme caution.',
+        },
     };
 
     final prompt =
-        'Analyze this scanned URL scan result and explain it to the user in language "$languageCode":\n'
-        '${jsonEncode(promptData)}';
+        'Analyze this scanned URL scan result and explain it to the user.\n'
+        'CRITICAL INSTRUCTION: You MUST write the entire JSON response (headline, summary, keyFindings, recommendedAction) in $langName language.\n'
+        'Scan data:\n${jsonEncode(promptData)}';
 
     return _generateExplanation(apiKey, prompt);
   }
@@ -100,6 +129,10 @@ class GeminiAiService {
       throw const GeminiMissingApiKeyException();
     }
 
+    final decision = DecisionMaker.decide(scan);
+    final isNotSafe = decision.safetyLevel != CryptoSafetyLevel.safe;
+    final langName = _resolveLanguageName(languageCode);
+
     final assetsSummary = scan.assets
         .take(10)
         .map((a) => '${a.metadata?.name ?? a.symbol ?? a.type}: ${a.balance}')
@@ -113,15 +146,28 @@ class GeminiAiService {
       'nativeBalance': scan.nativeBalance?.balance ?? '0',
       'assetsCount': scan.assets.length,
       'assetsPreview': assetsSummary,
-      'maliciousCheckStatus': scan.safety.status.name,
-      'threatDescription': scan.safety.description,
+      'scannerSafetyVerdict': decision.safetyLevel.name,
+      'isFlaggedUnsafe': isNotSafe,
+      'threatReasons': decision.reasons,
       'threatSignals': scan.safety.signals ?? [],
+      if (scan.safety.description != null)
+        'threatDescription': scan.safety.description,
+      if (scan.safety.source != null) 'threatSource': scan.safety.source,
+      if (isNotSafe)
+        'scannerThreatAlert': {
+          'threatLevel': decision.safetyLevel.name,
+          'instruction': decision.safetyLevel == CryptoSafetyLevel.malicious
+              ? 'CRITICAL ALERT: The security scanner identified this address as MALICIOUS (e.g. scam, drainer, or blacklist). Emphasize that transferring crypto or signing transactions will lead to permanent fund loss.'
+              : 'CAUTION: The security scanner identified this address as UNVERIFIED with no trusted security verification. Remind the user to double check before sending funds.',
+        },
+      'targetLanguage': langName,
       'targetLanguageCode': languageCode,
     };
 
     final prompt =
-        'Analyze this scanned cryptocurrency wallet address and explain it to the user in language "$languageCode":\n'
-        '${jsonEncode(promptData)}';
+        'Analyze this scanned cryptocurrency wallet address and explain it to the user.\n'
+        'CRITICAL INSTRUCTION: You MUST write the entire JSON response (headline, summary, keyFindings, recommendedAction) in $langName language.\n'
+        'Scan data:\n${jsonEncode(promptData)}';
 
     return _generateExplanation(apiKey, prompt);
   }

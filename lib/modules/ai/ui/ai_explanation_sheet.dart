@@ -7,6 +7,7 @@ import '../../results/models/scan_result.dart';
 import '../../results/providers/scan_results_notifier.dart';
 import '../../security/models/analysis.dart';
 import '../../security/models/crypto_wallet_scan.dart';
+import '../../settings/providers/settings_notifier.dart';
 import '../models/ai_security_explanation.dart';
 import '../providers/ai_providers.dart';
 import '../services/gemini_ai_service.dart';
@@ -115,7 +116,9 @@ class _AiExplanationSheetState extends ConsumerState<AiExplanationSheet>
       _errorMessage = null;
     });
 
-    final currentLocale = Localizations.localeOf(context).languageCode;
+    final selectedLanguageCode = ref.read(settingsProvider).languageCode;
+    final activeLanguageCode =
+        selectedLanguageCode ?? Localizations.localeOf(context).languageCode;
     final geminiService = ref.read(geminiAiServiceProvider);
 
     try {
@@ -123,13 +126,13 @@ class _AiExplanationSheetState extends ConsumerState<AiExplanationSheet>
       if (widget.cryptoScan != null) {
         result = await geminiService.explainCryptoScan(
           scan: widget.cryptoScan!,
-          languageCode: currentLocale,
+          languageCode: activeLanguageCode,
         );
       } else if (widget.urlAnalysis != null) {
         result = await geminiService.explainUrlScan(
           url: widget.data,
           analysis: widget.urlAnalysis!,
-          languageCode: currentLocale,
+          languageCode: activeLanguageCode,
         );
       } else {
         throw const GeminiGenericException('No scan intelligence available.');
