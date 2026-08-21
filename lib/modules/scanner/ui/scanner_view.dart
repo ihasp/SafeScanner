@@ -5,28 +5,19 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 
 import '../../../constants/app_constants.dart';
-import '../../../helpers/crypto/address_decoder.dart';
-import '../../../helpers/scanner/qr_payload_parser.dart';
 import '../../../routing/tab_scaffold.dart';
 import '../../../shared/models/scan_mode.dart';
 import '../../../shared/services/haptic_service.dart';
 import '../../results/providers/scan_results_notifier.dart';
-import '../../security/models/Analysis.dart';
-import '../../security/services/tatum_service.dart';
-import '../../security/services/virustotal_service.dart';
+import '../../security/logic/address_decoder.dart';
+import '../../security/models/analysis.dart';
+import '../../security/models/crypto_scan_state.dart';
+import '../../security/providers/security_providers.dart';
 import '../../security/ui/scanned_layout_sheet.dart';
 import '../../settings/models/app_settings.dart';
 import '../../settings/providers/settings_notifier.dart';
-import '../models/crypto_scan_state.dart';
+import '../logic/qr_payload_parser.dart';
 import 'scan_mode_switch.dart';
-
-final virusTotalServiceProvider = Provider<VirusTotalService>((ref) {
-  return VirusTotalService();
-});
-
-final tatumServiceProvider = Provider<TatumService>((ref) {
-  return TatumService();
-});
 
 class ScannerView extends ConsumerStatefulWidget {
   const ScannerView({super.key});

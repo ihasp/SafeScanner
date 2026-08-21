@@ -3,8 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../ui/scanner_view.dart';
 
-class HomePage extends ConsumerWidget {
-  const HomePage({super.key});
+class ScannerPage extends ConsumerWidget {
+  const ScannerPage({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

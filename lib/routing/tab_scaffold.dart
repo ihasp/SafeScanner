@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../modules/gallery/views/gallery_page.dart';
-import '../modules/home/views/home_page.dart';
 import '../modules/results/views/results_page.dart';
+import '../modules/scanner/views/scanner_page.dart';
 import '../modules/settings/views/settings_page.dart';
 import '../shared/widgets/glass_tab_bar.dart';
 
@@ -27,7 +27,7 @@ class TabScaffold extends ConsumerWidget {
           IndexedStack(
             index: selectedIndex,
             children: const [
-              HomePage(),
+              ScannerPage(),
               GalleryPage(),
               ResultsPage(),
               SettingsPage(),

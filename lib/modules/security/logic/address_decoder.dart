@@ -1,4 +1,4 @@
-import '../../modules/security/models/tatum_chain.dart';
+import '../models/tatum_chain.dart';
 
 abstract final class AddressDecoder {
   static const Map<String, TatumChain> _schemeChains = {

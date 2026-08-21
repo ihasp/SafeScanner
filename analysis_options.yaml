@@ -32,8 +32,7 @@ dcm:
     - avoid-casting-to-extension-type
     - avoid-cascade-after-if-null
     - avoid-unused-parameters
-    - prefer-conditional-expressions:
-        ignore-nested: false
+    - prefer-conditional-expressions
     - prefer-first
     - prefer-correct-test-file-name
     - avoid-collection-methods-with-unrelated-types

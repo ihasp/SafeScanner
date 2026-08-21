@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:crypto_scanner/modules/security/models/Analysis.dart';
+import 'package:crypto_scanner/modules/security/models/analysis.dart';
 import 'package:crypto_scanner/modules/security/models/tatum_chain.dart';
 import 'package:crypto_scanner/modules/security/services/tatum_service.dart';
 import 'package:crypto_scanner/modules/security/services/virustotal_service.dart';
@@ -267,7 +267,7 @@ void main() {
         expect(scan.wallet.address, equals(testWallet.address));
         expect(scan.nativeBalance?.balance, equals('3.75'));
         expect(scan.assets.length, equals(2));
-        expect(scan.assets[0].symbol, equals('ETH'));
+        expect(scan.assets.first.symbol, equals('ETH'));
         expect(scan.assets[1].symbol, equals('USDT'));
         expect(scan.safety.status, equals(MaliciousCheckStatus.valid));
       },

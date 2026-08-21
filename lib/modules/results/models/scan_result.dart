@@ -1,4 +1,4 @@
-import '../../security/models/Analysis.dart';
+import '../../security/models/analysis.dart';
 import '../../security/models/crypto_wallet_scan.dart';
 
 sealed class ScanResult {

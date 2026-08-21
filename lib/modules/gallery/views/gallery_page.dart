@@ -7,17 +7,17 @@ import 'package:photo_manager/photo_manager.dart';
 
 import '../../../constants/app_colors.dart';
 import '../../../constants/app_constants.dart';
-import '../../../helpers/crypto/address_decoder.dart';
-import '../../../helpers/scanner/qr_payload_parser.dart';
 import '../../../shared/models/scan_mode.dart';
 import '../../../shared/services/haptic_service.dart';
-import '../../home/models/crypto_scan_state.dart';
-import '../../home/ui/asset_thumbnail.dart';
-import '../../home/ui/scanner_view.dart';
 import '../../results/providers/scan_results_notifier.dart';
-import '../../security/models/Analysis.dart';
+import '../../scanner/logic/qr_payload_parser.dart';
+import '../../security/logic/address_decoder.dart';
+import '../../security/models/analysis.dart';
+import '../../security/models/crypto_scan_state.dart';
+import '../../security/providers/security_providers.dart';
 import '../../security/ui/scanned_layout_sheet.dart';
 import '../../settings/providers/settings_notifier.dart';
+import '../ui/asset_thumbnail.dart';
 
 class GalleryPage extends ConsumerStatefulWidget {
   const GalleryPage({super.key});

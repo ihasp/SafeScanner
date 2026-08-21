@@ -1,6 +1,6 @@
-import '../../modules/security/models/crypto_decision.dart';
-import '../../modules/security/models/crypto_wallet_scan.dart';
-import '../../modules/security/models/tatum_chain.dart';
+import '../models/crypto_decision.dart';
+import '../models/crypto_wallet_scan.dart';
+import '../models/tatum_chain.dart';
 
 abstract final class DecisionMaker {
   static double _parseBalance(String? balance) {

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
 import '../../../constants/app_colors.dart';
-import '../../../helpers/security/analysis_status_resolver.dart';
-import '../models/Analysis.dart';
+import '../logic/analysis_status_resolver.dart';
+import '../models/analysis.dart';
 
 class CustomFlatlistView extends StatefulWidget {
   final Analysis analysis;

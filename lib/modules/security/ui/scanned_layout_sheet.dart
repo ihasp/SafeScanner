@@ -4,13 +4,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../constants/app_colors.dart';
-import '../../../helpers/crypto/decision_maker.dart';
-import '../../../helpers/security/analysis_status_resolver.dart';
 import '../../../helpers/shared/url_open_helper.dart';
 import '../../../shared/models/scan_mode.dart';
-import '../../home/models/crypto_scan_state.dart';
 import '../../settings/providers/settings_notifier.dart';
-import '../models/Analysis.dart';
+import '../logic/analysis_status_resolver.dart';
+import '../logic/decision_maker.dart';
+import '../models/analysis.dart';
+import '../models/crypto_scan_state.dart';
 import '../models/tatum_chain.dart';
 import 'crypto_wallet_results_view.dart';
 import 'custom_flatlist_view.dart';

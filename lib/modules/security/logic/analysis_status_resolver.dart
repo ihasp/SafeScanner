@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import '../../constants/app_colors.dart';
-import '../../modules/security/models/Analysis.dart';
+import '../../../constants/app_colors.dart';
+import '../models/analysis.dart';
 
 abstract final class AnalysisStatusResolver {
   static FormattedEngineResult formatEngineResult(

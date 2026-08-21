@@ -1,4 +1,4 @@
-import '../../security/models/crypto_wallet_scan.dart';
+import 'crypto_wallet_scan.dart';
 
 class CryptoScanState {
   final CryptoScanStatus status;

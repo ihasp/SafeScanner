@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
 import '../../../constants/app_colors.dart';
-import '../../../helpers/security/analysis_status_resolver.dart';
 import '../../../helpers/shared/url_open_helper.dart';
+import '../../security/logic/analysis_status_resolver.dart';
 import '../../security/ui/custom_flatlist_view.dart';
 import '../models/scan_result.dart';
 

@@ -1,5 +1,5 @@
-import '../../shared/models/scan_mode.dart';
-import '../crypto/address_decoder.dart';
+import '../../../shared/models/scan_mode.dart';
+import '../../security/logic/address_decoder.dart';
 
 abstract final class ScanModeDetector {
   static ScanMode detect(String payload) {

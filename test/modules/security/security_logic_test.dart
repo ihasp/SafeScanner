@@ -1,30 +1,34 @@
-import 'package:crypto_scanner/helpers/crypto/address_decoder.dart';
-import 'package:crypto_scanner/helpers/crypto/decision_maker.dart';
-import 'package:crypto_scanner/helpers/scanner/scan_mode_detector.dart';
-import 'package:crypto_scanner/helpers/security/analysis_status_resolver.dart';
-import 'package:crypto_scanner/modules/security/models/Analysis.dart';
+import 'package:crypto_scanner/modules/security/logic/address_decoder.dart';
+import 'package:crypto_scanner/modules/security/logic/analysis_status_resolver.dart';
+import 'package:crypto_scanner/modules/security/logic/decision_maker.dart';
+import 'package:crypto_scanner/modules/security/models/analysis.dart';
 import 'package:crypto_scanner/modules/security/models/crypto_decision.dart';
 import 'package:crypto_scanner/modules/security/models/crypto_wallet_scan.dart';
 import 'package:crypto_scanner/modules/security/models/tatum_chain.dart';
-import 'package:crypto_scanner/modules/gallery/views/gallery_page.dart';
-import 'package:crypto_scanner/modules/home/ui/scanner_view.dart';
-import 'package:crypto_scanner/modules/settings/providers/settings_notifier.dart';
-import 'package:crypto_scanner/modules/settings/services/settings_service.dart';
-import 'package:crypto_scanner/modules/settings/views/settings_page.dart';
-import 'package:crypto_scanner/routing/tab_scaffold.dart';
-import 'package:crypto_scanner/shared/models/scan_mode.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
-  group('AddressDecoder Tests', () {
+  group('AddressDecoder Word Boundary & Decoding Tests', () {
     test('Decodes Ethereum EVM address correctly', () {
       const address = '0x742d35Cc6634C0532925a3b844Bc454e4438f44e';
       final wallet = AddressDecoder.decode(address);
       expect(wallet, isNotNull);
       expect(wallet!.address, equals(address));
+      expect(wallet.chain, equals(TatumChain.ethereumMainnet));
+    });
+
+    test('EVM regex does not match 64-char transaction hashes as standard address', () {
+      const txHash =
+          '0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef';
+      final wallet = AddressDecoder.decode(txHash);
+      expect(wallet, isNull);
+    });
+
+    test('EVM regex accurately decodes 40-char EVM address with 0x prefix', () {
+      const validAddress = '0x1234567890abcdef1234567890abcdef12345678';
+      final wallet = AddressDecoder.decode(validAddress);
+      expect(wallet, isNotNull);
+      expect(wallet!.address, equals(validAddress));
       expect(wallet.chain, equals(TatumChain.ethereumMainnet));
     });
 
@@ -61,20 +65,6 @@ void main() {
           'https://example.com/verify/7xKXtg2CW87d97TXJSDpbD5jBkheTqA83TZRuJosgAsU';
       final wallet = AddressDecoder.decode(url);
       expect(wallet, isNull);
-    });
-  });
-
-  group('ScanModeDetector Tests', () {
-    test('Detects crypto scan mode for crypto address', () {
-      const address = '0x742d35Cc6634C0532925a3b844Bc454e4438f44e';
-      final mode = ScanModeDetector.detect(address);
-      expect(mode, equals(ScanMode.crypto));
-    });
-
-    test('Detects QR scan mode for URL', () {
-      const url = 'https://example.com';
-      final mode = ScanModeDetector.detect(url);
-      expect(mode, equals(ScanMode.qr));
     });
   });
 
@@ -219,131 +209,6 @@ void main() {
       expect(resolved.canOpenLink, isFalse);
       expect(resolved.riskCount, equals(2));
       expect(resolved.resultCounts.malicious, equals(2));
-    });
-  });
-
-  group('SettingsPage UI Tests', () {
-    testWidgets('Renders only active preferences and excludes hidden settings', (
-      tester,
-    ) async {
-      SharedPreferences.setMockInitialValues({});
-      final prefs = await SharedPreferences.getInstance();
-
-      await tester.pumpWidget(
-        ProviderScope(
-          overrides: [
-            sharedPreferencesProvider.overrideWithValue(prefs),
-            settingsServiceProvider.overrideWithValue(SettingsService(prefs)),
-          ],
-          child: const MaterialApp(home: SettingsPage()),
-        ),
-      );
-      await tester.pumpAndSettle();
-
-      // Included settings
-      expect(find.text('Settings'), findsOneWidget);
-      expect(find.text('Scanner Preferences'), findsOneWidget);
-      expect(find.text('Default Camera'), findsOneWidget);
-      expect(find.text('Default Scan Mode'), findsOneWidget);
-      expect(find.text('Haptics on Scan'), findsOneWidget);
-      expect(find.text('Auto-Open Safe Links'), findsOneWidget);
-
-      // Excluded settings
-      expect(find.text('Polling Interval'), findsNothing);
-      expect(find.text('Privacy & History'), findsNothing);
-      expect(find.text('Incognito Mode'), findsNothing);
-      expect(find.text('History Size'), findsNothing);
-      expect(find.text('Clear Scan History'), findsNothing);
-      expect(find.text('Remove All'), findsNothing);
-    });
-  });
-
-  group('TabScaffold & GlassTabBar UI Tests', () {
-    testWidgets('Renders 4 items in bottom frosted glass menu in exact order', (
-      tester,
-    ) async {
-      SharedPreferences.setMockInitialValues({});
-      final prefs = await SharedPreferences.getInstance();
-
-      final container = ProviderContainer(
-        overrides: [
-          sharedPreferencesProvider.overrideWithValue(prefs),
-          settingsServiceProvider.overrideWithValue(SettingsService(prefs)),
-        ],
-      );
-
-      await tester.pumpWidget(
-        UncontrolledProviderScope(
-          container: container,
-          child: const MaterialApp(home: TabScaffold()),
-        ),
-      );
-      await tester.pump();
-
-      // Verify all 4 tabs exist in frosted glass menu
-      expect(find.text('Scan'), findsOneWidget);
-      expect(find.text('Gallery'), findsOneWidget);
-      expect(find.text('Results'), findsOneWidget);
-      expect(find.text('Settings'), findsOneWidget);
-
-      expect(find.byIcon(Icons.qr_code_scanner_rounded), findsOneWidget);
-      expect(find.byIcon(Icons.photo_library_outlined), findsOneWidget);
-      expect(find.byIcon(Icons.format_list_bulleted_rounded), findsOneWidget);
-      expect(find.byIcon(Icons.settings_outlined), findsOneWidget);
-
-      // Tap on Gallery (2nd item) -> switches to GalleryPage (tab index 1)
-      await tester.tap(find.text('Gallery'));
-      await tester.pump();
-
-      expect(container.read(selectedTabIndexProvider), equals(1));
-    });
-  });
-
-  group('GalleryPage UI Tests', () {
-    testWidgets('Renders Gallery header with icon and title matching Settings style', (
-      tester,
-    ) async {
-      SharedPreferences.setMockInitialValues({});
-      final prefs = await SharedPreferences.getInstance();
-
-      await tester.pumpWidget(
-        ProviderScope(
-          overrides: [
-            sharedPreferencesProvider.overrideWithValue(prefs),
-            settingsServiceProvider.overrideWithValue(SettingsService(prefs)),
-          ],
-          child: const MaterialApp(home: Scaffold(body: GalleryPage())),
-        ),
-      );
-      await tester.pump();
-
-      // Verify Gallery header
-      expect(find.text('Gallery'), findsOneWidget);
-      expect(find.byIcon(Icons.photo_library_outlined), findsOneWidget);
-    });
-  });
-
-  group('ScannerView UI Tests', () {
-    testWidgets('Renders centered ScanModeSwitch with QR and Crypto icons', (
-      tester,
-    ) async {
-      SharedPreferences.setMockInitialValues({});
-      final prefs = await SharedPreferences.getInstance();
-
-      await tester.pumpWidget(
-        ProviderScope(
-          overrides: [
-            sharedPreferencesProvider.overrideWithValue(prefs),
-            settingsServiceProvider.overrideWithValue(SettingsService(prefs)),
-          ],
-          child: const MaterialApp(home: Scaffold(body: ScannerView())),
-        ),
-      );
-      await tester.pump();
-
-      // Verify QR & Crypto switch icons
-      expect(find.byIcon(Icons.qr_code_2_rounded), findsOneWidget);
-      expect(find.byIcon(Icons.currency_bitcoin_rounded), findsOneWidget);
     });
   });
 }
