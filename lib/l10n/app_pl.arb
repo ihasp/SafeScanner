@@ -108,7 +108,7 @@
   "keyFindings": "Kluczowe ustalenia",
   "recommendedAction": "Zalecane działanie",
   "regenerate": "Wygeneruj ponownie",
-  "apiKeyMissingDesc": "Klucz API Gemini nie jest skonfigurowany. Uruchom aplikację z parametrem --dart-define=GEMINI_API_KEY=twoj_klucz.",
+  "apiKeyMissingDesc": "Klucz API Gemini nie jest skonfigurowany.",
   "hybridAiAnalysis": "Analiza hybrydowa AI",
   "hybridAiReport": "Raport bezpieczeństwa",
   "analyzingWithHybridAi": "Trwa synteza Multi-Engine...",
