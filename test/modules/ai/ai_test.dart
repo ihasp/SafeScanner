@@ -1,6 +1,5 @@
 import 'package:crypto_scanner/modules/ai/models/ai_security_explanation.dart';
 import 'package:crypto_scanner/modules/ai/services/gemini_ai_service.dart';
-import 'package:crypto_scanner/modules/results/models/scan_result.dart';
 import 'package:crypto_scanner/modules/results/providers/scan_results_notifier.dart';
 import 'package:crypto_scanner/modules/results/services/scan_results_storage_service.dart';
 import 'package:crypto_scanner/modules/security/models/analysis.dart';

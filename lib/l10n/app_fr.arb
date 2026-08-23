@@ -108,5 +108,17 @@
   "keyFindings": "Principaux constats",
   "recommendedAction": "Action recommandée",
   "regenerate": "Régénérer",
-  "apiKeyMissingDesc": "La clé API Gemini n'est pas configurée. Lancez l'application avec --dart-define=GEMINI_API_KEY=votre_cle."
+  "apiKeyMissingDesc": "La clé API Gemini n'est pas configurée. Lancez l'application avec --dart-define=GEMINI_API_KEY=votre_cle.",
+  "hybridAiAnalysis": "Analyse IA hybride",
+  "hybridAiReport": "Rapport de sécurité IA Multi-Engine",
+  "analyzingWithHybridAi": "L'IA Multi-Engine synthétise les données on-chain et du modèle...",
+  "knownExploitThreat": "Adresse associée à une attaque on-chain confirmée : {exploit}",
+  "verifiedProtocolLabel": "Protocole vérifié / adresse officielle : {protocol}",
+  "signalMixerInteraction": "Interaction directe avec un mixeur de cryptomonnaies (ex. Tornado Cash)",
+  "signalFastDrain": "Retrait immédiat des fonds après dépôt (< 2h - schéma de drainer)",
+  "signalAsymmetricFlow": "Forte asymétrie de transactions (drainage massif de fonds de multiples utilisateurs)",
+  "signalYoungWallet": "Adresse très récente (créée au cours des 72 dernières heures)",
+  "signalBrandImpersonation": "Usurpation d'une marque Web3 connue (Brand Impersonation)",
+  "signalHighRiskTld": "Domaine jetable à haut risque (.xyz, .top)",
+  "signalDgaEntropy": "Entropie élevée des caractères dans le domaine (motif DGA)"
 }

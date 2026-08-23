@@ -51,7 +51,7 @@ class AiExplainButton extends StatelessWidget {
           size: 20,
           color: Color(0xFF8B5CF6),
         ),
-        tooltip: l10n.explainWithAi,
+        tooltip: l10n.hybridAiAnalysis,
         onPressed: () => _onPressed(context),
       );
     }
@@ -99,7 +99,7 @@ class AiExplainButton extends StatelessWidget {
                 ),
                 const SizedBox(width: 8),
                 Text(
-                  l10n.explainWithAi,
+                  l10n.hybridAiAnalysis,
                   style: TextStyle(
                     fontSize: 13,
                     fontWeight: FontWeight.w700,

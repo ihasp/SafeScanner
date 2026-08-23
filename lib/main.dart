@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -8,6 +10,9 @@ import 'l10n/l10n.dart';
 
 import 'package:flutter_localizations/flutter_localizations.dart';
 
+import 'modules/security/providers/security_providers.dart';
+import 'modules/security/services/badblock_whitelist_service.dart';
+import 'modules/security/services/on_device_ai_service.dart';
 import 'modules/settings/providers/settings_notifier.dart';
 import 'routing/tab_scaffold.dart';
 import 'shared/constants/app_colors.dart';
@@ -28,9 +33,18 @@ Future<void> main() async {
     ),
   );
   final prefs = await SharedPreferences.getInstance();
+  // Warm up On-Device AI models into memory for sub-millisecond offline inference
+  OnDeviceAiService.initialize();
+  final whitelistService = BadBlockWhitelistService(prefs: prefs);
+  await whitelistService.loadFromCache();
+  unawaited(whitelistService.syncWhitelist());
+
   runApp(
     ProviderScope(
-      overrides: [sharedPreferencesProvider.overrideWithValue(prefs)],
+      overrides: [
+        sharedPreferencesProvider.overrideWithValue(prefs),
+        badBlockWhitelistServiceProvider.overrideWithValue(whitelistService),
+      ],
       child: const CryptoScannerApp(),
     ),
   );

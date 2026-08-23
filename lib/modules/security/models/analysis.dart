@@ -27,6 +27,25 @@ class Analysis {
     );
   }
 
+  factory Analysis.whitelisted({
+    String? url,
+    String engineName = 'BadBlock Whitelist',
+  }) {
+    return Analysis(
+      data: AnalysisData(
+        attributes: AnalysisAttributes(
+          status: AnalysisStatus.completed,
+          results: {
+            engineName: const EngineResult(
+              category: 'harmless',
+              result: 'clean',
+            ),
+          },
+        ),
+      ),
+    );
+  }
+
   factory Analysis.fromJson(Map<String, dynamic> json) {
     final rawData = json['data'] as Map<String, dynamic>? ?? {};
     return Analysis(error: json['error'], data: AnalysisData.fromJson(rawData));

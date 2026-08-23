@@ -395,4 +395,51 @@ class AppLocalizationsPl extends AppLocalizations {
   @override
   String get apiKeyMissingDesc =>
       'Klucz API Gemini nie jest skonfigurowany. Uruchom aplikację z parametrem --dart-define=GEMINI_API_KEY=twoj_klucz.';
+
+  @override
+  String get hybridAiAnalysis => 'Analiza hybrydowa AI';
+
+  @override
+  String get hybridAiReport => 'Raport bezpieczeństwa';
+
+  @override
+  String get analyzingWithHybridAi => 'Trwa synteza Multi-Engine...';
+
+  @override
+  String knownExploitThreat(String exploit) {
+    return 'Adres powiązany ze znanym atakiem: $exploit';
+  }
+
+  @override
+  String verifiedProtocolLabel(String protocol) {
+    return 'Zweryfikowany protokół / oficjalny adres: $protocol';
+  }
+
+  @override
+  String get signalMixerInteraction =>
+      'Bezpośrednia interakcja z mikserem kryptowalut (np. Tornado Cash)';
+
+  @override
+  String get signalFastDrain =>
+      'Błyskawiczne wypłacanie środków po wpłacie (< 2h - schemat drainera)';
+
+  @override
+  String get signalAsymmetricFlow =>
+      'Wysoka asymetria transakcji (masowe ściąganie środków od wielu użytkowników)';
+
+  @override
+  String get signalYoungWallet =>
+      'Bardzo młody adres (utworzony w ciągu ostatnich 72 godzin)';
+
+  @override
+  String get signalBrandImpersonation =>
+      'Podszywanie pod znaną markę Web3 (Brand Impersonation)';
+
+  @override
+  String get signalHighRiskTld =>
+      'Jednorazowa domena wysokiego ryzyka (.xyz, .top)';
+
+  @override
+  String get signalDgaEntropy =>
+      'Wysoka losowość znaków w domenie (wzorzec DGA)';
 }

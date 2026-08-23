@@ -13,8 +13,8 @@ import '../../settings/providers/settings_notifier.dart';
 import '../logic/analysis_status_resolver.dart';
 import '../logic/decision_maker.dart';
 import '../models/analysis.dart';
+import '../models/crypto_decision.dart';
 import '../models/crypto_scan_state.dart';
-import '../models/tatum_chain.dart';
 import 'crypto_wallet_results_view.dart';
 import 'custom_flatlist_view.dart';
 import 'glow_overlay_view.dart';
@@ -222,9 +222,9 @@ class _ScannedLayoutSheetState extends ConsumerState<ScannedLayoutSheet>
     if (cryptoState?.result == null || _hasTriggeredGlow) return;
     _hasTriggeredGlow = true;
 
-    final isSafe = DecisionMaker.isWalletSafe(cryptoState!.result!);
-    final isMalicious =
-        cryptoState.result!.safety.status == MaliciousCheckStatus.invalid;
+    final decision = DecisionMaker.decide(cryptoState!.result!);
+    final isSafe = decision.isSafe;
+    final isMalicious = decision.safetyLevel == CryptoSafetyLevel.malicious;
     _glowSeverity = isSafe
         ? GlowSeverity.safe
         : (isMalicious ? GlowSeverity.malicious : GlowSeverity.warning);

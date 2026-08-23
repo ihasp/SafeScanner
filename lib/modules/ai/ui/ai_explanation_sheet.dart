@@ -268,7 +268,7 @@ class _AiExplanationSheetState extends ConsumerState<AiExplanationSheet>
               ),
               const SizedBox(width: 8),
               Text(
-                l10n.aiSecurityReport,
+                l10n.hybridAiReport,
                 style: TextStyle(
                   fontSize: 19,
                   fontWeight: FontWeight.bold,
@@ -369,7 +369,7 @@ class _AiExplanationSheetState extends ConsumerState<AiExplanationSheet>
             ),
             const SizedBox(height: 24),
             Text(
-              l10n.analyzingWithAi,
+              l10n.analyzingWithHybridAi,
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: 14,

@@ -761,6 +761,78 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Gemini API key is not configured. Run the app with --dart-define=GEMINI_API_KEY=your_key.'**
   String get apiKeyMissingDesc;
+
+  /// Button label for hybrid AI security analysis
+  ///
+  /// In en, this message translates to:
+  /// **'Hybrid AI Analysis'**
+  String get hybridAiAnalysis;
+
+  /// Title for hybrid AI security analysis sheet
+  ///
+  /// In en, this message translates to:
+  /// **'Hybrid AI Security Report'**
+  String get hybridAiReport;
+
+  /// Loading message during multi-engine AI analysis
+  ///
+  /// In en, this message translates to:
+  /// **'Multi-Engine AI is synthesizing on-chain & model intelligence...'**
+  String get analyzingWithHybridAi;
+
+  /// Warning when wallet is identified on threat intelligence index
+  ///
+  /// In en, this message translates to:
+  /// **'Address associated with confirmed on-chain attack: {exploit}'**
+  String knownExploitThreat(String exploit);
+
+  /// Info label for verified safe Web3 protocol
+  ///
+  /// In en, this message translates to:
+  /// **'Verified protocol / official address: {protocol}'**
+  String verifiedProtocolLabel(String protocol);
+
+  /// Threat signal for crypto mixer interaction
+  ///
+  /// In en, this message translates to:
+  /// **'Direct interaction with cryptocurrency mixer (e.g. Tornado Cash)'**
+  String get signalMixerInteraction;
+
+  /// Threat signal for fast draining pattern
+  ///
+  /// In en, this message translates to:
+  /// **'Immediate withdrawal of funds after deposit (< 2h - drainer pattern)'**
+  String get signalFastDrain;
+
+  /// Threat signal for high inflow/outflow transaction asymmetry
+  ///
+  /// In en, this message translates to:
+  /// **'High transaction asymmetry (mass asset draining from multiple users)'**
+  String get signalAsymmetricFlow;
+
+  /// Threat signal for freshly created wallet address
+  ///
+  /// In en, this message translates to:
+  /// **'Very new address (created within the last 72 hours)'**
+  String get signalYoungWallet;
+
+  /// Threat signal for Web3 brand impersonation in URL
+  ///
+  /// In en, this message translates to:
+  /// **'Impersonating known Web3 brand (Brand Impersonation)'**
+  String get signalBrandImpersonation;
+
+  /// Threat signal for high-risk TLD
+  ///
+  /// In en, this message translates to:
+  /// **'High-risk disposable domain TLD (.xyz, .top)'**
+  String get signalHighRiskTld;
+
+  /// Threat signal for high entropy domain name
+  ///
+  /// In en, this message translates to:
+  /// **'High character entropy in domain (DGA pattern)'**
+  String get signalDgaEntropy;
 }
 
 class _AppLocalizationsDelegate

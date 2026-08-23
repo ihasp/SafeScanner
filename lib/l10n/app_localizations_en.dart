@@ -384,4 +384,52 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get apiKeyMissingDesc =>
       'Gemini API key is not configured. Run the app with --dart-define=GEMINI_API_KEY=your_key.';
+
+  @override
+  String get hybridAiAnalysis => 'Hybrid AI Analysis';
+
+  @override
+  String get hybridAiReport => 'Hybrid AI Security Report';
+
+  @override
+  String get analyzingWithHybridAi =>
+      'Multi-Engine AI is synthesizing on-chain & model intelligence...';
+
+  @override
+  String knownExploitThreat(String exploit) {
+    return 'Address associated with confirmed on-chain attack: $exploit';
+  }
+
+  @override
+  String verifiedProtocolLabel(String protocol) {
+    return 'Verified protocol / official address: $protocol';
+  }
+
+  @override
+  String get signalMixerInteraction =>
+      'Direct interaction with cryptocurrency mixer (e.g. Tornado Cash)';
+
+  @override
+  String get signalFastDrain =>
+      'Immediate withdrawal of funds after deposit (< 2h - drainer pattern)';
+
+  @override
+  String get signalAsymmetricFlow =>
+      'High transaction asymmetry (mass asset draining from multiple users)';
+
+  @override
+  String get signalYoungWallet =>
+      'Very new address (created within the last 72 hours)';
+
+  @override
+  String get signalBrandImpersonation =>
+      'Impersonating known Web3 brand (Brand Impersonation)';
+
+  @override
+  String get signalHighRiskTld =>
+      'High-risk disposable domain TLD (.xyz, .top)';
+
+  @override
+  String get signalDgaEntropy =>
+      'High character entropy in domain (DGA pattern)';
 }

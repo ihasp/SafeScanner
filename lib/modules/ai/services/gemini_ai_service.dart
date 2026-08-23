@@ -149,7 +149,7 @@ class GeminiAiService {
       'scannerSafetyVerdict': decision.safetyLevel.name,
       'isFlaggedUnsafe': isNotSafe,
       'threatReasons': decision.reasons,
-      'threatSignals': scan.safety.signals ?? [],
+      'threatSignals': decision.signals ?? [],
       if (scan.safety.description != null)
         'threatDescription': scan.safety.description,
       if (scan.safety.source != null) 'threatSource': scan.safety.source,

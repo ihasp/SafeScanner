@@ -3,8 +3,11 @@ import 'package:flutter/material.dart';
 import '../../../l10n/l10n.dart';
 import '../../../shared/constants/app_colors.dart';
 import '../../../shared/helpers/balance_formatter.dart';
+import '../logic/decision_maker.dart';
+import '../models/crypto_decision.dart';
 import '../models/crypto_wallet_scan.dart';
 import '../models/tatum_chain.dart';
+import '../services/threat_intelligence_registry.dart';
 
 class CryptoWalletResultsView extends StatelessWidget {
   final CryptoWalletScan scan;
@@ -16,29 +19,86 @@ class CryptoWalletResultsView extends StatelessWidget {
   }
 
   ({String label, Color color}) _getSafetyDisplay(
-    TatumMaliciousAddressCheck safety,
+    CryptoDecision decision,
     AppLocalizations l10n,
   ) {
-    return switch (safety.status) {
-      MaliciousCheckStatus.valid => (label: l10n.safe, color: AppColors.safe),
-      MaliciousCheckStatus.invalid => (
+    return switch (decision.safetyLevel) {
+      CryptoSafetyLevel.safe => (label: l10n.safe, color: AppColors.safe),
+      CryptoSafetyLevel.malicious => (
         label: l10n.malicious,
         color: AppColors.malicious,
       ),
-      MaliciousCheckStatus.unknown => (
+      CryptoSafetyLevel.unverified => (
         label: l10n.unverified,
         color: AppColors.phishing,
       ),
     };
   }
 
+  String _getMaliciousBannerText(CryptoWalletScan scan, AppLocalizations l10n) {
+    final exploitDesc = ThreatIntelligenceRegistry.getKnownMaliciousDescription(
+      scan.wallet.address,
+    );
+    if (exploitDesc != null) {
+      return l10n.knownExploitThreat(exploitDesc);
+    }
+    return scan.safety.description ?? l10n.maliciousReportedDesc;
+  }
+
+  String _localizeSignal(String signal, AppLocalizations l10n) {
+    if (signal.contains('Rapid fund sweeping') ||
+        signal.contains('drainer pattern')) {
+      return l10n.signalFastDrain;
+    }
+    if (signal.contains('High transaction asymmetry') ||
+        signal.contains('mass fund draining')) {
+      return l10n.signalAsymmetricFlow;
+    }
+    if (signal.contains('Direct interaction with cryptocurrency mixer') ||
+        signal.contains('Tornado Cash') ||
+        signal.contains('Direct transfers to mixers')) {
+      return l10n.signalMixerInteraction;
+    }
+    if (signal.contains('Very new address') || signal.contains('72 hours')) {
+      return l10n.signalYoungWallet;
+    }
+    if (signal.contains('Web3 Brand Impersonation')) {
+      return l10n.signalBrandImpersonation;
+    }
+    if (signal.contains('High-risk disposable')) {
+      return l10n.signalHighRiskTld;
+    }
+    if (signal.contains('High character entropy') ||
+        signal.contains('DGA pattern')) {
+      return l10n.signalDgaEntropy;
+    }
+    if (signal.startsWith('Address associated with known attack:')) {
+      final exploit = signal
+          .replaceFirst('Address associated with known attack:', '')
+          .trim();
+      return l10n.knownExploitThreat(exploit);
+    }
+    return signal;
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final safetyDisplay = _getSafetyDisplay(scan.safety, l10n);
+    final decision = DecisionMaker.decide(scan);
+    final safetyDisplay = _getSafetyDisplay(decision, l10n);
     final textColor = isDark ? AppColors.textDark : AppColors.textLight;
     final borderColor = isDark ? AppColors.borderDark : AppColors.border;
+
+    final displaySignals =
+        decision.signals
+            ?.where(
+              (s) => !s.startsWith('Address associated with known attack:'),
+            )
+            .map((s) => _localizeSignal(s, l10n))
+            .toSet()
+            .toList() ??
+        const <String>[];
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
@@ -53,8 +113,33 @@ class CryptoWalletResultsView extends StatelessWidget {
             defaultTextColor: textColor,
           ),
 
-          // Warning banner if invalid
-          if (scan.safety.status == MaliciousCheckStatus.invalid) ...[
+          // Safe Protocol banner if verified
+          if (decision.safetyLevel == CryptoSafetyLevel.safe) ...[
+            if (ThreatIntelligenceRegistry.getKnownSafeLabel(
+                  scan.wallet.address,
+                )
+                case final safeLabel?) ...[
+              const SizedBox(height: 6),
+              Container(
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: isDark
+                      ? AppColors.safe.withAlpha(35)
+                      : const Color(0xFFE8F5E9),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Text(
+                  l10n.verifiedProtocolLabel(safeLabel),
+                  style: const TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w700,
+                    color: AppColors.safe,
+                  ),
+                ),
+              ),
+              const SizedBox(height: 6),
+            ],
+          ] else if (decision.safetyLevel == CryptoSafetyLevel.malicious) ...[
             const SizedBox(height: 6),
             Container(
               padding: const EdgeInsets.all(10),
@@ -65,7 +150,7 @@ class CryptoWalletResultsView extends StatelessWidget {
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Text(
-                scan.safety.description ?? l10n.maliciousReportedDesc,
+                _getMaliciousBannerText(scan, l10n),
                 style: const TextStyle(
                   fontSize: 12,
                   fontWeight: FontWeight.w700,
@@ -74,7 +159,7 @@ class CryptoWalletResultsView extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 6),
-          ] else if (scan.safety.status == MaliciousCheckStatus.unknown) ...[
+          ] else if (decision.safetyLevel == CryptoSafetyLevel.unverified) ...[
             const SizedBox(height: 6),
             Container(
               padding: const EdgeInsets.all(10),
@@ -97,12 +182,12 @@ class CryptoWalletResultsView extends StatelessWidget {
           ],
 
           // Signals
-          if (scan.safety.signals != null &&
-              scan.safety.signals!.isNotEmpty) ...[
+          if (displaySignals.isNotEmpty) ...[
             const SizedBox(height: 4),
             Center(
               child: Text(
-                scan.safety.signals!.join(' | '),
+                displaySignals.join(' • '),
+                textAlign: TextAlign.center,
                 style: const TextStyle(
                   fontSize: 11,
                   color: AppColors.textSecondary,

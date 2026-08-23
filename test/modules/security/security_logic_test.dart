@@ -108,6 +108,24 @@ void main() {
       expect(decision.status, equals(MaliciousCheckStatus.invalid));
     });
 
+    test('Identifies known high-profile exploiters as malicious even if source is valid', () {
+      const scan = CryptoWalletScan(
+        wallet: CryptoWallet(
+          address: '0xb66cd966670d962c227b3eabe305290249014aed', // Euler Finance
+          chain: TatumChain.ethereumMainnet,
+          label: 'Ethereum',
+          rawPayload: '0xb66cd966670d962c227b3eabe305290249014aed',
+        ),
+        assets: [],
+        safety: TatumMaliciousAddressCheck(status: MaliciousCheckStatus.valid),
+      );
+
+      final decision = DecisionMaker.decide(scan);
+      expect(decision.isSafe, isFalse);
+      expect(decision.safetyLevel, equals(CryptoSafetyLevel.malicious));
+      expect(decision.reasons.first, contains('Euler Finance'));
+    });
+
     test('Marks unknown status as unverified without false safe alarm', () {
       const scan = CryptoWalletScan(
         wallet: CryptoWallet(
