@@ -393,8 +393,7 @@ class AppLocalizationsPl extends AppLocalizations {
   String get regenerate => 'Wygeneruj ponownie';
 
   @override
-  String get apiKeyMissingDesc =>
-      'Klucz API Gemini nie jest skonfigurowany. Uruchom aplikację z parametrem --dart-define=GEMINI_API_KEY=twoj_klucz.';
+  String get apiKeyMissingDesc => 'Klucz API Gemini nie jest skonfigurowany.';
 
   @override
   String get hybridAiAnalysis => 'Analiza hybrydowa AI';
