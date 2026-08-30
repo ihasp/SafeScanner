@@ -9,7 +9,7 @@ Rules:
 - Every code change has to be made only with Flutter code
 - Never ignore results from `scripts/check.ps1`
 
-Certain api keys has to be set in windows' enviornments:
+Certain api keys has to be set in windows' enviornment variables:
 `VIRUSTOTAL_API_KEY`, `TATUM_API_KEY`, and `GEMINI_API_KEY`
 
 Valid app has to pass all of these:
@@ -24,6 +24,6 @@ flutter test
 
 this script `./scripts/check.ps1` runs these checks
 
-Update to Powershell 7 to use the scripts.
+Scrips were made with Powershell 7 in mind 
 
 To build the app run the build scripts from `/scripts` folder
