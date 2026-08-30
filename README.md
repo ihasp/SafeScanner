@@ -1,4 +1,4 @@
-# Crypto Scanner - Flutter
+# QR Scanner - Flutter
 
 Scanner app that scans regular qr codes and crypto qr codes
 
