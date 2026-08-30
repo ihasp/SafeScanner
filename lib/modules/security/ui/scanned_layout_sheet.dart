@@ -8,12 +8,13 @@ import '../../../shared/constants/app_colors.dart';
 import '../../../shared/helpers/url_open_helper.dart';
 import '../../../shared/models/scan_mode.dart';
 import '../../../shared/services/haptic_service.dart';
+import '../../ai/ui/ai_explain_button.dart';
 import '../../settings/providers/settings_notifier.dart';
 import '../logic/analysis_status_resolver.dart';
 import '../logic/decision_maker.dart';
 import '../models/analysis.dart';
+import '../models/crypto_decision.dart';
 import '../models/crypto_scan_state.dart';
-import '../models/tatum_chain.dart';
 import 'crypto_wallet_results_view.dart';
 import 'custom_flatlist_view.dart';
 import 'glow_overlay_view.dart';
@@ -221,9 +222,9 @@ class _ScannedLayoutSheetState extends ConsumerState<ScannedLayoutSheet>
     if (cryptoState?.result == null || _hasTriggeredGlow) return;
     _hasTriggeredGlow = true;
 
-    final isSafe = DecisionMaker.isWalletSafe(cryptoState!.result!);
-    final isMalicious =
-        cryptoState.result!.safety.status == MaliciousCheckStatus.invalid;
+    final decision = DecisionMaker.decide(cryptoState!.result!);
+    final isSafe = decision.isSafe;
+    final isMalicious = decision.safetyLevel == CryptoSafetyLevel.malicious;
     _glowSeverity = isSafe
         ? GlowSeverity.safe
         : (isMalicious ? GlowSeverity.malicious : GlowSeverity.warning);
@@ -535,6 +536,19 @@ class _ScannedLayoutSheetState extends ConsumerState<ScannedLayoutSheet>
                                   ),
                                 ),
                               ),
+                            Padding(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 24,
+                                vertical: 6,
+                              ),
+                              child: SizedBox(
+                                width: double.infinity,
+                                child: AiExplainButton.forLiveScan(
+                                  liveData: widget.data,
+                                  liveUrlAnalysis: widget.analysis,
+                                ),
+                              ),
+                            ),
                           ] else if (!isCrypto &&
                               isUrlFailed &&
                               (widget.analysis != null || _isTimedOut))
@@ -548,11 +562,24 @@ class _ScannedLayoutSheetState extends ConsumerState<ScannedLayoutSheet>
                             )
                           else if (isCrypto &&
                               isCryptoCompleted &&
-                              widget.cryptoScan?.result != null)
+                              widget.cryptoScan?.result != null) ...[
                             CryptoWalletResultsView(
                               scan: widget.cryptoScan!.result!,
-                            )
-                          else if (isCrypto && isCryptoFailed)
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 24,
+                                vertical: 8,
+                              ),
+                              child: SizedBox(
+                                width: double.infinity,
+                                child: AiExplainButton.forLiveScan(
+                                  liveData: widget.data,
+                                  liveCryptoScan: widget.cryptoScan!.result,
+                                ),
+                              ),
+                            ),
+                          ] else if (isCrypto && isCryptoFailed)
                             _buildErrorBox(
                               widget.cryptoScan?.error ??
                                   l10n.unableToScanWallet,

@@ -12,7 +12,8 @@ param(
     [switch]$SplitPerAbi,
     [switch]$Clean,
     [string]$VirusTotalApiKey = $env:VIRUSTOTAL_API_KEY,
-    [string]$TatumApiKey = $env:TATUM_API_KEY
+    [string]$TatumApiKey = $env:TATUM_API_KEY,
+    [string]$GeminiApiKey = $env:GEMINI_API_KEY
 )
 
 $ErrorActionPreference = 'Stop'
@@ -30,6 +31,7 @@ Write-Host ""
 # Check environment variable presence without printing values
 $vtConfigured = -not [string]::IsNullOrWhiteSpace($VirusTotalApiKey)
 $tatumConfigured = -not [string]::IsNullOrWhiteSpace($TatumApiKey)
+$geminiConfigured = -not [string]::IsNullOrWhiteSpace($GeminiApiKey)
 
 Write-Host "Environment Variables Check:" -ForegroundColor Yellow
 if ($vtConfigured) {
@@ -43,6 +45,12 @@ if ($tatumConfigured) {
 } else {
     Write-Host " - TATUM_API_KEY:       [Not Set]" -ForegroundColor Red
 }
+
+if ($geminiConfigured) {
+    Write-Host " - GEMINI_API_KEY:      [Configured]" -ForegroundColor Green
+} else {
+    Write-Host " - GEMINI_API_KEY:      [Not Set]" -ForegroundColor Yellow
+}
 Write-Host ""
 
 if (-not $vtConfigured -or -not $tatumConfigured) {
@@ -54,7 +62,7 @@ if (-not $vtConfigured -or -not $tatumConfigured) {
         Write-Host "  - TATUM_API_KEY is required but not set or empty." -ForegroundColor Red
     }
     Write-Host ""
-    Write-Host "Please set the environment variables or pass them as parameters (-VirusTotalApiKey, -TatumApiKey)." -ForegroundColor Yellow
+    Write-Host "Please set the environment variables or pass them as parameters (-VirusTotalApiKey, -TatumApiKey, -GeminiApiKey)." -ForegroundColor Yellow
     exit 1
 }
 
@@ -80,6 +88,11 @@ $displayArgs += "--dart-define=VIRUSTOTAL_API_KEY=***"
 
 $buildArgs += "--dart-define=TATUM_API_KEY=$TatumApiKey"
 $displayArgs += "--dart-define=TATUM_API_KEY=***"
+
+if ($geminiConfigured) {
+    $buildArgs += "--dart-define=GEMINI_API_KEY=$GeminiApiKey"
+    $displayArgs += "--dart-define=GEMINI_API_KEY=***"
+}
 
 Write-Host "Executing build command:" -ForegroundColor Green
 Write-Host "flutter $($displayArgs -join ' ')" -ForegroundColor DarkGray

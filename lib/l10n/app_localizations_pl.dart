@@ -370,4 +370,75 @@ class AppLocalizationsPl extends AppLocalizations {
 
   @override
   String get noAssetsFound => 'Nie znaleziono aktywów dla tego portfela.';
+
+  @override
+  String get explainWithAi => 'Wyjaśnij z AI';
+
+  @override
+  String get aiSecurityReport => 'Raport bezpieczeństwa AI';
+
+  @override
+  String get analyzingWithAi => 'Gemini AI analizuje dane bezpieczeństwa...';
+
+  @override
+  String get aiAnalysisFailed => 'Nie udało się ukończyć analizy AI';
+
+  @override
+  String get keyFindings => 'Kluczowe ustalenia';
+
+  @override
+  String get recommendedAction => 'Zalecane działanie';
+
+  @override
+  String get regenerate => 'Wygeneruj ponownie';
+
+  @override
+  String get apiKeyMissingDesc => 'Klucz API Gemini nie jest skonfigurowany.';
+
+  @override
+  String get hybridAiAnalysis => 'Analiza hybrydowa AI';
+
+  @override
+  String get hybridAiReport => 'Raport bezpieczeństwa';
+
+  @override
+  String get analyzingWithHybridAi => 'Trwa synteza Multi-Engine...';
+
+  @override
+  String knownExploitThreat(String exploit) {
+    return 'Adres powiązany ze znanym atakiem: $exploit';
+  }
+
+  @override
+  String verifiedProtocolLabel(String protocol) {
+    return 'Zweryfikowany protokół / oficjalny adres: $protocol';
+  }
+
+  @override
+  String get signalMixerInteraction =>
+      'Bezpośrednia interakcja z mikserem kryptowalut (np. Tornado Cash)';
+
+  @override
+  String get signalFastDrain =>
+      'Błyskawiczne wypłacanie środków po wpłacie (< 2h - schemat drainera)';
+
+  @override
+  String get signalAsymmetricFlow =>
+      'Wysoka asymetria transakcji (masowe ściąganie środków od wielu użytkowników)';
+
+  @override
+  String get signalYoungWallet =>
+      'Bardzo młody adres (utworzony w ciągu ostatnich 72 godzin)';
+
+  @override
+  String get signalBrandImpersonation =>
+      'Podszywanie pod znaną markę Web3 (Brand Impersonation)';
+
+  @override
+  String get signalHighRiskTld =>
+      'Jednorazowa domena wysokiego ryzyka (.xyz, .top)';
+
+  @override
+  String get signalDgaEntropy =>
+      'Wysoka losowość znaków w domenie (wzorzec DGA)';
 }

@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 
 import '../../../l10n/l10n.dart';
 import '../../../shared/constants/app_colors.dart';
-import '../../security/models/tatum_chain.dart';
+import '../../ai/ui/ai_explain_button.dart';
+import '../../security/logic/decision_maker.dart';
+import '../../security/models/crypto_decision.dart';
 import '../../security/ui/crypto_wallet_results_view.dart';
 import '../models/scan_result.dart';
 
@@ -19,16 +21,16 @@ class _CryptoScanAccordionState extends State<CryptoScanAccordion> {
   bool _isOpen = false;
 
   ({String label, Color color}) _getSafetyDisplay(
-    TatumMaliciousAddressCheck safety,
+    CryptoDecision decision,
     AppLocalizations l10n,
   ) {
-    return switch (safety.status) {
-      MaliciousCheckStatus.valid => (label: l10n.safe, color: AppColors.safe),
-      MaliciousCheckStatus.invalid => (
+    return switch (decision.safetyLevel) {
+      CryptoSafetyLevel.safe => (label: l10n.safe, color: AppColors.safe),
+      CryptoSafetyLevel.malicious => (
         label: l10n.malicious,
         color: AppColors.malicious,
       ),
-      MaliciousCheckStatus.unknown => (
+      CryptoSafetyLevel.unverified => (
         label: l10n.unverified,
         color: AppColors.phishing,
       ),
@@ -39,7 +41,8 @@ class _CryptoScanAccordionState extends State<CryptoScanAccordion> {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final safety = _getSafetyDisplay(widget.scan.cryptoScan.safety, l10n);
+    final decision = DecisionMaker.decide(widget.scan.cryptoScan);
+    final safety = _getSafetyDisplay(decision, l10n);
 
     return Container(
       margin: const EdgeInsets.only(bottom: 10),
@@ -150,8 +153,18 @@ class _CryptoScanAccordionState extends State<CryptoScanAccordion> {
                       ),
                     ),
                     padding: const EdgeInsets.only(top: 8),
-                    child: CryptoWalletResultsView(
-                      scan: widget.scan.cryptoScan,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        CryptoWalletResultsView(scan: widget.scan.cryptoScan),
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(24, 6, 24, 16),
+                          child: SizedBox(
+                            width: double.infinity,
+                            child: AiExplainButton(scan: widget.scan),
+                          ),
+                        ),
+                      ],
                     ),
                   )
                 : const SizedBox.shrink(),

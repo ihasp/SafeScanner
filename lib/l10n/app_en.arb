@@ -534,5 +534,115 @@
   "noAssetsFound": "No assets found for this wallet.",
   "@noAssetsFound": {
     "description": "Message when no assets are found for wallet"
+  },
+
+  "explainWithAi": "Explain with AI",
+  "@explainWithAi": {
+    "description": "Button label to request Gemini AI security explanation"
+  },
+
+  "aiSecurityReport": "AI Security Report",
+  "@aiSecurityReport": {
+    "description": "Title of the AI security modal"
+  },
+
+  "analyzingWithAi": "Gemini AI is analyzing security data...",
+  "@analyzingWithAi": {
+    "description": "Loading state message while generating AI explanation"
+  },
+
+  "aiAnalysisFailed": "AI analysis could not be completed",
+  "@aiAnalysisFailed": {
+    "description": "Error title when AI analysis fails"
+  },
+
+  "keyFindings": "Key Findings",
+  "@keyFindings": {
+    "description": "Section header for AI key security findings"
+  },
+
+  "recommendedAction": "Recommended Action",
+  "@recommendedAction": {
+    "description": "Section header for AI recommended action"
+  },
+
+  "regenerate": "Regenerate",
+  "@regenerate": {
+    "description": "Button to re-run AI analysis"
+  },
+
+  "apiKeyMissingDesc": "Gemini API key is not configured. Run the app with --dart-define=GEMINI_API_KEY=your_key.",
+  "@apiKeyMissingDesc": {
+    "description": "Explanation when Gemini API key is missing"
+  },
+
+  "hybridAiAnalysis": "Hybrid AI Analysis",
+  "@hybridAiAnalysis": {
+    "description": "Button label for hybrid AI security analysis"
+  },
+
+  "hybridAiReport": "Hybrid AI Security Report",
+  "@hybridAiReport": {
+    "description": "Title for hybrid AI security analysis sheet"
+  },
+
+  "analyzingWithHybridAi": "Multi-Engine AI is synthesizing on-chain & model intelligence...",
+  "@analyzingWithHybridAi": {
+    "description": "Loading message during multi-engine AI analysis"
+  },
+
+  "knownExploitThreat": "Address associated with confirmed on-chain attack: {exploit}",
+  "@knownExploitThreat": {
+    "description": "Warning when wallet is identified on threat intelligence index",
+    "placeholders": {
+      "exploit": {
+        "type": "String"
+      }
+    }
+  },
+
+  "verifiedProtocolLabel": "Verified protocol / official address: {protocol}",
+  "@verifiedProtocolLabel": {
+    "description": "Info label for verified safe Web3 protocol",
+    "placeholders": {
+      "protocol": {
+        "type": "String"
+      }
+    }
+  },
+
+  "signalMixerInteraction": "Direct interaction with cryptocurrency mixer (e.g. Tornado Cash)",
+  "@signalMixerInteraction": {
+    "description": "Threat signal for crypto mixer interaction"
+  },
+
+  "signalFastDrain": "Immediate withdrawal of funds after deposit (< 2h - drainer pattern)",
+  "@signalFastDrain": {
+    "description": "Threat signal for fast draining pattern"
+  },
+
+  "signalAsymmetricFlow": "High transaction asymmetry (mass asset draining from multiple users)",
+  "@signalAsymmetricFlow": {
+    "description": "Threat signal for high inflow/outflow transaction asymmetry"
+  },
+
+  "signalYoungWallet": "Very new address (created within the last 72 hours)",
+  "@signalYoungWallet": {
+    "description": "Threat signal for freshly created wallet address"
+  },
+
+  "signalBrandImpersonation": "Impersonating known Web3 brand (Brand Impersonation)",
+  "@signalBrandImpersonation": {
+    "description": "Threat signal for Web3 brand impersonation in URL"
+  },
+
+  "signalHighRiskTld": "High-risk disposable domain TLD (.xyz, .top)",
+  "@signalHighRiskTld": {
+    "description": "Threat signal for high-risk TLD"
+  },
+
+  "signalDgaEntropy": "High character entropy in domain (DGA pattern)",
+  "@signalDgaEntropy": {
+    "description": "Threat signal for high entropy domain name"
   }
 }

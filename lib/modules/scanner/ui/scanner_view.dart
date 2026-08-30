@@ -216,6 +216,22 @@ class _ScannerViewState extends ConsumerState<ScannerView>
         return;
       }
 
+      final whitelistService = ref.read(badBlockWhitelistServiceProvider);
+      if (whitelistService.isWhitelisted(sanitized)) {
+        final safeAnalysis = Analysis.whitelisted(url: sanitized);
+        if (!mounted) return;
+        setState(() {
+          _analysisData = safeAnalysis;
+          _currentAnalysisId = null;
+          _showScannedLayout = true;
+          _isProcessingScan = false;
+        });
+        ref
+            .read(scanResultsProvider.notifier)
+            .addUrlScan(data: sanitized, analysis: safeAnalysis);
+        return;
+      }
+
       if (!mounted) return;
       setState(() {
         _analysisData = Analysis.queued();

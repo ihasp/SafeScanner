@@ -10,7 +10,7 @@ Rules:
 - Never ignore results from `scripts/check.ps1`
 
 Certain api keys has to be set in windows' enviornments:
-`VIRUSTOTAL_API_KEY` and `TATUM_API_KEY`
+`VIRUSTOTAL_API_KEY`, `TATUM_API_KEY`, and `GEMINI_API_KEY`
 
 Valid app has to pass all of these:
 

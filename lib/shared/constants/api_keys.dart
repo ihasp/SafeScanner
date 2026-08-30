@@ -4,4 +4,5 @@ abstract final class ApiKeys {
   );
 
   static const String tatumApiKey = String.fromEnvironment('TATUM_API_KEY');
+  static const String geminiApiKey = String.fromEnvironment('GEMINI_API_KEY');
 }

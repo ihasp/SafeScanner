@@ -41,6 +41,7 @@ dependencies:
   url_launcher: ^6.3.2
   shared_preferences: ^2.5.5
   photo_manager: ^3.12.0
+  google_generative_ai: ^0.4.6
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -63,6 +64,10 @@ flutter:
   # included with your application, so that you can use the icons in
   # the material Icons class.
   uses-material-design: true
+
+  assets:
+    - assets/models/
+    - assets/whitelist/
 
 
   # An image asset can refer to one or more resolution-specific "variants", see
