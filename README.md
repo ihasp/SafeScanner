@@ -1,6 +1,6 @@
 # QR Scanner - Flutter
 
-Scanner app that scans regular qr codes and crypto qr codes
+Scanner app that scans regular qr codes & crypto qr codes and checks for their safety 
 
 ## Contributing
 
